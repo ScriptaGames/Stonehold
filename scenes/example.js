@@ -1,10 +1,6 @@
 import Phaser from "phaser";
 
 class ExampleScene extends Phaser.Scene {
-    graphics: Phaser.GameObjects.Graphics;
-    logo: Phaser.GameObjects.Image;
-    path: Phaser.Curves.Path;
-
     init() {
     }
     preload() {
