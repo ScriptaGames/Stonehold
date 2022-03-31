@@ -79,15 +79,3 @@ await esbuildServe(
             root: "public",
     }
 );
-
-// "build": "esbuild index.ts 
-// --bundle 
-// --define:DEBUG=false 
-// --analyze 
-// --legal-comments=linked 
-// --tree-shaking=true 
-// --minify 
-// --target=es6 
-// --outfile=public/index.js"
-
-
