@@ -52,7 +52,7 @@ async function esbuildServe(options = {}, serveOptions = {}) {
     if (isWatch) {
         serve.start(serveOptions);
         chokidar.watch(serveOptions.root, {
-            ignored: "public/index.js*", // ignore the js bundle (and .map and .LEGAL.txt) because those reloads are triggered by esbuild onRebuild events
+            ignored: "public/main.js*", // ignore the js bundle (and .map and .LEGAL.txt) because those reloads are triggered by esbuild onRebuild events
             ignoreInitial: true,
             atomic: true
         }).on("all", reload);
@@ -66,9 +66,9 @@ await esbuildServe(
         // analyze: true,
         minify: true,
         legalComments: "linked",
-            entryPoints: ["index.js"],
+            entryPoints: ["main.js"],
         treeShaking: true,
-            outfile: "public/index.js",
+            outfile: "public/main.js",
             outbase: "public",
             sourcemap: true,
             metafile: true,
