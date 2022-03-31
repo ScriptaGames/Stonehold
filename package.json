@@ -2,13 +2,16 @@
   "name": "phaser3-esbuild",
   "version": "0.0.1",
   "scripts": {
-    "dev": "esbuild index.js --serve=3000 --define:DEBUG=true --legal-comments=linked --tree-shaking=true --servedir=public --bundle --sourcemap --target=es6",
-    "build": "esbuild index.js --bundle --define:DEBUG=false --analyze --legal-comments=linked --tree-shaking=true --minify --target=es6 --outfile=public/index.js"
+    "dev": "node build.js -w",
+    "build": "node build.js"
   },
+  "type": "module",
   "dependencies": {
     "phaser": "3.55.2"
   },
   "devDependencies": {
-    "esbuild": "0.14.28"
+    "chokidar": "^3.5.3",
+    "esbuild": "0.14.28",
+    "esbuild-serve": "^1.0.1"
   }
 }
