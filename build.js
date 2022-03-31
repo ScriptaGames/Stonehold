@@ -66,7 +66,7 @@ await esbuildServe(
         // analyze: true,
         minify: true,
         legalComments: "linked",
-            entryPoints: ["index.ts"],
+            entryPoints: ["index.js"],
         treeShaking: true,
             outfile: "public/index.js",
             outbase: "public",
