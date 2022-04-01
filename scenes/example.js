@@ -5,13 +5,39 @@ class ExampleScene extends Phaser.Scene {
     }
     preload() {
         this.load.image("logo", "images/logo.png");
+        this.load.audio("paeMusic", ["audio/pae-main-menu.mp3"]);
     }
     create() {
-        this.graphics = this.add.graphics();
 
         const firstPosition = this.getLogoPosition();
+
+        this.graphics = this.add.graphics();
         this.path = new Phaser.Curves.Path(firstPosition[0], firstPosition[1]);
+
         this.logo = this.add.image(firstPosition[0], firstPosition[1], "logo").setName("logo");
+        this.logo.setInteractive();
+
+        // add the audio to the scene.  this should go in create()
+        this.paeMusic = this.sound.add("paeMusic");
+
+        // example handlers for user input.  prefer using "gameobjectdown" (ie, mousedown) because it feels like more instant feedback than waiting for mouseup.
+        this.input.on("gameobjectdown", (pointer, gameObject) => {
+            console.log(`mouse down on ${gameObject.name}`, gameObject);
+            this.paeMusic.play();
+        });
+
+        // tween example
+        //
+        const tween = this.tweens.add({
+            targets: this.logo,
+            alpha: 0.5,
+            duration: 800,
+            paused: false,
+            ease: Phaser.Math.Easing.Quadratic.InOut, // https://easings.net/
+            yoyo: true,
+            repeat: -1
+        });
+        // if you need to stop it: tween.stop();
     }
     update() {
         const newPosition = this.getLogoPosition();
