@@ -2,8 +2,9 @@
 
 ## Initial setup
 
- 1. First, make sure you have [yarn](https://yarnpkg.com/) installed.
- 2. Run `yarn` to install dependencies.
+ 1. Install [node.js](https://nodejs.org/en/) (version 14 or higher, 16 recommended).
+ 2. Install [yarn](https://yarnpkg.com/).
+ 3. Run `yarn` to install dependencies.
 
 ## Dev
 
