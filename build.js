@@ -63,19 +63,18 @@ await esbuildServe(
     // esbuild options
     {
         bundle: true,
-        // analyze: true,
         minify: true,
+        sourcemap: true,
         legalComments: "linked",
-            entryPoints: ["main.js"],
+        entryPoints: ["main.js"],
         treeShaking: true,
-            outfile: "public/main.js",
-            outbase: "public",
-            sourcemap: true,
-            metafile: true,
+        outfile: "public/main.js",
+        outbase: "public",
+        metafile: true,
     },
     // serve options
     {
         port: 7007,
-            root: "public",
+        root: "public",
     }
 );
