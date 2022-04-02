@@ -29,6 +29,11 @@ export class Player {
       "images/dwarfBody_dodge_strip.png",
       { frameWidth: 36, frameHeight: 36 }
     );
+    this.scene.load.spritesheet(
+      "axe-attack",
+      "images/dwarfAxe_attack_strip.png",
+      { frameWidth: 36, frameHeight: 36 }
+    );
   }
   create() {
     this.player = this.scene.add.sprite(250, 500);
@@ -85,16 +90,21 @@ export class Player {
   }
 
   createSmear() {
-    this.particles = this.scene.add.particles("smear");
+    this.particles = this.scene.add.particles("axe-attack");
 
     this.particlesEmitter = this.particles.createEmitter({
       // frame: "spritesheetFrame", // spritesheet frame
-      x: 400,
-      y: 300,
+      frame: {
+        frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        cycle: true,
+        quantity: 10,
+      },
+      x: 0,
+      y: 0,
       lifespan: 600,
       quantity: 0,
-      scale: 1.6,
-      alpha: { start: 0.5, end: 0, ease: Phaser.Math.Easing.Quintic.Out },
+      scale: 4,
+      alpha: { start: 1, end: 0, ease: Phaser.Math.Easing.Quintic.Out },
       blendMode: Phaser.BlendModes.COLOR,
     });
   }
@@ -250,11 +260,20 @@ export class Player {
 
   smear() {
     // position the smear a little farther out than the hands
-    const smearPos = this.hands.body.position.clone();
-    smearPos.subtract(this.playerBody.position);
-    smearPos.scale(2);
-    smearPos.add(this.hands.body.position);
+    // const smearPos = this.hands.body.position.clone();
+    // smearPos.subtract(this.playerBody.position);
+    // smearPos.scale(2);
+    // smearPos.add(this.hands.body.position);
 
-    this.particlesEmitter.emitParticle(1, smearPos.x + 20, smearPos.y + 20);
+    /** @type {Phaser.Math.Vector2} */
+    const handPos = this.hands.getCenter().clone();
+    const smearOffset = this.mouse
+      .clone()
+      .subtract(handPos)
+      .normalize()
+      .scale(WEAPON_HOVER_DISTANCE);
+    const smearPos = handPos.add(smearOffset);
+    // this.particlesEmitter.emitParticle(10, smearPos.x + 20, smearPos.y + 20);
+    this.particles.emitParticleAt(smearPos.x, smearPos.y, 10);
   }
 }
