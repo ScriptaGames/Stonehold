@@ -31,7 +31,7 @@ export class Player {
     );
   }
   create() {
-    this.player = this.scene.add.sprite(250, 400);
+    this.player = this.scene.add.sprite(250, 500);
     this.player.setScale(3);
     this.player.play("dwarf-idle");
     this.player.setOrigin(0.5);

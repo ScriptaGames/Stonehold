@@ -1,11 +1,14 @@
 import Phaser from "phaser";
 import HubDoor from "../actors/hub_door";
+import { Player } from "../components/player";
 
 class HubScene extends Phaser.Scene {
     constructor(config) {
         super({
             key: 'HubScene',
         });
+
+        this.player = new Player(this);
     }
 
     init(data) {
@@ -37,6 +40,7 @@ class HubScene extends Phaser.Scene {
     preload() {
         this.load.image("cell_door", "images/cell_door.png");
         this.load.image("player", "images/player.png");
+        this.player.preload();
     }
 
     create() {
@@ -57,9 +61,10 @@ class HubScene extends Phaser.Scene {
             this.add.text(x - 32, y - 150, other_player.seed);
         }
 
-        this.player = this.physics.add.sprite(200, 400, "player");
+        Player.createAnims(this);
+        this.player.create();
 
-        this.physics.add.overlap(this.player, this.doors, (player, door, colInfo) => {
+        this.physics.add.overlap(this.player.player, this.doors, (player, door, colInfo) => {
             console.log("overlap: " + door.info.name);
             this.room_manager.initChain(door.info);
             let room_config = this.room_manager.nextRoom();
@@ -68,22 +73,7 @@ class HubScene extends Phaser.Scene {
     }
 
     update() {
-        let input = new Phaser.Math.Vector2(0, 0);
-        const speed = 200;
-        if (this.cursors.left.isDown) {
-            input.x -= speed;
-        }
-        if (this.cursors.right.isDown) {
-            input.x += speed; 
-        }
-        if (this.cursors.up.isDown) {
-            input.y -= speed;
-        }
-        if (this.cursors.down.isDown) {
-            input.y += speed;
-        }
-    
-        this.player.setVelocity(input.x, input.y);
+        this.player.update();
     }
 }
 

@@ -1,10 +1,13 @@
 import Phaser from "phaser";
+import { Player } from "../components/player";
 
 class RoomScene extends Phaser.Scene {
     constructor(config) {
         super({
             key: 'RoomScene'
-        })
+        });
+
+        this.player = new Player(this);
     }
 
     init(data) {
@@ -19,9 +22,10 @@ class RoomScene extends Phaser.Scene {
         this.load.image("door_open", "images/door_open.png");
         this.load.image("door_locked", "images/door_locked.png");
         this.load.image("mushroom", "images/mushroom.png");
-        this.load.image("player", "images/player.png");
         this.load.image("enemy", "images/enemy.png");
         this.load.image("enemy_captain", "images/enemy_captain.png");
+
+        this.player.preload();
     }
 
     create() {
@@ -58,9 +62,10 @@ class RoomScene extends Phaser.Scene {
             this.physics.add.staticSprite(x, y, enemyKey);
         }
 
-        this.player = this.physics.add.sprite(800, 100, "player");
+        Player.createAnims(this);
+        this.player.create();
 
-        this.physics.add.collider(this.player, this.doorExit, (player, door, colInfo) => {
+        this.physics.add.collider(this.player.player, this.doorExit, (player, door, colInfo) => {
             console.log("exit overlap");
             if (this.doorUnlocked) {
                 this.exitingRoom();
@@ -74,26 +79,7 @@ class RoomScene extends Phaser.Scene {
     }
 
     update() {
-        let input = new Phaser.Math.Vector2(0, 0);
-        const speed = 200;
-        if (this.cursors.left.isDown) {
-            input.x -= speed;
-        }
-        if (this.cursors.right.isDown) {
-            input.x += speed; 
-        }
-        if (this.cursors.up.isDown) {
-            input.y -= speed;
-        }
-        if (this.cursors.down.isDown) {
-            input.y += speed;
-        }
-
-        if (this.keyEscape.isDown) {
-            this.scene.start('HubScene');
-        }
-    
-        this.player.setVelocity(input.x, input.y);
+        this.player.update();
     }
 
     exitingRoom() {
