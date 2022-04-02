@@ -37,12 +37,25 @@ class RoomScene extends Phaser.Scene {
         }
         this.doorExit = this.physics.add.staticSprite(1024, 150, doorTexture);
 
-        let numMushrooms = this.roomConfig.num_mushrooms;
+        let numMushrooms = this.room_manager.rnd.between(1, this.roomConfig.numMushrooms);
         console.log("room1 mushrooms: " + numMushrooms);
         for (let m = 0; m < numMushrooms; m++) {
-            let x = this.room_manager.rnd.between(20, 300);
-            let y = this.room_manager.rnd.between(20, 300);
+            let x = this.room_manager.rnd.between(20, 800);
+            let y = this.room_manager.rnd.between(20, 800);
             this.add.sprite(x, y, "mushroom");
+        }
+
+        let maxEnemies = this.roomConfig.numEnemies;
+        let numEnemies = this.room_manager.rnd.between(maxEnemies / 2, maxEnemies);
+        let percentCaptains = 100 * this.room_manager.currentChainDepth / maxEnemies;
+        for (let e = 0; e < numEnemies; e++) {
+            let x = this.room_manager.rnd.between(20, 800);
+            let y = this.room_manager.rnd.between(20, 800);
+            let enemyKey = "enemy";
+            if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
+                enemyKey = "enemy_captain";
+            }
+            this.physics.add.staticSprite(x, y, enemyKey);
         }
 
         this.player = this.physics.add.sprite(800, 100, "player");

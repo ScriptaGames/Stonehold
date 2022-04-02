@@ -25,7 +25,7 @@ class HubScene extends Phaser.Scene {
                     {
                         "name": "nicksmaddog",
                         "rooms_cleared": 0,
-                        "seed": "sdfsdvjkhj676"
+                        "seed": "1234"
                     }
                 ]
             }

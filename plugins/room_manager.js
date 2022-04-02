@@ -4,22 +4,22 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
         this.roomChoices = [
             {
                 key: 'RoomScene',
-                num_mushrooms: 5,
-                background: "room_background"
+                numMushrooms: 5,
+                numEnemies: 10,
+                background: "room_background",
             },
             {
                 key: 'RoomScene',
-                num_mushrooms: 10,
+                numMushrooms: 10,
+                numEnemies: 15,
                 background: "room2_background"
             }
         ];
-
-        this.rnd = Phaser.Math.RND;
     }
 
     initChain(player_data) {
-        this.rnd = new Phaser.Math.RandomDataGenerator([this.seed]);
-        this.rnd.seed = this.seed;
+        this.rnd = new Phaser.Math.RandomDataGenerator([player_data.seed]);
+        this.rnd.seed = player_data.seed;
 
         this.unlockedDepth = player_data.rooms_cleared;
         this.currentChainDepth = 0;
