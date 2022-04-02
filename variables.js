@@ -13,6 +13,8 @@ export const DODGE_DURATION = 800;
 /** From dodge start, how long until the player can start WASD-based movement again. */
 export const DODGE_FREEZE_DURATION = 300;
 /** How far from the player the weapon should hover. */
-export const WEAPON_HOVER_DISTANCE = 50;
+export const WEAPON_HOVER_DISTANCE = 30;
 /** GraphQL API URL **/
-export const API_URL = 'http://66.228.50.201:3000/api/graphql'
+export const API_URL = "http://66.228.50.201:3000/api/graphql";
+/** Scale applied to all pixel art. */
+export const PIXEL_SCALE = 3;

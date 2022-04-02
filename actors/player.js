@@ -6,6 +6,7 @@ import {
   DODGE_DURATION,
   WEAPON_HOVER_DISTANCE,
   DODGE_FREEZE_DURATION,
+  PIXEL_SCALE,
 } from "../variables";
 
 export class Player {
@@ -34,6 +35,12 @@ export class Player {
     );
 
     this.scene.load.spritesheet(
+      "dwarf-attack",
+      "images/dwarfBody_attack_strip.png",
+      { frameWidth: 36, frameHeight: 36 }
+    );
+
+    this.scene.load.spritesheet(
       "axe-attack",
       "images/dwarfAxe_attack_strip.png",
       { frameWidth: 36, frameHeight: 36 }
@@ -53,7 +60,7 @@ export class Player {
   }
   create() {
     this.player = this.scene.add.sprite(250, 500);
-    this.player.setScale(3);
+    this.player.setScale(PIXEL_SCALE);
     this.player.play("dwarf-idle");
     this.player.setOrigin(0.5);
     this.scene.physics.add.existing(this.player);
@@ -64,17 +71,23 @@ export class Player {
 
     this.speedBoost = new Phaser.Math.Vector2();
 
-    this.hands = this.scene.add.circle(0, 0, 20, 0x919191, 1);
+    // this.hands = this.scene.add.circle(0, 0, 20, 0x919191, 1);
 
     this.leftHand = this.scene.add.sprite(64, 64, "left-hand");
-    this.leftHand.setScale(3);
+    this.leftHand.setScale(PIXEL_SCALE);
     // this.leftHand.play("left-hand");
     this.rightHand = this.scene.add.sprite(128, 128, "right-hand");
-    this.rightHand.setScale(3);
+    this.rightHand.setScale(PIXEL_SCALE);
 
-    this.scene.physics.add.existing(this.hands);
+    // this.scene.physics.add.existing(this.hands);
 
-    this.createSmear();
+    this.smear = this.scene.add.sprite(100, 100, "axe-attack");
+    window.smear = this.smear;
+    this.smear.setScale(PIXEL_SCALE);
+    this.smear.anims.hideOnComplete = true;
+    this.smear.visible = false;
+    this.scene.physics.add.existing(this.smear);
+
     this.createKeyboardControls();
     this.createMouse();
   }
@@ -96,6 +109,7 @@ export class Player {
       "dwarf-dodge",
       "left-hand",
       "right-hand",
+      "dwarf-attack",
     ].forEach((name) => {
       scene.anims.create({
         key: name,
@@ -103,6 +117,12 @@ export class Player {
         frameRate: 10,
         repeat: -1,
       });
+    });
+    scene.anims.create({
+      key: "axe-attack",
+      frames: scene.anims.generateFrameNumbers("axe-attack"),
+      frameRate: 15,
+      repeat: 0,
     });
   }
 
@@ -115,31 +135,12 @@ export class Player {
     });
 
     this.scene.input.on("pointerdown", () => {
-      this.swingWeapon();
-    });
-  }
-
-  createSmear() {
-    this.particles = this.scene.add.particles("axe-attack");
-
-    this.particlesEmitter = this.particles.createEmitter({
-      // frame: "spritesheetFrame", // spritesheet frame
-      frame: {
-        frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        cycle: true,
-        quantity: 10,
-      },
-      x: 0,
-      y: 0,
-      lifespan: 600,
-      quantity: 0,
-      scale: 4,
-      alpha: { start: 1, end: 0, ease: Phaser.Math.Easing.Quintic.Out },
-      blendMode: Phaser.BlendModes.COLOR,
+      this.trySwingWeapon();
     });
   }
 
   createKeyboardControls() {
+    /** Various state about dodging. */
     this.dodge = {
       x: 0,
       y: 0,
@@ -148,6 +149,10 @@ export class Player {
       dodging: false,
       wasdEnabled: true,
     };
+    /** Various state about dwarf's attacks. */
+    this.attack = {
+      attacking: false,
+    };
     this.kb = this.scene.input.keyboard.addKeys("W,A,S,D,SPACE");
   }
 
@@ -155,7 +160,7 @@ export class Player {
     this.playerBody.setVelocity(0, 0);
 
     // choose whether to play/continue idle, run, or dodge anim
-    let isWalking =
+    let isRunning =
       this.kb.W.isDown ||
       this.kb.A.isDown ||
       this.kb.S.isDown ||
@@ -167,20 +172,16 @@ export class Player {
       if (this.player.anims.getName() !== "dwarf-dodge") {
         this.player.play("dwarf-dodge");
       }
-    } else {
-      // if we aren't dodging, flip the sprite in the direction the mouse is facing
-      this.player.setFlipX(this.mouse.x - this.player.x < 0);
-      if (isWalking) {
+    } else if (!this.attack.attacking) {
+      if (isRunning) {
         // play run anim if not already playing it
         if (this.player.anims.getName() !== "dwarf-run") {
           this.player.play("dwarf-run");
           this.leftHand.play({
             key: "left-hand",
-            // startFrame: 5,
           });
           this.rightHand.play({
             key: "right-hand",
-            // startFrame: 5,
           });
         }
       } else {
@@ -195,14 +196,16 @@ export class Player {
 
     // apply WASD motion if dodge status allows it
 
-    if (this.dodge.wasdEnabled) {
+    if (this.dodge.wasdEnabled && !this.attack.attacking) {
       // apply left/right motion
       if (this.kb.A.isDown) {
         this.playerBody.setVelocityX(-1);
         this.dodge.x = -1;
+        this.player.setFlipX(true);
       } else if (this.kb.D.isDown) {
         this.playerBody.setVelocityX(1);
         this.dodge.x = 1;
+        this.player.setFlipX(false);
       }
 
       // apply up/down motion
@@ -227,7 +230,12 @@ export class Player {
 
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
-    if (this.kb.SPACE.isDown && this.dodge.ready && this.dodge.keyReleased) {
+    if (
+      this.kb.SPACE.isDown &&
+      this.dodge.ready &&
+      this.dodge.keyReleased &&
+      !this.attack.attacking
+    ) {
       // start dodging
       this.dodge.dodging = true;
       this.dodge.ready = false;
@@ -290,47 +298,60 @@ export class Player {
 
     this.rightHand.copyPosition(this.player);
     this.rightHand.setFlipX(this.player.flipX);
-
-    // // set depth based on direction faced
-    // if (this.player.flipX) {
-    //   this.rightHand.depth = 1;
-    //   this.player.depth = 2;
-    //   this.leftHand.depth = 3;
-    // } else {
-    //   this.leftHand.depth = 1;
-    //   this.player.depth = 2;
-    //   this.rightHand.depth = 3;
-    // }
-
-    // this.hands.body.position.copy(this.playerBody.position);
-    // this.hands.body.position
-    //   .subtract(this.mouse)
-    //   .negate()
-    //   .normalize()
-    //   .scale(WEAPON_HOVER_DISTANCE)
-    //   .add(this.playerBody.position);
   }
 
-  swingWeapon() {
-    this.smear();
-  }
+  /** Attack, if we're in a state that allows attacking. */
+  trySwingWeapon() {
+    if (!this.dodge.dodging && !this.attack.attacking) {
+      this.attack.attacking = true;
 
-  smear() {
-    // position the smear a little farther out than the hands
-    // const smearPos = this.hands.body.position.clone();
-    // smearPos.subtract(this.playerBody.position);
-    // smearPos.scale(2);
-    // smearPos.add(this.hands.body.position);
+      this.player.setFlipX(this.mouse.x - this.player.x < 0);
+      this.leftHand.setVisible(false);
+      this.rightHand.setVisible(false);
+      this.smear.setFlipX(this.player.flipX);
+      // offset smear slightly in the direction the dwarf is facing
+      // this.smear.x -= this.smear.flipX ? 26 : -26;
 
-    /** @type {Phaser.Math.Vector2} */
-    // const playerPos = this.player.getCenter().clone();
-    // const smearOffset = this.mouse
-    //   .clone()
-    //   .subtract(playerPos)
-    //   .normalize()
-    //   .scale(WEAPON_HOVER_DISTANCE);
-    // const smearPos = playerPos.add(smearOffset);
-    // this.particlesEmitter.emitParticle(10, smearPos.x + 20, smearPos.y + 20);
-    this.particles.emitParticleAt(this.player.x, this.player.y, 10);
+      this.smear.setOrigin(0.5);
+      this.player.setOrigin(0.5);
+      const smearOffset = new Phaser.Math.Vector2()
+        .copy(this.mouse)
+        .subtract(this.player)
+        .normalize()
+        .scale(WEAPON_HOVER_DISTANCE);
+
+      // get rotation before calculating the file smear position relative to the player
+      this.smear.setRotation(smearOffset.angle() * 2);
+
+      const smearPos = smearOffset.add(this.player);
+
+      this.smear.body.position.copy(smearPos);
+      console.log(this.smear.x, this.smear.y, this.smear.body.position);
+
+      this.smear.copyPosition(this.smear.body.position);
+
+      // play attack anims
+      this.smear.play({
+        key: "axe-attack",
+        hideOnComplete: true,
+        showOnStart: true,
+      });
+      this.player.play("dwarf-attack");
+
+      // I can't figure out how to listen for an "animation end" event, so this
+      // timer attempts to land on the same frame as the end of the animation
+      const delay =
+        1000 *
+        (1 / this.scene.anims.get("axe-attack").frameRate) *
+        this.scene.anims.get("axe-attack").frames.length;
+      this.scene.time.addEvent({
+        delay,
+        callback: () => {
+          this.attack.attacking = false;
+          this.leftHand.setVisible(true);
+          this.rightHand.setVisible(true);
+        },
+      });
+    }
   }
 }

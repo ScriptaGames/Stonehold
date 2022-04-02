@@ -9,8 +9,13 @@ new Phaser.Game({
   pixelArt: true,
   plugins: {
     global: [
-      { key: 'RoomManager', plugin: RoomManager, start: false, mapping: 'room_manager' },
-    ]
+      {
+        key: "RoomManager",
+        plugin: RoomManager,
+        start: false,
+        mapping: "room_manager",
+      },
+    ],
   },
   scale: {
     parent: "game",
