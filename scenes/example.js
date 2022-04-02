@@ -5,14 +5,13 @@ class ExampleScene extends Phaser.Scene {
     }
     preload() {
         this.load.image("logo", "images/logo.png");
+        this.load.spritesheet("dreyr-idle", "images/Dreyr_idle_strip.png", { frameWidth: 128, frameHeight: 96 });
+        this.load.spritesheet("dreyr-run", "images/Dreyr_run_strip.png", { frameWidth: 128, frameHeight: 96 });
         this.load.audio("paeMusic", ["audio/pae-main-menu.mp3"]);
     }
     create() {
 
         const firstPosition = this.getLogoPosition();
-
-        this.graphics = this.add.graphics();
-        this.path = new Phaser.Curves.Path(firstPosition[0], firstPosition[1]);
 
         this.logo = this.add.image(firstPosition[0], firstPosition[1], "logo").setName("logo");
         this.logo.setInteractive();
@@ -26,8 +25,44 @@ class ExampleScene extends Phaser.Scene {
             this.paeMusic.play();
         });
 
+        // spritesheet animation example
+
+        this.anims.create({
+            key: "dreyr-idle",
+            frames: this.anims.generateFrameNumbers("dreyr-idle"),
+            frameRate: 10,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "dreyr-run",
+            frames: this.anims.generateFrameNumbers("dreyr-run"),
+            frameRate: 10,
+            repeat: -1,
+        });
+
+        const dreyr = this.add.sprite(150, 600);
+        dreyr.setScale(4);
+        dreyr.play("dreyr-idle");
+        dreyr.setInteractive();
+        dreyr.on("gameobjectdown", () => {
+            console.log("dreyr");
+        });
+
+        this.dreyrRunTimer = this.time.addEvent({
+            delay: 5000,
+            loop: true,
+            callback() {
+                // alternate between idle and run each time the timer completes
+                if (dreyr.anims.currentAnim.key == "dreyr-idle") {
+                    dreyr.play("dreyr-run");
+                } else {
+                    dreyr.play("dreyr-idle");
+                }
+            }
+        });
+
         // tween example
-        //
+
         const tween = this.tweens.add({
             targets: this.logo,
             alpha: 0.5,
@@ -42,10 +77,6 @@ class ExampleScene extends Phaser.Scene {
     update() {
         const newPosition = this.getLogoPosition();
         this.logo.setPosition(newPosition[0], newPosition[1]);
-        this.graphics.clear();
-        this.graphics.lineStyle(1, 0xcfcfcf, 0.3);
-        this.path.lineTo(this.logo.getCenter());
-        this.path.draw(this.graphics);
     }
     getLogoPosition() {
         return [this.cameras.main.centerX + 300 * Math.sin(this.time.now / 317), this.cameras.main.centerY + 200 * Math.cos(this.time.now / 359)];
