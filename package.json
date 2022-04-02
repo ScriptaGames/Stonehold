@@ -3,15 +3,17 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "node build.js -w",
-    "build": "node build.js"
+    "build": "node build.js",
+    "fmt": "prettier --write 'build.js' 'main.js' 'scenes/**/*.js'"
   },
   "type": "module",
   "dependencies": {
     "phaser": "3.55.2"
   },
   "devDependencies": {
-    "chokidar": "^3.5.3",
+    "chokidar": "3.5.3",
     "esbuild": "0.14.28",
-    "esbuild-serve": "^1.0.1"
+    "esbuild-serve": "1.0.1",
+    "prettier": "2.3.0"
   }
 }

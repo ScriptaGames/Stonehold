@@ -16,65 +16,71 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import esbuild from 'esbuild';
-import serve, { error, log } from 'create-serve';
+import esbuild from "esbuild";
+import serve, { error, log } from "create-serve";
 import chokidar from "chokidar";
 
-export const isWatch = process.argv.includes('-w');
+export const isWatch = process.argv.includes("-w");
 
-function reload(event, path)  {
-    log(`🔃 Reload: ${event} ${path} at ${new Date().toLocaleTimeString()}`);
-    serve.update();
+function reload(event, path) {
+  log(`🔃 Reload: ${event} ${path} at ${new Date().toLocaleTimeString()}`);
+  serve.update();
 }
 
 async function esbuildServe(options = {}, serveOptions = {}) {
-    try {
-        let result = await esbuild
-            .build({
-                ...options,
-                watch: isWatch && {
-                    async onRebuild(err, result) {
-                        const time = `${new Date().toLocaleTimeString()}`;
-                        err ? error(`× Failed at ${time}`) : log(`✔️ Built at ${time}`);
+  try {
+    let result = await esbuild.build({
+      ...options,
+      watch: isWatch && {
+        async onRebuild(err, result) {
+          const time = `${new Date().toLocaleTimeString()}`;
+          if (!err) {
+            log(`✔️ Built at ${time}`);
+          }
 
-                        serve.update();
-                    }
-                }
-            })
+          serve.update();
+        },
+      },
+    });
 
-        // only print the package size breakdown in regular build mode, it's
-        // too spammy in watch mode
-        !isWatch && console.log(await esbuild.analyzeMetafile(result.metafile, { color: true }));
-    } catch (e) {
-        process.exit(1);
-    }
+    // only print the package size breakdown in regular build mode, it's
+    // too spammy in watch mode
+    !isWatch &&
+      console.log(
+        await esbuild.analyzeMetafile(result.metafile, { color: true })
+      );
+  } catch (e) {
+    process.exit(1);
+  }
 
-    if (isWatch) {
-        serve.start(serveOptions);
-        chokidar.watch(serveOptions.root, {
-            ignored: "public/main.js*", // ignore the js bundle (and .map and .LEGAL.txt) because those reloads are triggered by esbuild onRebuild events
-            ignoreInitial: true,
-            atomic: true
-        }).on("all", reload);
-    }
+  if (isWatch) {
+    serve.start(serveOptions);
+    chokidar
+      .watch(serveOptions.root, {
+        ignored: "public/main.js*", // ignore the js bundle (and .map and .LEGAL.txt) because those reloads are triggered by esbuild onRebuild events
+        ignoreInitial: true,
+        atomic: true,
+      })
+      .on("all", reload);
+  }
 }
 
 await esbuildServe(
-    // esbuild options
-    {
-        bundle: true,
-        minify: true,
-        sourcemap: true,
-        legalComments: "linked",
-        entryPoints: ["main.js"],
-        treeShaking: true,
-        outfile: "public/main.js",
-        outbase: "public",
-        metafile: true,
-    },
-    // serve options
-    {
-        port: 7007,
-        root: "public",
-    }
+  // esbuild options
+  {
+    bundle: true,
+    minify: true,
+    sourcemap: true,
+    legalComments: "linked",
+    entryPoints: ["main.js"],
+    treeShaking: true,
+    outfile: "public/main.js",
+    outbase: "public",
+    metafile: true,
+  },
+  // serve options
+  {
+    port: 7007,
+    root: "public",
+  }
 );

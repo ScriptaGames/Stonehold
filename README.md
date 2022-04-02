@@ -6,18 +6,8 @@
  2. Install [yarn](https://yarnpkg.com/).
  3. Run `yarn` to install dependencies.
 
-## Dev
+## Commands
 
-To launch the local dev server:
-
-```sh
-yarn dev
-```
-
-## Build
-
-To do a production build:
-
-```sh
-yarn build
-```
+ - `yarn dev` - start local dev server
+ - `yarn build` - do a production build
+ - `yarn fmt` - format the source code
