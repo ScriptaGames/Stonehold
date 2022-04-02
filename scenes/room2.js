@@ -37,6 +37,8 @@ class Room2Scene extends Phaser.Scene {
         this.player = this.physics.add.sprite(200, 100, "player");
 
         // this.physics.add.overlap(this.player, this.doorExit, this.exitingRoom, null, this);
+
+        this.keyEscape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     }
 
     update() {
@@ -53,6 +55,10 @@ class Room2Scene extends Phaser.Scene {
         }
         if (this.cursors.down.isDown) {
             input.y += speed;
+        }
+
+        if (this.keyEscape.isDown) {
+            this.scene.start('HubScene');
         }
     
         this.player.setVelocity(input.x, input.y);

@@ -1,15 +1,17 @@
 class RoomManager extends Phaser.Plugins.BasePlugin {
-    constructor(pluginManager) {
-        super(pluginManager);
-
-        // TODO: get seed from API
-        this.seed = "1123245";
-        this.rnd = new Phaser.Math.RandomDataGenerator([this.seed]);
-
+    init() {
         this.roomChoices = [
             'Room1Scene',
             'Room2Scene',
         ];
+    }
+
+    initChain(player_data) {
+        this.seed = player_data.seed;
+
+        // this.seed = "1123245";
+        this.rnd = new Phaser.Math.RandomDataGenerator([this.seed]);
+        this.rnd.seed = this.seed;
     }
 
     nextRoom() {
