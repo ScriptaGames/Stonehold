@@ -11,7 +11,9 @@ export const DODGE_COOLDOWN = 1000;
 /** How long dodge animation lasts. */
 export const DODGE_DURATION = 800;
 /** From dodge start, how long until the player can start WASD-based movement again. */
-export const DODGE_FREEZE_DURATION = 300;
+export const DODGE_GRACE_PERIOD = 300;
+/** From attack start, how long until the player can start moving and dodging again. */
+export const ATTACK_GRACE_PERIOD = 550;
 /** How far from the player the weapon should hover. */
 export const WEAPON_HOVER_DISTANCE = 30;
 /** GraphQL API URL **/

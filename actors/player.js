@@ -5,8 +5,9 @@ import {
   DODGE_COOLDOWN,
   DODGE_DURATION,
   WEAPON_HOVER_DISTANCE,
-  DODGE_FREEZE_DURATION,
+  DODGE_GRACE_PERIOD,
   PIXEL_SCALE,
+  ATTACK_GRACE_PERIOD,
 } from "../variables";
 
 export class Player {
@@ -144,11 +145,12 @@ export class Player {
       ready: true,
       keyReleased: true,
       dodging: false,
-      wasdEnabled: true,
+      gracePeriod: true,
     };
     /** Various state about dwarf's attacks. */
     this.attack = {
       attacking: false,
+      gracePeriod: true,
     };
     this.kb = this.scene.input.keyboard.addKeys("W,A,S,D,SPACE");
   }
@@ -162,7 +164,7 @@ export class Player {
       this.kb.A.isDown ||
       this.kb.S.isDown ||
       this.kb.D.isDown;
-    if (this.dodge.dodging) {
+    if (this.dodge.dodging && this.attack.gracePeriod) {
       // since we're dodging, flip the sprite in the direction of the dodge
       this.player.setFlipX(this.dodge.x < 0);
       // play dodge anim if not already playing it
@@ -193,7 +195,7 @@ export class Player {
 
     // apply WASD motion if dodge status allows it
 
-    if (this.dodge.wasdEnabled && !this.attack.attacking) {
+    if (this.dodge.gracePeriod && this.attack.gracePeriod) {
       // apply left/right motion
       if (this.kb.A.isDown) {
         this.playerBody.setVelocityX(-1);
@@ -231,13 +233,13 @@ export class Player {
       this.kb.SPACE.isDown &&
       this.dodge.ready &&
       this.dodge.keyReleased &&
-      !this.attack.attacking
+      this.attack.gracePeriod
     ) {
       // start dodging
       this.dodge.dodging = true;
       this.dodge.ready = false;
       this.dodge.keyReleased = false;
-      this.dodge.wasdEnabled = false;
+      this.dodge.gracePeriod = false;
 
       // apply speed boost in the direction of the dodge
       this.speedBoost.copy(this.dodge).normalize().scale(DODGE_SPEED_BONUS);
@@ -262,9 +264,9 @@ export class Player {
 
       // start timer until player can move with WASD again
       this.scene.time.addEvent({
-        delay: DODGE_FREEZE_DURATION,
+        delay: DODGE_GRACE_PERIOD,
         callback: () => {
-          this.dodge.wasdEnabled = true;
+          this.dodge.gracePeriod = true;
         },
       });
 
@@ -299,8 +301,9 @@ export class Player {
 
   /** Attack, if we're in a state that allows attacking. */
   trySwingWeapon() {
-    if (!this.dodge.dodging && !this.attack.attacking) {
+    if (this.dodge.gracePeriod && this.attack.gracePeriod) {
       this.attack.attacking = true;
+      this.attack.gracePeriod = false;
 
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
       this.leftHand.setVisible(false);
@@ -340,21 +343,20 @@ export class Player {
         hideOnComplete: true,
         showOnStart: true,
       });
+      this.player.anims.stop();
       this.player.play("dwarf-attack");
 
-      // I can't figure out how to listen for an "animation end" event, so this
-      // timer attempts to land on the same frame as the end of the animation
-      const delay =
-        1000 *
-        (1 / this.scene.anims.get("axe-attack").frameRate) *
-        this.scene.anims.get("axe-attack").frames.length;
       this.scene.time.addEvent({
-        delay,
+        delay: ATTACK_GRACE_PERIOD,
         callback: () => {
-          this.attack.attacking = false;
-          this.leftHand.setVisible(true);
-          this.rightHand.setVisible(true);
+          this.attack.gracePeriod = true;
         },
+      });
+
+      this.smear.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        this.attack.attacking = false;
+        this.leftHand.setVisible(true);
+        this.rightHand.setVisible(true);
       });
     }
   }
