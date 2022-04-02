@@ -30,6 +30,30 @@ class HubScene extends Phaser.Scene {
                         "rooms_cleared": 0,
                         "seed": "1234"
                     }
+                    ,
+                    {
+                        "name": "hannah",
+                        "rooms_cleared": 2,
+                        "seed": "123asd"
+                    }
+                    ,
+                    {
+                        "name": "zoe",
+                        "rooms_cleared": 20,
+                        "seed": "asdfasdfasd"
+                    }
+                    ,
+                    {
+                        "name": "john",
+                        "rooms_cleared": 0,
+                        "seed": "55555555"
+                    }
+                    ,
+                    {
+                        "name": "jane",
+                        "rooms_cleared": 5,
+                        "seed": "agehajhea"
+                    }
                 ]
             }
         };
@@ -70,6 +94,8 @@ class HubScene extends Phaser.Scene {
             let room_config = this.room_manager.nextRoom();
             this.scene.start(room_config.key, room_config.config);
         });
+
+        this.cameras.main.startFollow(this.player.player, true, 0.4, 0.4);
     }
 
     update() {
