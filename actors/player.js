@@ -15,23 +15,39 @@ export class Player {
   }
   preload() {
     this.scene.load.image("smear", "images/smear.png");
+
     this.scene.load.spritesheet(
       "dwarf-idle",
       "images/dwarfBody_idle_strip.png",
       { frameWidth: 36, frameHeight: 36 }
     );
+
     this.scene.load.spritesheet("dwarf-run", "images/dwarfBody_run_strip.png", {
       frameWidth: 36,
       frameHeight: 36,
     });
+
     this.scene.load.spritesheet(
       "dwarf-dodge",
       "images/dwarfBody_dodge_strip.png",
       { frameWidth: 36, frameHeight: 36 }
     );
+
     this.scene.load.spritesheet(
       "axe-attack",
       "images/dwarfAxe_attack_strip.png",
+      { frameWidth: 36, frameHeight: 36 }
+    );
+
+    this.scene.load.spritesheet(
+      "right-hand",
+      "images/dwarfFrontHand_run_strip.png",
+      { frameWidth: 36, frameHeight: 36 }
+    );
+
+    this.scene.load.spritesheet(
+      "left-hand",
+      "images/dwarfBackHand_run_strip.png",
       { frameWidth: 36, frameHeight: 36 }
     );
   }
@@ -49,6 +65,13 @@ export class Player {
     this.speedBoost = new Phaser.Math.Vector2();
 
     this.hands = this.scene.add.circle(0, 0, 20, 0x919191, 1);
+
+    this.leftHand = this.scene.add.sprite(64, 64, "left-hand");
+    this.leftHand.setScale(3);
+    // this.leftHand.play("left-hand");
+    this.rightHand = this.scene.add.sprite(128, 128, "right-hand");
+    this.rightHand.setScale(3);
+
     this.scene.physics.add.existing(this.hands);
 
     this.createSmear();
@@ -66,7 +89,14 @@ export class Player {
    * @param {Phaser.Scene} scene
    */
   static createAnims(scene) {
-    ["dwarf-idle", "dwarf-run", "dwarf-dodge"].forEach((name) => {
+    // loop through each spritesheet and create an animation
+    [
+      "dwarf-idle",
+      "dwarf-run",
+      "dwarf-dodge",
+      "left-hand",
+      "right-hand",
+    ].forEach((name) => {
       scene.anims.create({
         key: name,
         frames: scene.anims.generateFrameNumbers(name),
@@ -144,12 +174,22 @@ export class Player {
         // play run anim if not already playing it
         if (this.player.anims.getName() !== "dwarf-run") {
           this.player.play("dwarf-run");
+          this.leftHand.play({
+            key: "left-hand",
+            // startFrame: 5,
+          });
+          this.rightHand.play({
+            key: "right-hand",
+            // startFrame: 5,
+          });
         }
       } else {
         // play idle anim if not already playing it
         if (this.player.anims.getName() !== "dwarf-idle") {
           this.player.play("dwarf-idle");
         }
+        this.leftHand.stop();
+        this.rightHand.stop();
       }
     }
 
@@ -245,13 +285,30 @@ export class Player {
   }
 
   updateHandPosition() {
-    this.hands.body.position.copy(this.playerBody.position);
-    this.hands.body.position
-      .subtract(this.mouse)
-      .negate()
-      .normalize()
-      .scale(WEAPON_HOVER_DISTANCE)
-      .add(this.playerBody.position);
+    this.leftHand.copyPosition(this.player);
+    this.leftHand.setFlipX(this.player.flipX);
+
+    this.rightHand.copyPosition(this.player);
+    this.rightHand.setFlipX(this.player.flipX);
+
+    // // set depth based on direction faced
+    // if (this.player.flipX) {
+    //   this.rightHand.depth = 1;
+    //   this.player.depth = 2;
+    //   this.leftHand.depth = 3;
+    // } else {
+    //   this.leftHand.depth = 1;
+    //   this.player.depth = 2;
+    //   this.rightHand.depth = 3;
+    // }
+
+    // this.hands.body.position.copy(this.playerBody.position);
+    // this.hands.body.position
+    //   .subtract(this.mouse)
+    //   .negate()
+    //   .normalize()
+    //   .scale(WEAPON_HOVER_DISTANCE)
+    //   .add(this.playerBody.position);
   }
 
   swingWeapon() {
@@ -266,14 +323,14 @@ export class Player {
     // smearPos.add(this.hands.body.position);
 
     /** @type {Phaser.Math.Vector2} */
-    const handPos = this.hands.getCenter().clone();
-    const smearOffset = this.mouse
-      .clone()
-      .subtract(handPos)
-      .normalize()
-      .scale(WEAPON_HOVER_DISTANCE);
-    const smearPos = handPos.add(smearOffset);
+    // const playerPos = this.player.getCenter().clone();
+    // const smearOffset = this.mouse
+    //   .clone()
+    //   .subtract(playerPos)
+    //   .normalize()
+    //   .scale(WEAPON_HOVER_DISTANCE);
+    // const smearPos = playerPos.add(smearOffset);
     // this.particlesEmitter.emitParticle(10, smearPos.x + 20, smearPos.y + 20);
-    this.particles.emitParticleAt(smearPos.x, smearPos.y, 10);
+    this.particles.emitParticleAt(this.player.x, this.player.y, 10);
   }
 }
