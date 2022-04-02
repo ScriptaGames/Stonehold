@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 import HubDoor from "../actors/hub_door";
-import {Player} from "../actors/player";
-import {GraphQLClient} from "../lib/GraphQLClient.js";
+import { Player } from "../actors/player";
+import { GraphQLClient } from "../lib/GraphQLClient.js";
 
 class HubScene extends Phaser.Scene {
   constructor(config) {
     super({
-      key: 'HubScene',
+      key: "HubScene",
     });
 
     this.player = new Player(this);
@@ -20,12 +20,10 @@ class HubScene extends Phaser.Scene {
   async preload() {
     this.load.image("cell_door", "images/cell_door.png");
     this.load.image("player", "images/player.png");
-    this.player.preload();
+    Player.preload(this);
   }
 
-
   async create() {
-
     // Create the main player
     Player.createAnims(this);
     this.player.create();
@@ -38,7 +36,7 @@ class HubScene extends Phaser.Scene {
 
     for (let other_player_index in this.players) {
       let other_player = this.players[other_player_index];
-      console.debug('player:', other_player);
+      console.debug("player:", other_player);
       let x = other_player_index * 256 + 200;
       let y = 300;
       let door = new HubDoor({
@@ -52,12 +50,16 @@ class HubScene extends Phaser.Scene {
       this.add.text(x - 32, y - 150, other_player.seed);
     }
 
-    this.physics.add.overlap(this.player.player, this.doors, (player, door, colInfo) => {
-      console.log("overlap: " + door.info.name);
-      this.room_manager.initChain(door.info);
-      let room_config = this.room_manager.nextRoom();
-      this.scene.start(room_config.key, room_config.config);
-    });
+    this.physics.add.overlap(
+      this.player.player,
+      this.doors,
+      (player, door, colInfo) => {
+        console.log("overlap: " + door.info.name);
+        this.room_manager.initChain(door.info);
+        let room_config = this.room_manager.nextRoom();
+        this.scene.start(room_config.key, room_config.config);
+      }
+    );
 
     this.cameras.main.startFollow(this.player.player, true, 0.4, 0.4);
   }

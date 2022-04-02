@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { Player } from "../actors/player";
+import { Pinky } from "../actors/pinky";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -8,6 +9,7 @@ class RoomScene extends Phaser.Scene {
     });
 
     this.player = new Player(this);
+    this.pinkies = [];
   }
 
   init(data) {
@@ -25,11 +27,15 @@ class RoomScene extends Phaser.Scene {
     this.load.image("enemy", "images/enemy.png");
     this.load.image("enemy_captain", "images/enemy_captain.png");
 
-    this.player.preload();
+    Player.preload(this);
+    Pinky.preload(this);
   }
 
   create() {
     this.add.sprite(0, 0, this.roomConfig.background);
+
+    Pinky.createAnims(this);
+    Player.createAnims(this);
 
     this.doorUnlocked = false;
     let doorTexture = "door";
@@ -61,14 +67,17 @@ class RoomScene extends Phaser.Scene {
     for (let e = 0; e < numEnemies; e++) {
       let x = this.room_manager.rnd.between(20, 800);
       let y = this.room_manager.rnd.between(20, 800);
-      let enemyKey = "enemy";
-      if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
-        enemyKey = "enemy_captain";
-      }
-      this.physics.add.staticSprite(x, y, enemyKey);
+      // let enemyKey = "enemy";
+      // if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
+      //   enemyKey = "enemy_captain";
+      // }
+      // this.physics.add.staticSprite(x, y, enemyKey);
+      let pinky = new Pinky(this);
+      pinky.create();
+      pinky.pinky.copyPosition({ x, y });
+      this.pinkies.push(pinky);
     }
 
-    Player.createAnims(this);
     this.player.create();
 
     this.physics.add.collider(
@@ -92,6 +101,7 @@ class RoomScene extends Phaser.Scene {
 
   update() {
     this.player.update();
+    this.pinkies.forEach((pinky) => pinky.update());
   }
 
   exitingRoom() {
