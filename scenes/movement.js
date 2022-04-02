@@ -1,10 +1,11 @@
 import Phaser from "phaser";
-
-const PLAYER_SPEED = 400;
-const DODGE_SPEED_BONUS = 1200;
-const DODGE_COOLDOWN = 1000;
-const DODGE_DURATION = 200;
-const WEAPON_HOVER_DISTANCE = 30;
+import {
+  PLAYER_SPEED,
+  DODGE_SPEED_BONUS,
+  DODGE_COOLDOWN,
+  DODGE_DURATION,
+  WEAPON_HOVER_DISTANCE,
+} from "../variables";
 
 class MovementScene extends Phaser.Scene {
   init() {}
