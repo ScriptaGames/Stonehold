@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import ExampleScene from "./scenes/example";
+import MovementScene from "./scenes/movement";
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -9,5 +9,11 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
-  scene: [ExampleScene],
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: true,
+    },
+  },
+  scene: [MovementScene],
 });
