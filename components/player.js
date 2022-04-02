@@ -219,7 +219,7 @@ export class Player {
         y: 0, // the property to tween
         delay: 0,
         duration: DODGE_DURATION, // ms
-        ease: Phaser.Math.Easing.Quintic.Out, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
+        ease: Phaser.Math.Easing.Quartic.Out, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
       });
     }
     // detect dodge key release
