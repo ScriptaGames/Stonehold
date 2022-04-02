@@ -14,49 +14,44 @@ export class Player {
   constructor(scene) {
     this.scene = scene;
   }
-  preload() {
-    this.scene.load.image("smear", "images/smear.png");
-
-    this.scene.load.spritesheet(
-      "dwarf-idle",
-      "images/dwarfBody_idle_strip.png",
-      { frameWidth: 36, frameHeight: 36 }
-    );
-
-    this.scene.load.spritesheet("dwarf-run", "images/dwarfBody_run_strip.png", {
+  /** @param {Phaser.Scene} scene */
+  static preload(scene) {
+    scene.load.spritesheet("dwarf-idle", "images/dwarfBody_idle_strip.png", {
       frameWidth: 36,
       frameHeight: 36,
     });
 
-    this.scene.load.spritesheet(
-      "dwarf-dodge",
-      "images/dwarfBody_dodge_strip.png",
-      { frameWidth: 36, frameHeight: 36 }
-    );
+    scene.load.spritesheet("dwarf-run", "images/dwarfBody_run_strip.png", {
+      frameWidth: 36,
+      frameHeight: 36,
+    });
 
-    this.scene.load.spritesheet(
+    scene.load.spritesheet("dwarf-dodge", "images/dwarfBody_dodge_strip.png", {
+      frameWidth: 36,
+      frameHeight: 36,
+    });
+
+    scene.load.spritesheet(
       "dwarf-attack",
       "images/dwarfBody_attack_strip.png",
       { frameWidth: 36, frameHeight: 36 }
     );
 
-    this.scene.load.spritesheet(
-      "axe-attack",
-      "images/dwarfAxe_attack_strip.png",
-      { frameWidth: 36, frameHeight: 36 }
-    );
+    scene.load.spritesheet("axe-attack", "images/dwarfAxe_attack_strip.png", {
+      frameWidth: 36,
+      frameHeight: 36,
+    });
 
-    this.scene.load.spritesheet(
+    scene.load.spritesheet(
       "right-hand",
       "images/dwarfFrontHand_run_strip.png",
       { frameWidth: 36, frameHeight: 36 }
     );
 
-    this.scene.load.spritesheet(
-      "left-hand",
-      "images/dwarfBackHand_run_strip.png",
-      { frameWidth: 36, frameHeight: 36 }
-    );
+    scene.load.spritesheet("left-hand", "images/dwarfBackHand_run_strip.png", {
+      frameWidth: 36,
+      frameHeight: 36,
+    });
   }
   create() {
     this.player = this.scene.add.sprite(250, 500);
@@ -82,7 +77,6 @@ export class Player {
     // this.scene.physics.add.existing(this.hands);
 
     this.smear = this.scene.add.sprite(100, 100, "axe-attack");
-    window.smear = this.smear;
     this.smear.setScale(PIXEL_SCALE);
     this.smear.anims.hideOnComplete = true;
     this.smear.visible = false;
@@ -93,6 +87,9 @@ export class Player {
   }
 
   update() {
+    // set z-index depth
+    this.player.depth = this.player.y + this.player.height;
+
     this.handleKeyboard();
     this.updateHandPosition();
   }
@@ -320,13 +317,20 @@ export class Player {
         .normalize()
         .scale(WEAPON_HOVER_DISTANCE);
 
-      // get rotation before calculating the file smear position relative to the player
-      this.smear.setRotation(smearOffset.angle() * 2);
+      const smearPos = smearOffset.clone().add(this.player);
 
-      const smearPos = smearOffset.add(this.player);
+      // rotate towards the cursor
+      this.smear.setRotation(smearOffset.angle() * 2);
+      // apply special compensation to make downward attacks look better (FRAGILE, hope to replace)
+      if (smearOffset.y > 0) {
+        if (smearOffset.x > 0) {
+          this.smear.rotation -= smearOffset.y / 36;
+        } else {
+          this.smear.rotation += smearOffset.y / 36;
+        }
+      }
 
       this.smear.body.position.copy(smearPos);
-      console.log(this.smear.x, this.smear.y, this.smear.body.position);
 
       this.smear.copyPosition(this.smear.body.position);
 
