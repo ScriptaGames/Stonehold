@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import HubDoor from "../actors/hub_door";
-import { Player } from "../components/player";
+import { Player } from "../actors/player";
 
 class HubScene extends Phaser.Scene {
     constructor(config) {

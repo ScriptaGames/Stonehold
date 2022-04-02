@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { Player } from "../components/player";
+import { Player } from "../actors/player";
 
 class MovementScene extends Phaser.Scene {
   constructor(config) {
