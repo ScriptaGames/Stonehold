@@ -12,6 +12,7 @@ class MovementScene extends Phaser.Scene {
     this.player.preload();
   }
   create() {
+    Player.createAnims(this);
     this.player.create();
   }
 
