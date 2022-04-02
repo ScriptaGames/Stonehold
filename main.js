@@ -2,8 +2,7 @@ import Phaser from "phaser";
 import RoomManager from "./plugins/room_manager";
 import ExampleScene from "./scenes/example";
 import HubScene from "./scenes/hub";
-import Room1Scene from "./scenes/room1";
-import Room2Scene from "./scenes/room2";
+import RoomScene from "./scenes/room";
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -24,5 +23,5 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
-  scene: [HubScene, Room1Scene, Room2Scene],
+  scene: [HubScene, RoomScene],
 });

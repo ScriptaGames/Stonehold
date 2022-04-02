@@ -24,7 +24,7 @@ class HubScene extends Phaser.Scene {
                     },
                     {
                         "name": "nicksmaddog",
-                        "rooms_cleared": 10,
+                        "rooms_cleared": 0,
                         "seed": "sdfsdvjkhj676"
                     }
                 ]
@@ -62,7 +62,8 @@ class HubScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.doors, (player, door, colInfo) => {
             console.log("overlap: " + door.info.name);
             this.room_manager.initChain(door.info);
-            this.scene.start(this.room_manager.nextRoom());
+            let room_config = this.room_manager.nextRoom();
+            this.scene.start(room_config.key, room_config.config);
         });
     }
 
