@@ -14,6 +14,7 @@ export class Player {
     this.scene = scene;
   }
   preload() {
+    this.scene.load.image("smear", "images/smear.png");
     this.scene.load.spritesheet(
       "dwarf-idle",
       "images/dwarfBody_idle_strip.png",
