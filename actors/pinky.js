@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { PIXEL_SCALE, PINKY_ATTACK_DAMAGE, PINKY_SPEED, WEAPON_HOVER_DISTANCE, PINKY_ATTACK_RANGE } from "../variables";
+import { PIXEL_SCALE, PINKY_ATTACK_DAMAGE, PINKY_SPEED, WEAPON_HOVER_DISTANCE, PINKY_ATTACK_RANGE, PINKY_IDLE_AFTER_ATTACK } from "../variables";
 
 export class Pinky {
   /** @param {Phaser.Scene} scene */
@@ -74,7 +74,7 @@ export class Pinky {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["pinky-run"].forEach((name) => {
+    ["pinky-idle", "pinky-run"].forEach((name) => {
       scene.anims.create({
         key: name,
         frames: scene.anims.generateFrameNumbers(name),
@@ -82,7 +82,7 @@ export class Pinky {
         repeat: -1,
       });
     });
-    ["pinky-idle", "pinky-attack", "poison"].forEach((name) => {
+    ["pinky-attack", "poison"].forEach((name) => {
       scene.anims.create({
         key: name,
         frames: scene.anims.generateFrameNumbers(name),
@@ -137,13 +137,18 @@ export class Pinky {
     this.pinky.play("pinky-attack");
 
     this.pinky.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      if (this.pinky.anims.currentAnim.key === "pinky-attack") {
-        this.pinky.play({key: "pinky-idle"});
-      } else if (this.pinky.anims.currentAnim.key === "pinky-idle") {
-        this.pinky.play("pinky-run");
-        this.isAttacking = false;
-      }
+      this.pinky.play("pinky-idle");
+      this.scene.time.addEvent({
+        delay: PINKY_IDLE_AFTER_ATTACK,
+        callback: this.attackComplete,
+        callbackScope: this,
+      });
     });
+  }
+
+  attackComplete() {
+    this.pinky.play("pinky-run");
+    this.isAttacking = false;
   }
 
   /** Get the attack damage of this pinky.  May be adjusted from  */
