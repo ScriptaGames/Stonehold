@@ -1,5 +1,9 @@
 import Phaser from "phaser";
-import { CAPTAIN_ATTACK_DAMAGE, CAPTAIN_PROJECTILE_SPEED } from "../variables";
+import {
+  CAPTAIN_ATTACK_DAMAGE,
+  CAPTAIN_PROJECTILE_SPEED,
+  PIXEL_SCALE,
+} from "../variables";
 
 export class PoisonBall extends Phaser.GameObjects.Sprite {
   /** @param {Phaser.Scene} scene */
@@ -7,6 +11,7 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
     super(scene, 0, 0, "poison-ball");
 
     scene.physics.add.existing(this);
+    this.setScale(PIXEL_SCALE);
 
     this.setDataEnabled(true);
     this.data.set("actor", this);
@@ -52,6 +57,7 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
 
   spawnExplosion() {
     let explosion = this.scene.add.sprite(this.x, this.y);
+    explosion.setScale(PIXEL_SCALE);
     explosion.play("poison-ball-explosion");
     explosion.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       explosion.destroy();
