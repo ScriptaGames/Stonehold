@@ -2,8 +2,7 @@ import Phaser from "phaser";
 import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
-import { GraphQLClient } from "../lib/GraphQLClient"
-
+import { GraphQLClient } from "../lib/GraphQLClient";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -28,6 +27,8 @@ class RoomScene extends Phaser.Scene {
     this.load.image("door_locked", "images/door_locked.png");
     this.load.image("mushroom", "images/mushroom.png");
 
+    this.load.audio("room-music", "audio/ld50-menumusic.mp3");
+
     Player.preload(this);
     Pinky.preload(this);
     Captain.preload(this);
@@ -37,6 +38,11 @@ class RoomScene extends Phaser.Scene {
     this.player = new Player(this);
     this.pinkies = [];
     this.captains = [];
+
+    // play room music if it isn't already playing from the previous room
+    if (!this.sound.get("room-music")?.isPlaying) {
+      // this.sound.play("room-music", { loop: true });
+    }
 
     this.add.sprite(0, 0, this.roomConfig.background);
 
@@ -190,8 +196,11 @@ class RoomScene extends Phaser.Scene {
     const playerId = localStorage.getItem("player_id");
     let roomsCleared = parseInt(localStorage.getItem("player_rooms_cleared"));
     roomsCleared++;
-    const updatedPlayer = await this.gqlClient.updatePlayer(playerId, roomsCleared);
-    console.debug('updatedPlayer:', updatedPlayer);
+    const updatedPlayer = await this.gqlClient.updatePlayer(
+      playerId,
+      roomsCleared
+    );
+    console.debug("updatedPlayer:", updatedPlayer);
     localStorage.setItem("player_rooms_cleared", roomsCleared.toString());
   }
 

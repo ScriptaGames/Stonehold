@@ -21,11 +21,17 @@ class HubScene extends Phaser.Scene {
   async preload() {
     this.load.image("cell_door", "images/cell_door.png");
     this.load.image("player", "images/player.png");
+
+    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
     Player.preload(this);
   }
 
   async create(data) {
     console.log("name:", data.name);
+
+    // this.sound.play("hub-music", {
+    //   loop: true,
+    // });
 
     // Create the main player
     Player.createAnims(this);
@@ -70,6 +76,9 @@ class HubScene extends Phaser.Scene {
 
   /** @param {HubDoor} door */
   enterDoor(door) {
+    // stop hub music
+    this.sound.stopAll();
+
     console.log("overlap: " + door.info.name);
     this.room_manager.initChain(door.info);
     let room_config = this.room_manager.nextRoom();

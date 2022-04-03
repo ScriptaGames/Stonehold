@@ -56,6 +56,16 @@ export class Player extends Actor {
       frameWidth: 36,
       frameHeight: 36,
     });
+
+    scene.load.audio("swing-big", "audio/swing-big.mp3");
+    scene.load.audio("swing-small", "audio/swing-small.mp3");
+    scene.load.audio("axe-hit-stone", "audio/axe-hitting-stone.mp3");
+    scene.load.audio("footstep", "audio/footstep.mp3");
+    scene.load.audio("ultimate", "audio/ultimate-boom.mp3");
+    scene.load.audio("player-damaged", "audio/player-damaged.mp3");
+    scene.load.audio("player-hit-aah", "audio/player-hit-aah.mp3");
+    scene.load.audio("axe-hit1", "audio/weapon-hit.mp3");
+    scene.load.audio("axe-hit2", "audio/weapon-hit2.mp3");
   }
   create() {
     super.create();
@@ -102,6 +112,22 @@ export class Player extends Actor {
     // adjust axe hitbox to fit the sprite better
     this.axeBody.setSize(27, 27);
     this.axeLive(false);
+
+    // link footstep sfx to run animation
+    this.player.on(
+      Phaser.Animations.Events.ANIMATION_UPDATE,
+      (anim, b, c, frameIndex) => {
+        if (anim.key == "dwarf-run" && frameIndex == 3) {
+          this.scene.sound.play("footstep");
+        }
+      }
+    );
+    this.player.on(Phaser.Animations.Events.ANIMATION_STOP, () => {
+      this.scene.sound.stopByKey("footstep");
+    });
+    this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.scene.sound.stopByKey("footstep");
+    });
   }
 
   update() {
@@ -406,12 +432,14 @@ export class Player extends Actor {
   axeLive(enabled) {
     if (enabled) {
       this.attack.activeFrame = true;
+      this.scene.sound.play("swing-small");
     } else {
       this.attack.activeFrame = false;
     }
   }
 
   playDeathAnim() {
+    this.scene.sound.play();
     this.scene.tweens.addCounter({
       from: 255,
       to: 0,
@@ -425,5 +453,15 @@ export class Player extends Actor {
         this.rightHand.setTint(color);
       },
     });
+  }
+
+  /**
+   * Cause damage to this actor.
+   * @param {number} inflictedDamage
+   */
+  inflictDamage(inflictedDamage) {
+    super.inflictDamage(inflictedDamage);
+
+    this.scene.sound.play("player-damaged");
   }
 }
