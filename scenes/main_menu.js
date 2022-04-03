@@ -40,15 +40,31 @@ export default class MainMenuScene extends Phaser.Scene {
           name = "Prisoner" + rn;
         }
 
-        // TODO: query to see if the player exists before creating them
+        // first see if this player exists already
+        let existingPlayer;
+        const localPlayerId = localStorage.getItem("player_id");
+        if (localPlayerId) {
+          existingPlayer = await gqlClient.queryPlayerByIDAndName(
+            localPlayerId,
+            name
+          );
+          console.debug("existingPlayer:", existingPlayer);
+        }
 
-        // Create the player
-        const createdPlayer = await gqlClient.createPlayer({
-          name,
-          seed,
-          rooms_cleared: 0,
-        });
-        console.log("Created player:", createdPlayer);
+        if (!existingPlayer) {
+          // Create the player
+          const createdPlayer = await gqlClient.createPlayer({
+            name,
+            seed,
+            rooms_cleared: 0,
+          });
+          console.log("Created player:", createdPlayer);
+
+          // Save player to local storage
+          localStorage.setItem("player_id", createdPlayer.id);
+          localStorage.setItem("player_name", name);
+          localStorage.setItem("player_seed", seed);
+        }
 
         //  Turn off the click events
         this.removeListener("click");
