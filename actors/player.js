@@ -373,7 +373,6 @@ export class Player {
         hideOnComplete: true,
         showOnStart: true,
       });
-      this.player.anims.stop();
       this.player.play("dwarf-attack");
 
       this.scene.time.addEvent({
