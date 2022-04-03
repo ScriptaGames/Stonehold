@@ -89,10 +89,10 @@ export default class MainMenuScene extends Phaser.Scene {
     let filtered_name = xss(name);
 
     // now also remove quotes because they break the backend
-    filtered_name = filtered_name.replace(/["']/g, '');
+    filtered_name = filtered_name.replace(/["']/g, "");
 
     // now also replace any profane words with astrix
-    filtered_name = profanityFilter.clean( filtered_name );
+    filtered_name = profanityFilter.clean(filtered_name);
 
     if (name.length > 20) {
       filtered_name = filtered_name.substring(0, 20);
