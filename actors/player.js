@@ -336,6 +336,10 @@ export class Player extends Actor {
       this.attack.gracePeriod = false;
 
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
+
+      // also set the horizontal dodge direction to match the direction the player is facing
+      this.dodge.x = this.player.flipX ? -1 : 1;
+
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
       this.axe.setFlipX(this.player.flipX);
