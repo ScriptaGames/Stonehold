@@ -410,4 +410,20 @@ export class Player extends Actor {
       this.attack.activeFrame = false;
     }
   }
+
+  playDeathAnim() {
+    this.scene.tweens.addCounter({
+      from: 255,
+      to: 0,
+      duration: 500,
+      ease: Phaser.Math.Easing.Elastic.In, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
+      onUpdate: (tween) => {
+        const value = Math.floor(tween.getValue());
+        const color = Phaser.Display.Color.GetColor(value, value, value);
+        this.mainSprite.setTint(color);
+        this.leftHand.setTint(color);
+        this.rightHand.setTint(color);
+      },
+    });
+  }
 }
