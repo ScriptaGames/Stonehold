@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { PIXEL_SCALE, PINKY_ATTACK_DAMAGE } from "../variables";
+import { PIXEL_SCALE, PINKY_ATTACK_DAMAGE, PINKY_SPEED } from "../variables";
 
 export class Pinky {
   /** @param {Phaser.Scene} scene */
@@ -30,7 +30,7 @@ export class Pinky {
   create() {
     this.pinky = this.scene.add.sprite(250, 500);
     this.pinky.setScale(PIXEL_SCALE);
-    this.pinky.play("pinky-idle");
+    this.pinky.play("pinky-run");
     this.pinky.setDataEnabled();
     this.pinky.data.set("actor", this);
     this.scene.physics.add.existing(this.pinky);
@@ -39,10 +39,27 @@ export class Pinky {
     /** @type {Phaser.Physics.Arcade.Body} */
     this.pinkyBody = this.pinky.body;
     this.pinkyBody.immovable = true;
+
+    this.isAttacking = false;
   }
 
   update() {
+    this.pinkyBody.setVelocity(0, 0);
     this.pinky.depth = this.pinky.y + this.pinky.height;
+
+    const targetX = this.scene.player.player.x;
+    this.pinky.setFlipX(targetX > this.pinky.x);
+
+    this.playerDistance = new Phaser.Math.Vector2()
+      .copy(this.scene.player.player)
+      .subtract(this.pinky);
+    
+    console.log("distance: " + this.playerDistance.length());
+    if (this.playerDistance.length() < 100) {
+      this.attack();
+    }
+
+    this.handleMovement();
   }
 
   /**
@@ -51,7 +68,7 @@ export class Pinky {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["pinky-idle", "pinky-run", "pinky-attack", "poison"].forEach((name) => {
+    ["pinky-idle", "pinky-run"].forEach((name) => {
       scene.anims.create({
         key: name,
         frames: scene.anims.generateFrameNumbers(name),
@@ -59,10 +76,40 @@ export class Pinky {
         repeat: -1,
       });
     });
+    ["pinky-attack", "poison"].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 10,
+        repeat: 0,
+      });
+    });
+  }
+
+  handleMovement() {
+    if (!this.isAttacking) {
+      const vel = this.playerDistance
+        .normalize()
+        .scale(PINKY_SPEED);
+      this.pinkyBody.setVelocity(vel.x, vel.y);
+    }
   }
 
   /** Attack, if we're in a state that allows attacking. */
-  attack() {}
+  attack() {
+    if (this.isAttacking) return;
+
+    this.pinkyBody.setVelocity(0, 0);
+
+    this.isAttacking = true;
+    this.pinky.anims.stop;
+    this.pinky.play("pinky-attack");
+
+    this.pinky.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.isAttacking = false;
+      this.pinky.play("pinky-run")
+    });
+  }
 
   /** Get the attack damage of this pinky.  May be adjusted from  */
   getAttackDamage() {
