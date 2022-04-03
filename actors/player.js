@@ -88,14 +88,13 @@ export class Player {
 
     this.smear = this.scene.add.sprite(100, 100, "axe-attack");
     this.smear.setScale(PIXEL_SCALE);
-    this.smear.anims.hideOnComplete = true;
     this.smear.visible = false;
     this.scene.physics.add.existing(this.smear);
 
     // set a pretty-good not-too-bad fairly accurate hitbox
     /** @type {Phaser.Physics.Arcade.Body} */
     this.smearBody = this.smear.body;
-    this.smearBody.setSize(27, 27);
+    this.weaponLive(false);
 
     this.createKeyboardControls();
     this.createMouse();
@@ -315,22 +314,35 @@ export class Player {
     this.rightHand.setFlipX(this.player.flipX);
   }
 
+  updateHandPosition() {
+    this.leftHand.copyPosition(this.player);
+    this.leftHand.setFlipX(this.player.flipX);
+
+    this.rightHand.copyPosition(this.player);
+    this.rightHand.setFlipX(this.player.flipX);
+
+    // also update the weapon hitbox position
+    if (!this.attack.attacking) {
+      this.smear.copyPosition(this.player);
+    }
+  }
+
   /** Attack, if we're in a state that allows attacking. */
   trySwingWeapon() {
+    // yes, this looks wrong, but just, I mean... just trust me.
+    this.weaponLive(false);
+
     if (this.dodge.gracePeriod && this.attack.gracePeriod) {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
 
       // enable collision on the smear
-      this.smearBody.enable = true;
+      // this.smearBody.enable = true;
 
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
       this.smear.setFlipX(this.player.flipX);
-
-      this.smear.setOrigin(0.5);
-      this.player.setOrigin(0.5);
 
       const smearOffset = new Phaser.Math.Vector2()
         .copy(this.mouse)
@@ -371,11 +383,33 @@ export class Player {
         },
       });
 
+      this.smear.on(
+        Phaser.Animations.Events.ANIMATION_UPDATE,
+        /** @param {number} frameIndex */
+        // not sure what the first three args are
+        (foo, bar, baz, frameIndex) => {
+          // enable hitbox on the big SWOOSH frames
+          this.weaponLive(frameIndex == 2 || frameIndex == 7);
+        }
+      );
+
       this.smear.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         this.attack.attacking = false;
         this.leftHand.setVisible(true);
         this.rightHand.setVisible(true);
       });
+    }
+  }
+
+  /**
+   * Enable or disable the weapon's hitbox.
+   * @param {number} enabled
+   */
+  weaponLive(enabled) {
+    if (enabled) {
+      this.smearBody.setSize(27, 27);
+    } else {
+      this.smearBody.setSize(1, 1);
     }
   }
 
