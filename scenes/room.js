@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
+import { ULTIMATE_CHARGE_PER_ENEMY } from "../variables";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -139,7 +140,10 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
 
-        enemyActor.inflictDamage(this.player.damage);
+        let killedEnemy = enemyActor.inflictDamage(this.player.damage);
+        if (killedEnemy) {
+          this.player.ultimateCharge += ULTIMATE_CHARGE_PER_ENEMY;
+        }
       },
       // check collision only when the axe is active, and when the enemy is vulnerable
       (player, enemy) => this.player.attack.activeFrame && enemy.vulnerable

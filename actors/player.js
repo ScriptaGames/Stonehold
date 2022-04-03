@@ -13,6 +13,7 @@ import {
   PLAYER_BASE_DAMAGE,
   PLAYER_AFTER_ULTIMATE_DELAY,
   ULTIMATE_ATTACK_GRACE_PERIOD,
+  ULTIMATE_ATTACK_RADIUS,
 } from "../variables";
 
 export class Player extends Actor {
@@ -115,6 +116,8 @@ export class Player extends Actor {
     this.ultimateExplosion = this.scene.add.sprite(100, 100);
     this.ultimateExplosion.setScale(PIXEL_SCALE);
     this.ultimateExplosion.setVisible(false);
+
+    this.ultimateCharge = 1.0;
 
     this.createKeyboardControls();
     this.createMouse();
@@ -440,9 +443,15 @@ export class Player extends Actor {
   }
 
   tryUltimateAbility() {
-    if (this.dodge.gracePeriod && this.attack.gracePeriod) {
+    console.log(`ultimate charge: ${this.ultimateCharge}`);
+    if (
+      this.dodge.gracePeriod &&
+      this.attack.gracePeriod &&
+      this.ultimateCharge >= 1.0
+    ) {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
+      this.ultimateCharge = 0.0;
 
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
@@ -472,6 +481,18 @@ export class Player extends Actor {
     this.ultimateExplosion.setVisible(true);
     this.ultimateExplosion.setPosition(this.player.x, this.player.y);
     this.ultimateExplosion.play("ultimate-explosion");
+
+    this.scene.physics
+      .overlapCirc(
+        this.ultimateExplosion.x,
+        this.ultimateExplosion.y,
+        ULTIMATE_ATTACK_RADIUS
+      )
+      .forEach((obj) => {
+        if (obj.inflictDamage === "function") {
+          console.log(`ultimate hit ${obj}`);
+        }
+      });
 
     this.ultimateExplosion.on(
       Phaser.Animations.Events.ANIMATION_COMPLETE,

@@ -32,6 +32,12 @@ export const ATTACK_GRACE_PERIOD = 550;
 /** From attack start, how long until the player can start moving and dodging again. */
 export const ULTIMATE_ATTACK_GRACE_PERIOD = 1000;
 
+/** Radius the ultimate attack will damage */
+export const ULTIMATE_ATTACK_RADIUS = 100;
+
+/** Percent of ultimate charge refilled per enemey kill */
+export const ULTIMATE_CHARGE_PER_ENEMY = 0.25;
+
 /** How far from the player the weapon should hover. */
 export const WEAPON_HOVER_DISTANCE = 34;
 
