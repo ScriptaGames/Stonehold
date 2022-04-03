@@ -58,6 +58,8 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
   spawnExplosion() {
     let explosion = this.scene.add.sprite(this.x, this.y);
     explosion.setScale(PIXEL_SCALE);
+    // put explosion on top of everything (probably)
+    explosion.setDepth(5000);
     explosion.play("poison-ball-explosion");
     explosion.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       explosion.destroy();

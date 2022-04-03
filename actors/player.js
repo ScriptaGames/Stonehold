@@ -100,6 +100,8 @@ export class Player extends Actor {
     this.axe = this.scene.add.sprite(100, 100, "axe-attack");
     this.axe.setScale(PIXEL_SCALE);
     this.axe.visible = false;
+    // put axe on top of everything (probably)
+    this.axe.setDepth(5000);
     this.scene.physics.add.existing(this.axe);
 
     this.createKeyboardControls();
