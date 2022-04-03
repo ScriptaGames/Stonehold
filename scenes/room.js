@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
+import { Captain } from "../actors/captain";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -10,6 +11,7 @@ class RoomScene extends Phaser.Scene {
 
     this.player = new Player(this);
     this.pinkies = [];
+    this.captains = [];
   }
 
   init(data) {
@@ -24,11 +26,10 @@ class RoomScene extends Phaser.Scene {
     this.load.image("door_open", "images/door_open.png");
     this.load.image("door_locked", "images/door_locked.png");
     this.load.image("mushroom", "images/mushroom.png");
-    this.load.image("enemy", "images/enemy.png");
-    this.load.image("enemy_captain", "images/enemy_captain.png");
 
     Player.preload(this);
     Pinky.preload(this);
+    Captain.preload(this);
   }
 
   create() {
@@ -36,6 +37,7 @@ class RoomScene extends Phaser.Scene {
 
     Pinky.createAnims(this);
     Player.createAnims(this);
+    Captain.createAnims(this);
 
     this.doorUnlocked = false;
     let doorTexture = "door";
@@ -69,7 +71,10 @@ class RoomScene extends Phaser.Scene {
       let y = this.room_manager.rnd.between(20, 800);
       let enemyKey = "enemy";
       if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
-        enemyKey = "enemy_captain";
+        let captain = new Captain(this);
+        captain.create();
+        captain.captain.copyPosition({ x, y });
+        this.captains.push(captain);
       } else {
         let pinky = new Pinky(this);
         pinky.create();
