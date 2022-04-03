@@ -49,3 +49,18 @@ export const PINKY_SPEED = 100;
 
 /** Pinky's attack range */
 export const PINKY_ATTACK_RANGE = 100;
+
+/** Pinky's idle time after attacking */
+export const PINKY_IDLE_AFTER_ATTACK = 1000;
+
+/** Captain's speed */
+export const CAPTAIN_SPEED = 100;
+
+/** Captain's attack range */
+export const CAPTAIN_ATTACK_RANGE = 350;
+
+/** Captain's projectile speed */
+export const CAPTAIN_PROJECTILE_SPEED = 400;
+
+/** Captain's idle time after attacking */
+export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
