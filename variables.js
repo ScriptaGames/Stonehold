@@ -9,7 +9,7 @@ export const PLAYER_BASE_HP = 1;
 export const PLAYER_SPEED = 400;
 
 /** How much speed boost dodge should give.  Added to base player speed during a dodge. */
-export const DODGE_SPEED_BONUS = 1400;
+export const DODGE_SPEED_BONUS = 1500;
 
 /** How long, from dodge start, until the next dodge can start. */
 export const DODGE_COOLDOWN = 1000;
