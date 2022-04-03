@@ -23,8 +23,15 @@ export default class MainMenuScene extends Phaser.Scene {
     const scene = this.scene;
     const gqlClient = this.gqlClient;
 
-    element.addListener("click");
+    // Populate previous players name
+    const localPlayerName = localStorage.getItem("player_name");
+    if (localPlayerName) {
+      const nameField = element.getChildByName("nameField");
+      nameField.value = localPlayerName;
+    }
 
+    // Handle PLAY button click
+    element.addListener("click");
     element.on("click", async function (event) {
       if (event.target.name === "playButton") {
         const rn = Phaser.Math.Between(100, 90000);
