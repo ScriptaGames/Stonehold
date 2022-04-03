@@ -70,6 +70,10 @@ export class Player {
     /** @type {Phaser.Physics.Arcade.Body} */
     this.playerBody = this.player.body;
 
+    // adjust hitbox
+    this.playerBody.setSize(15, 28);
+    this.playerBody.setOffset(10, 4);
+
     this.speedBoost = new Phaser.Math.Vector2();
 
     // this.hands = this.scene.add.circle(0, 0, 20, 0x919191, 1);

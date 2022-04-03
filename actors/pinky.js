@@ -39,6 +39,10 @@ export class Pinky {
     /** @type {Phaser.Physics.Arcade.Body} */
     this.pinkyBody = this.pinky.body;
     this.pinkyBody.immovable = true;
+
+    // adjust hitbox
+    this.pinkyBody.setSize(28, 26);
+    this.pinkyBody.setOffset(17, 28);
   }
 
   update() {
