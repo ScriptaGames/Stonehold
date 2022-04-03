@@ -3,7 +3,10 @@
 ///////////////////////////////////////////////////////
 
 /** Player base HP. */
-export const PLAYER_BASE_HP = 1;
+export const PLAYER_BASE_HP = 4;
+
+/** Player base damage. */
+export const PLAYER_BASE_DAMAGE = 1;
 
 /** Base player speed. */
 export const PLAYER_SPEED = 400;
@@ -64,3 +67,6 @@ export const CAPTAIN_PROJECTILE_SPEED = 400;
 
 /** Captain's idle time after attacking */
 export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
+
+/** After taking damage, actors go invulnerable for this long. */
+export const ACTOR_DAMAGE_INVUL_PERIOD = 100;

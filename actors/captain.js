@@ -6,15 +6,14 @@ import {
   CAPTAIN_BASE_HP,
   CAPTAIN_SPEED,
   CAPTAIN_ATTACK_RANGE,
-  CAPTAIN_IDLE_AFTER_ATTACK
+  CAPTAIN_IDLE_AFTER_ATTACK,
 } from "../variables";
 import { PoisonBall } from "./poison_ball";
 
 export class Captain extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
-    super({ hp: CAPTAIN_BASE_HP, damage: CAPTAIN_ATTACK_DAMAGE });
-    this.scene = scene;
+    super(scene, { hp: CAPTAIN_BASE_HP, damage: CAPTAIN_ATTACK_DAMAGE });
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -34,14 +33,10 @@ export class Captain extends Actor {
         frameHeight: 64,
       }
     );
-    scene.load.spritesheet(
-      "poison-ball",
-      "images/poisonBall_strip.png",
-      {
-        frameWidth: 36,
-        frameHeight: 36,
-      }
-    );
+    scene.load.spritesheet("poison-ball", "images/poisonBall_strip.png", {
+      frameWidth: 36,
+      frameHeight: 36,
+    });
     scene.load.spritesheet(
       "poison-ball-explosion",
       "images/poisonBall_explosion_strip.png",
@@ -52,7 +47,8 @@ export class Captain extends Actor {
     );
   }
   create() {
-    this.captain = this.scene.add.sprite(250, 500);
+    super.create();
+    this.captain = this.mainSprite = this.scene.add.sprite(250, 500);
     this.captain.setScale(PIXEL_SCALE);
     this.captain.play("captain-run");
     this.scene.physics.add.existing(this.captain);
@@ -97,37 +93,31 @@ export class Captain extends Actor {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["captain-idle", "captain-run", "poison-ball"].forEach(
-      (name) => {
-        scene.anims.create({
-          key: name,
-          frames: scene.anims.generateFrameNumbers(name),
-          frameRate: 10,
-          repeat: -1,
-        });
-      }
-    );
-    ["captain-attack", "poison-ball-explosion"].forEach(
-      (name) => {
-        let res = scene.anims.create({
-          key: name,
-          frames: scene.anims.generateFrameNumbers(name),
-          frameRate: 10,
-          repeat: 0,
-        });
+    ["captain-idle", "captain-run", "poison-ball"].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 10,
+        repeat: -1,
+      });
+    });
+    ["captain-attack", "poison-ball-explosion"].forEach((name) => {
+      let res = scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 10,
+        repeat: 0,
+      });
 
-        console.log(`anim ${name} returned ${JSON.stringify(res)}`);
-      }
-    );
+      console.log(`anim ${name} returned ${JSON.stringify(res)}`);
+    });
   }
 
   handleMovement() {
     if (!this.isAttacking) {
       const targetX = this.scene.player.player.x;
       this.captain.setFlipX(targetX > this.captain.x);
-      const vel = this.playerDistance
-        .normalize()
-        .scale(CAPTAIN_SPEED);
+      const vel = this.playerDistance.normalize().scale(CAPTAIN_SPEED);
       this.captainBody.setVelocity(vel.x, vel.y);
     }
   }
@@ -138,11 +128,11 @@ export class Captain extends Actor {
 
     const targetX = this.scene.player.player.x;
     this.captain.setFlipX(targetX > this.captain.x);
-    
+
     this.isAttacking = true;
 
     this.captainBody.setVelocity(0, 0);
-    
+
     const poisonOffset = new Phaser.Math.Vector2(20, -50);
     if (this.captain.flipX) {
       poisonOffset.x *= -1;
@@ -154,7 +144,7 @@ export class Captain extends Actor {
     this.scene.time.addEvent({
       delay: 600,
       callback: () => this.spawnPoisonBalls(poisonPos, this.playerDistance),
-      callbackScope: this
+      callbackScope: this,
     });
 
     this.captain.anims.stop();
@@ -187,7 +177,6 @@ export class Captain extends Actor {
   spawnPoisonBall(pos, dir) {
     let poisonBall = this.poisonBalls.get();
     if (poisonBall) {
-      
       poisonBall.fire(pos.x, pos.y, dir);
     }
   }

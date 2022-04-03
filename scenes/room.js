@@ -116,12 +116,12 @@ class RoomScene extends Phaser.Scene {
         /** @type {Player} */
         let playerActor = player.data.get("actor");
         /** @type {Pinky} */
-        let pinkyActor = enemy.data.get("actor");
+        let enemyActor = enemy.data.get("actor");
 
-        playerActor.inflictDamage(pinkyActor.damage);
+        playerActor.inflictDamage(enemyActor.damage);
       },
       // disable player collision during the dodge grace period
-      () => this.player.dodge.gracePeriod
+      () => this.player.vulnerable
     );
 
     // collide player weapon with enemies
@@ -136,8 +136,13 @@ class RoomScene extends Phaser.Scene {
        * @param {Phaser.GameObjects.GameObject} enemy
        */
       (player, enemy, colInfo) => {
-        console.log("HIT ENEMY");
-      }
+        /** @type {Pinky} */
+        let enemyActor = enemy.data.get("actor");
+
+        enemyActor.inflictDamage(this.player.damage);
+      },
+      // check collision only when the axe is active, and when the enemy is vulnerable
+      (player, enemy) => this.player.attack.activeFrame && enemy.vulnerable
     );
 
     this.keyEscape = this.input.keyboard.addKey(

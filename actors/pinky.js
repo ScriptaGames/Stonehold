@@ -13,8 +13,7 @@ import {
 export class Pinky extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
-    super({ hp: PINKY_BASE_HP, damage: PINKY_ATTACK_DAMAGE });
-    this.scene = scene;
+    super(scene, { hp: PINKY_BASE_HP, damage: PINKY_ATTACK_DAMAGE });
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -36,7 +35,8 @@ export class Pinky extends Actor {
     });
   }
   create() {
-    this.pinky = this.scene.add.sprite(250, 500);
+    super.create();
+    this.pinky = this.mainSprite = this.scene.add.sprite(250, 500);
     this.pinky.setScale(PIXEL_SCALE);
     this.pinky.play("pinky-run");
     this.pinky.setDataEnabled();

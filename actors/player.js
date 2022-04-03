@@ -10,14 +10,13 @@ import {
   PIXEL_SCALE,
   ATTACK_GRACE_PERIOD,
   PLAYER_BASE_HP,
+  PLAYER_BASE_DAMAGE,
 } from "../variables";
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
-    super({ hp: PLAYER_BASE_HP });
-
-    this.scene = scene;
+    super(scene, { hp: PLAYER_BASE_HP, damage: PLAYER_BASE_DAMAGE });
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -59,7 +58,8 @@ export class Player extends Actor {
     });
   }
   create() {
-    this.player = this.scene.add.sprite(250, 500);
+    super.create();
+    this.player = this.mainSprite = this.scene.add.sprite(250, 500);
     this.player.setScale(PIXEL_SCALE);
     this.player.play("dwarf-idle");
     this.player.setOrigin(0.5);
@@ -92,14 +92,16 @@ export class Player extends Actor {
     this.axe.visible = false;
     this.scene.physics.add.existing(this.axe);
 
+    this.createKeyboardControls();
+    this.createMouse();
+
     // set a pretty-good not-too-bad fairly accurate hitbox
     /** @type {Phaser.Physics.Arcade.Body} */
     this.axeBody = this.axe.body;
     this.axeBody.immovable = true;
-    this.weaponLive(false);
-
-    this.createKeyboardControls();
-    this.createMouse();
+    // adjust axe hitbox to fit the sprite better
+    this.axeBody.setSize(27, 27);
+    this.axeLive(false);
   }
 
   update() {
@@ -150,7 +152,7 @@ export class Player extends Actor {
     });
 
     this.scene.input.on("pointerdown", () => {
-      this.trySwingWeapon();
+      this.trySwingAxe();
     });
   }
 
@@ -166,8 +168,12 @@ export class Player extends Actor {
     };
     /** Various state about dwarf's attacks. */
     this.attack = {
+      /** True when the attack animation is playing. */
       attacking: false,
+      /** True when not attacking, and true near the end of the attack animation, when the animation is still playing, but it's possible to move and dodge again. */
       gracePeriod: true,
+      /** True when the axe is in one of it's "damage frames", ie the frames in the spritesheet where there's a BIG SWOOSH. */
+      activeFrame: false,
     };
     this.kb = this.scene.input.keyboard.addKeys("W,A,S,D,SPACE");
   }
@@ -258,33 +264,32 @@ export class Player extends Actor {
       this.dodge.keyReleased = false;
       this.dodge.gracePeriod = false;
 
+      // become invul during the dodge roll
+      this.setVulnerable(false);
+
       // apply speed boost in the direction of the dodge
       this.speedBoost.copy(this.dodge).normalize().scale(DODGE_SPEED_BONUS);
 
       this.playerBody.setVelocity(this.dodge.x, this.dodge.y);
 
       // start cooldown timer
-      this.scene.time.addEvent({
-        delay: DODGE_COOLDOWN,
-        callback: () => {
-          this.dodge.ready = true;
-        },
-      });
+      this.scene.time.delayedCall(
+        DODGE_COOLDOWN,
+        () => (this.dodge.ready = true)
+      );
 
       // start dodge duration timer
-      this.scene.time.addEvent({
-        delay: DODGE_DURATION,
-        callback: () => {
-          this.dodge.dodging = false;
-        },
-      });
+      this.scene.time.delayedCall(
+        DODGE_DURATION,
+        () => (this.dodge.dodging = false)
+      );
 
       // start timer until player can move with WASD again
-      this.scene.time.addEvent({
-        delay: DODGE_GRACE_PERIOD,
-        callback: () => {
-          this.dodge.gracePeriod = true;
-        },
+      this.scene.time.delayedCall(DODGE_GRACE_PERIOD, () => {
+        this.dodge.gracePeriod = true;
+
+        // become vulnerable again during the grace period
+        this.setVulnerable(true);
       });
 
       // tween the speedBoost back to 0
@@ -330,42 +335,39 @@ export class Player extends Actor {
   }
 
   /** Attack, if we're in a state that allows attacking. */
-  trySwingWeapon() {
+  trySwingAxe() {
     // yes, this looks wrong, but just, I mean... just trust me.
-    this.weaponLive(false);
+    this.axeLive(false);
 
     if (this.dodge.gracePeriod && this.attack.gracePeriod) {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
-
-      // enable collision on the smear
-      // this.smearBody.enable = true;
 
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
       this.axe.setFlipX(this.player.flipX);
 
-      const smearOffset = new Phaser.Math.Vector2()
+      const axeOffset = new Phaser.Math.Vector2()
         .copy(this.mouse)
         .subtract(this.player)
         .normalize()
         .scale(WEAPON_HOVER_DISTANCE);
 
-      const smearPos = smearOffset.clone().add(this.player);
+      const axePos = axeOffset.clone().add(this.player);
 
       // rotate towards the cursor
-      this.axe.setRotation(smearOffset.angle() * 2);
+      this.axe.setRotation(axeOffset.angle() * 2);
       // apply special compensation to make downward attacks look better (FRAGILE, hope to replace)
-      if (smearOffset.y > 0) {
-        if (smearOffset.x > 0) {
-          this.axe.rotation -= smearOffset.y / 36;
+      if (axeOffset.y > 0) {
+        if (axeOffset.x > 0) {
+          this.axe.rotation -= axeOffset.y / 36;
         } else {
-          this.axe.rotation += smearOffset.y / 36;
+          this.axe.rotation += axeOffset.y / 36;
         }
       }
 
-      this.axeBody.position.copy(smearPos);
+      this.axeBody.position.copy(axePos);
 
       this.axe.copyPosition(this.axeBody.position);
 
@@ -377,12 +379,10 @@ export class Player extends Actor {
       });
       this.player.play("dwarf-attack");
 
-      this.scene.time.addEvent({
-        delay: ATTACK_GRACE_PERIOD,
-        callback: () => {
-          this.attack.gracePeriod = true;
-        },
-      });
+      this.scene.time.delayedCall(
+        ATTACK_GRACE_PERIOD,
+        () => (this.attack.gracePeriod = true)
+      );
 
       this.axe.on(
         Phaser.Animations.Events.ANIMATION_UPDATE,
@@ -390,7 +390,7 @@ export class Player extends Actor {
         // not sure what the first three args are
         (foo, bar, baz, frameIndex) => {
           // enable hitbox on the big SWOOSH frames
-          this.weaponLive(frameIndex == 2 || frameIndex == 7);
+          this.axeLive(frameIndex == 2 || frameIndex == 7);
         }
       );
 
@@ -403,14 +403,15 @@ export class Player extends Actor {
   }
 
   /**
-   * Enable or disable the weapon's hitbox.
+   * Enable or disable the axe's damage.  This is to help align the axe's
+   * damage with the spritesheet's "big swoosh" frames.
    * @param {number} enabled
    */
-  weaponLive(enabled) {
+  axeLive(enabled) {
     if (enabled) {
-      this.axeBody.setSize(27, 27);
+      this.attack.activeFrame = true;
     } else {
-      this.axeBody.setSize(1, 1);
+      this.attack.activeFrame = false;
     }
   }
 }
