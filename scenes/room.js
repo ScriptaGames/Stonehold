@@ -107,6 +107,7 @@ class RoomScene extends Phaser.Scene {
   update() {
     this.player.update();
     this.pinkies.forEach((pinky) => pinky.update());
+    this.captains.forEach((captain) => captain.update());
   }
 
   exitingRoom() {
