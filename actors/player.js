@@ -92,6 +92,11 @@ export class Player {
     this.smear.visible = false;
     this.scene.physics.add.existing(this.smear);
 
+    // set a pretty-good not-too-bad fairly accurate hitbox
+    /** @type {Phaser.Physics.Arcade.Body} */
+    this.smearBody = this.smear.body;
+    this.smearBody.setSize(27, 27);
+
     this.createKeyboardControls();
     this.createMouse();
   }
@@ -317,7 +322,7 @@ export class Player {
       this.attack.gracePeriod = false;
 
       // enable collision on the smear
-      this.smear.body.enable = true;
+      this.smearBody.enable = true;
 
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
       this.leftHand.setVisible(false);
@@ -346,9 +351,9 @@ export class Player {
         }
       }
 
-      this.smear.body.position.copy(smearPos);
+      this.smearBody.position.copy(smearPos);
 
-      this.smear.copyPosition(this.smear.body.position);
+      this.smear.copyPosition(this.smearBody.position);
 
       // play attack anims
       this.smear.play({
