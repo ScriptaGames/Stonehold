@@ -1,10 +1,12 @@
 import Phaser from "phaser";
-import { PIXEL_SCALE } from "../variables";
+import { PIXEL_SCALE, PINKY_ATTACK_DAMAGE } from "../variables";
 
 export class Pinky {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
     this.scene = scene;
+
+    this.baseAttackDamage = PINKY_ATTACK_DAMAGE;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -29,11 +31,14 @@ export class Pinky {
     this.pinky = this.scene.add.sprite(250, 500);
     this.pinky.setScale(PIXEL_SCALE);
     this.pinky.play("pinky-idle");
+    this.pinky.setDataEnabled();
+    this.pinky.data.set("actor", this);
     this.scene.physics.add.existing(this.pinky);
 
     // save a reference to the pinky body with the correct type
     /** @type {Phaser.Physics.Arcade.Body} */
     this.pinkyBody = this.pinky.body;
+    this.pinkyBody.immovable = true;
   }
 
   update() {
@@ -58,4 +63,9 @@ export class Pinky {
 
   /** Attack, if we're in a state that allows attacking. */
   attack() {}
+
+  /** Get the attack damage of this pinky.  May be adjusted from  */
+  getAttackDamage() {
+    return this.baseAttackDamage;
+  }
 }

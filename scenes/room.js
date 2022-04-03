@@ -9,10 +9,6 @@ class RoomScene extends Phaser.Scene {
       ...config,
       key: "RoomScene",
     });
-
-    this.player = new Player(this);
-    this.pinkies = [];
-    this.captains = [];
   }
 
   init(data) {
@@ -34,6 +30,10 @@ class RoomScene extends Phaser.Scene {
   }
 
   create() {
+    this.player = new Player(this);
+    this.pinkies = [];
+    this.captains = [];
+
     this.add.sprite(0, 0, this.roomConfig.background);
 
     Pinky.createAnims(this);
@@ -97,6 +97,27 @@ class RoomScene extends Phaser.Scene {
           this.room_manager.unlockedDepth++;
           this.exitingRoom();
         }
+      }
+    );
+
+    this.physics.add.collider(
+      this.player.player,
+      [
+        // enemies that can deal DAMAGE to player
+        ...this.pinkies.map((pinky) => pinky.pinky),
+        ...this.captains.map((captain) => captain.captain),
+      ],
+      /** @param {Phaser.GameObjects.GameObject} player
+       * @param {Phaser.GameObjects.GameObject} enemy
+       */
+      (player, enemy, colInfo) => {
+        console.log("player collided with", enemy, player, colInfo);
+        /** @type {Player} */
+        let playerActor = player.data.get("actor");
+        /** @type {Pinky} */
+        let pinkyActor = enemy.data.get("actor");
+
+        playerActor.applyDamage(pinkyActor.getAttackDamage());
       }
     );
 

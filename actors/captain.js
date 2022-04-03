@@ -1,10 +1,12 @@
 import Phaser from "phaser";
-import { PIXEL_SCALE } from "../variables";
+import { PIXEL_SCALE, CAPTAIN_ATTACK_DAMAGE } from "../variables";
 
 export class Captain {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
     this.scene = scene;
+
+    this.baseAttackDamage = CAPTAIN_ATTACK_DAMAGE;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -34,10 +36,13 @@ export class Captain {
     this.captain.setScale(PIXEL_SCALE);
     this.captain.play("captain-idle");
     this.scene.physics.add.existing(this.captain);
+    this.captain.setDataEnabled();
+    this.captain.data.set("actor", this);
 
     // save a reference to the captain body with the correct type
     /** @type {Phaser.Physics.Arcade.Body} */
     this.captainBody = this.captain.body;
+    this.captainBody.immovable = true;
   }
 
   update() {
@@ -64,4 +69,9 @@ export class Captain {
 
   /** Attack, if we're in a state that allows attacking. */
   attack() {}
+
+  /** Get the attack damage of this pinky.  May be adjusted from  */
+  getAttackDamage() {
+    return this.baseAttackDamage;
+  }
 }

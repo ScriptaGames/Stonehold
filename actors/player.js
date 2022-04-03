@@ -8,12 +8,15 @@ import {
   DODGE_GRACE_PERIOD,
   PIXEL_SCALE,
   ATTACK_GRACE_PERIOD,
+  PLAYER_BASE_HP,
 } from "../variables";
 
 export class Player {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
     this.scene = scene;
+
+    this.hp = PLAYER_BASE_HP;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -60,6 +63,8 @@ export class Player {
     this.player.play("dwarf-idle");
     this.player.setOrigin(0.5);
     this.scene.physics.add.existing(this.player);
+    this.player.setDataEnabled();
+    this.player.data.set("actor", this);
 
     // save a reference to the player body with the correct type
     /** @type {Phaser.Physics.Arcade.Body} */
@@ -90,6 +95,8 @@ export class Player {
   update() {
     // set z-index depth
     this.player.depth = this.player.y + this.player.height;
+    this.leftHand.depth = this.player.depth - 0.1;
+    this.rightHand.depth = this.player.depth + 0.1;
 
     this.handleKeyboard();
     this.updateHandPosition();
@@ -305,15 +312,17 @@ export class Player {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
 
+      // enable collision on the smear
+      this.smear.body.enable = true;
+
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
       this.smear.setFlipX(this.player.flipX);
-      // offset smear slightly in the direction the dwarf is facing
-      // this.smear.x -= this.smear.flipX ? 26 : -26;
 
       this.smear.setOrigin(0.5);
       this.player.setOrigin(0.5);
+
       const smearOffset = new Phaser.Math.Vector2()
         .copy(this.mouse)
         .subtract(this.player)
@@ -355,9 +364,25 @@ export class Player {
 
       this.smear.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         this.attack.attacking = false;
+        this.smear.body.enable = false;
         this.leftHand.setVisible(true);
         this.rightHand.setVisible(true);
       });
     }
+  }
+
+  /** @param {number} damage */
+  applyDamage(damage) {
+    this.hp -= damage;
+
+    console.log(`player took ${damage} damage and is now at ${this.hp} hp`);
+
+    if (this.hp <= 0) {
+      this.die();
+    }
+  }
+
+  die() {
+    console.log("TODO: death");
   }
 }
