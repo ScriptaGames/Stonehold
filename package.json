@@ -10,7 +10,8 @@
   "dependencies": {
     "graphql": "^16.3.0",
     "graphql-request": "^4.2.0",
-    "phaser": "3.55.2"
+    "phaser": "3.55.2",
+    "short-uuid": "^4.2.0"
   },
   "devDependencies": {
     "chokidar": "3.5.3",

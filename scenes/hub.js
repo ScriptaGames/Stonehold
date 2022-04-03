@@ -25,7 +25,7 @@ class HubScene extends Phaser.Scene {
   }
 
   async create(data) {
-    console.log('name:', data.name);
+    console.log("name:", data.name);
 
     // Create the main player
     Player.createAnims(this);
