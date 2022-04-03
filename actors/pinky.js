@@ -36,7 +36,7 @@ export class Pinky extends Actor {
 
     scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");
     scene.load.audio("enemy-hit-aah", "audio/enemy-hit-aah.mp3");
-    scene.load.audio("grunt-dies"  , "audio/grunt-dies.mp3");
+    scene.load.audio("grunt-dies", "audio/grunt-dies.mp3");
   }
   create() {
     super.create();
@@ -104,13 +104,6 @@ export class Pinky extends Actor {
         repeat: 0,
       });
     });
-    scene.anims.create({
-      key: "pinky-death",
-      defaultTextureKey: "pinky-attack",
-      frames: [8, 9],
-      frameRate: 10,
-      repeat: -1,
-    });
   }
 
   handleMovement() {
@@ -177,11 +170,9 @@ export class Pinky extends Actor {
 
   playDeathAnim() {
     super.playDeathAnim();
-    console.log("playing pinky death anim");
     this.pinky.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
     this.pinky.anims.stop();
-    // this seems like a good death anim, with the hands flying up
-    this.pinky.play("pinky-death");
+    this.scene.sound.play("grunt-dies");
   }
 
   /**
@@ -191,7 +182,9 @@ export class Pinky extends Actor {
   takeDamage(inflictedDamage) {
     super.takeDamage(inflictedDamage);
     if (this.vulnerable) {
-      this.scene.sound.play(["enemy-damaged", "enemy-hit-aah"][Math.round(Math.random())]);
+      this.scene.sound.play(
+        ["enemy-damaged", "enemy-hit-aah"][Math.round(Math.random())]
+      );
     }
   }
 

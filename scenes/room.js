@@ -132,7 +132,8 @@ class RoomScene extends Phaser.Scene {
         playerActor.takeDamage(enemyActor.damage);
       },
       // disable player collision during the dodge grace period
-      () => this.player.vulnerable
+      (player, enemy) =>
+        player.data.get("actor").vulnerable && enemy.data.get("actor").isAlive
     );
 
     // collide player weapon with enemies

@@ -112,8 +112,6 @@ export class Captain extends Actor {
         frameRate: 10,
         repeat: 0,
       });
-
-      console.log(`anim ${name} returned ${JSON.stringify(res)}`);
     });
   }
 
@@ -194,10 +192,18 @@ export class Captain extends Actor {
   takeDamage(inflictedDamage) {
     super.takeDamage(inflictedDamage);
     if (this.vulnerable) {
-    this.scene.sound.play(
-      ["enemy-damaged", "enemy-hit-aah"][Math.round(Math.random())]
-    );
+      this.scene.sound.play(
+        ["enemy-damaged", "enemy-hit-aah"][Math.round(Math.random())]
+      );
     }
+  }
+
+  playDeathAnim() {
+    super.playDeathAnim();
+    this.captain.removeAllListeners();
+    this.captain.anims.stop();
+    // this seems like a good death anim, with the hands flying up
+    this.scene.sound.play("captain-dies");
   }
 
   dealDamage() {
