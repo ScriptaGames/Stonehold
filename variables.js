@@ -39,4 +39,7 @@ export const PINKY_ATTACK_DAMAGE = 1;
 export const CAPTAIN_ATTACK_DAMAGE = 1;
 
 /** Pinky's speed */
-export const PINKY_SPEED = 50;
+export const PINKY_SPEED = 100;
+
+/** Pinky's attack range */
+export const PINKY_ATTACK_RANGE = 100;

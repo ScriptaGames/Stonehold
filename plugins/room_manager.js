@@ -5,13 +5,13 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
             {
                 key: 'RoomScene',
                 numMushrooms: 5,
-                numEnemies: 10,
+                numEnemies: 2,
                 background: "room_background",
             },
             {
                 key: 'RoomScene',
                 numMushrooms: 10,
-                numEnemies: 15,
+                numEnemies: 2,
                 background: "room2_background"
             }
         ];
