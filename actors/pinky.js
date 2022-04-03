@@ -65,15 +65,17 @@ export class Pinky extends Actor {
     this.pinkyBody.setVelocity(0, 0);
     this.pinky.depth = this.pinky.y + this.pinky.height;
 
-    this.playerDistance = new Phaser.Math.Vector2()
-      .copy(this.scene.player.player)
-      .subtract(this.pinky);
+    if (this.isAlive) {
+      this.playerDistance = new Phaser.Math.Vector2()
+        .copy(this.scene.player.player)
+        .subtract(this.pinky);
 
-    if (this.playerDistance.length() < PINKY_ATTACK_RANGE) {
-      this.attack();
+      if (this.playerDistance.length() < PINKY_ATTACK_RANGE) {
+        this.attack();
+      }
+
+      this.handleMovement();
     }
-
-    this.handleMovement();
   }
 
   /**
@@ -97,6 +99,13 @@ export class Pinky extends Actor {
         frameRate: 10,
         repeat: 0,
       });
+    });
+    scene.anims.create({
+      key: "pinky-death",
+      defaultTextureKey: "pinky-attack",
+      frames: [8, 9],
+      frameRate: 10,
+      repeat: -1,
     });
   }
 
@@ -163,5 +172,13 @@ export class Pinky extends Actor {
   /** Get the attack damage of this pinky.  May be adjusted from  */
   getAttackDamage() {
     return this.baseAttackDamage;
+  }
+
+  playDeathAnim() {
+    console.log("playing pinky death anim");
+    this.pinky.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
+    this.pinky.anims.stop();
+    // this seems like a good death anim, with the hands flying up
+    this.pinky.play("pinky-death");
   }
 }

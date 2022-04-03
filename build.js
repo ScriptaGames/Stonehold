@@ -69,7 +69,7 @@ await esbuildServe(
   // esbuild options
   {
     bundle: true,
-    minify: true,
+    // minify: true,
     sourcemap: true,
     legalComments: "linked",
     entryPoints: ["main.js"],

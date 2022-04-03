@@ -6,18 +6,31 @@ export class Actor {
    * @param {Phaser.Scene} scene
    */
   constructor(scene, { hp, damage }) {
+    /** A reference to the Phaser.Scene the actor is a member of.
+     * @type {Phaser.Scene}
+     */
     this.scene = scene;
+    /** The actor's current HP.
+     * @type {number}
+     */
     this.hp = hp;
+    /** The actor's current attack damage.
+     * @type {Phaser.Scene}
+     */
     this.damage = damage;
-    window.pinky = this;
-    /** Is the actor vulnerable.  Post-damage, actors are invul for a moment. */
 
+    /** Actor starts vulnerable. Post-damage, actors are invul for a moment. */
     this.setVulnerable(true);
 
     /** The actor's main sprite, as in ".player", ".pinky", etc.
      * @type {Phaser.GameObjects.Sprite?}
      */
     this.mainSprite;
+
+    /** Is this actor still alive?
+     * @type {boolean}
+     */
+    this.isAlive = true;
   }
 
   create() {}
@@ -46,17 +59,18 @@ export class Actor {
       );
 
       if (this.hp <= 0) {
+        console.log("ACTOR took fatal damage");
         this.die();
+      } else {
+        // make actor vulnerable again after a delay
+        this.scene.time.delayedCall(ACTOR_DAMAGE_INVUL_PERIOD, () =>
+          this.setVulnerable(true)
+        );
       }
 
       // damage flash effect
       this.mainSprite.setTintFill(0xf1f1f1);
       this.scene.time.delayedCall(128, () => this.mainSprite.clearTint());
-
-      // make actor vulnerable again after a delay
-      this.scene.time.delayedCall(ACTOR_DAMAGE_INVUL_PERIOD, () =>
-        this.setVulnerable(true)
-      );
     }
   }
 
@@ -64,6 +78,32 @@ export class Actor {
    * Make this actor die.
    */
   die() {
-    console.log("ACTOR has ceased to be");
+    this.isAlive = false;
+
+    // set invul on death to avoid taking more damage. TODO consider removing
+    // this, it might feel cool for further weapon swipes to cause flash
+    // effects even during the death anim
+    this.setVulnerable(false);
+
+    // play the actor's unique death animation
+    this.playDeathAnim();
+
+    // start death effect
+
+    this.scene.tweens.add({
+      targets: this.mainSprite,
+      tint: 0x00000000,
+      duration: 1500, // ms
+      ease: Phaser.Math.Easing.Linear, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
+      onComplete: () => {
+        console.log("ACTOR has ceased to be");
+      },
+    });
+  }
+
+  playDeathAnim() {
+    console.log(
+      "Actor.playDeathAnim called, this should be overidden in the actor"
+    );
   }
 }

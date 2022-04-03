@@ -69,4 +69,4 @@ export const CAPTAIN_PROJECTILE_SPEED = 400;
 export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
 
 /** After taking damage, actors go invulnerable for this long. */
-export const ACTOR_DAMAGE_INVUL_PERIOD = 100;
+export const ACTOR_DAMAGE_INVUL_PERIOD = 50;
