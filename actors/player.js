@@ -11,6 +11,8 @@ import {
   ATTACK_GRACE_PERIOD,
   PLAYER_BASE_HP,
   PLAYER_BASE_DAMAGE,
+  PLAYER_AFTER_ULTIMATE_DELAY,
+  ULTIMATE_ATTACK_GRACE_PERIOD,
 } from "../variables";
 
 export class Player extends Actor {
@@ -56,6 +58,24 @@ export class Player extends Actor {
       frameWidth: 36,
       frameHeight: 36,
     });
+
+    scene.load.spritesheet(
+      "ultimate-attack",
+      "images/dwarfFull_ultimate_strip.png",
+      {
+        frameWidth: 36,
+        frameHeight: 36,
+      }
+    );
+
+    scene.load.spritesheet(
+      "ultimate-explosion",
+      "images/ultimate_explosion_strip.png",
+      {
+        frameWidth: 148,
+        frameHeight: 148,
+      }
+    );
   }
   create() {
     super.create();
@@ -92,6 +112,10 @@ export class Player extends Actor {
     this.axe.visible = false;
     this.scene.physics.add.existing(this.axe);
 
+    this.ultimateExplosion = this.scene.add.sprite(100, 100);
+    this.ultimateExplosion.setScale(PIXEL_SCALE);
+    this.ultimateExplosion.setVisible(false);
+
     this.createKeyboardControls();
     this.createMouse();
 
@@ -109,6 +133,9 @@ export class Player extends Actor {
     this.player.depth = this.player.y + this.player.height;
     this.leftHand.depth = this.player.depth - 0.1;
     this.rightHand.depth = this.player.depth + 0.1;
+
+    this.ultimateExplosion.depth =
+      this.player.y + this.ultimateExplosion.height;
 
     this.handleKeyboard();
     this.updateHandPosition();
@@ -135,6 +162,14 @@ export class Player extends Actor {
         repeat: -1,
       });
     });
+    ["ultimate-attack", "ultimate-explosion"].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 10,
+        repeat: 0,
+      });
+    });
     scene.anims.create({
       key: "axe-attack",
       frames: scene.anims.generateFrameNumbers("axe-attack"),
@@ -151,8 +186,14 @@ export class Player extends Actor {
       this.mouse.copy(pointer);
     });
 
-    this.scene.input.on("pointerdown", () => {
-      this.trySwingAxe();
+    this.scene.input.on("pointerdown", (pointer) => {
+      if (pointer.button == 0) {
+        this.trySwingAxe();
+      } else if (pointer.button == 2) {
+        this.tryUltimateAbility();
+      } else {
+        console.log(`got pointer ${pointer.button}`);
+      }
     });
   }
 
@@ -396,6 +437,48 @@ export class Player extends Actor {
         this.rightHand.setVisible(true);
       });
     }
+  }
+
+  tryUltimateAbility() {
+    if (this.dodge.gracePeriod && this.attack.gracePeriod) {
+      this.attack.attacking = true;
+      this.attack.gracePeriod = false;
+
+      this.leftHand.setVisible(false);
+      this.rightHand.setVisible(false);
+
+      this.player.play("ultimate-attack");
+
+      this.scene.time.delayedCall(
+        ULTIMATE_ATTACK_GRACE_PERIOD,
+        () => (this.attack.gracePeriod = true)
+      );
+
+      this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        this.scene.time.delayedCall(PLAYER_AFTER_ULTIMATE_DELAY, () => {
+          this.attack.attacking = false;
+          this.leftHand.setVisible(true);
+          this.rightHand.setVisible(true);
+        });
+
+        this.scene.cameras.main.shake(500);
+
+        this.spawnUltimateExplosion();
+      });
+    }
+  }
+
+  spawnUltimateExplosion() {
+    this.ultimateExplosion.setVisible(true);
+    this.ultimateExplosion.setPosition(this.player.x, this.player.y);
+    this.ultimateExplosion.play("ultimate-explosion");
+
+    this.ultimateExplosion.on(
+      Phaser.Animations.Events.ANIMATION_COMPLETE,
+      () => {
+        this.ultimateExplosion.setVisible(false);
+      }
+    );
   }
 
   /**

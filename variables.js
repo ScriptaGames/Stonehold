@@ -11,6 +11,9 @@ export const PLAYER_BASE_DAMAGE = 1;
 /** Base player speed. */
 export const PLAYER_SPEED = 400;
 
+/** How long to freeze the final frame of ultimate attack animation */
+export const PLAYER_AFTER_ULTIMATE_DELAY = 500;
+
 /** How much speed boost dodge should give.  Added to base player speed during a dodge. */
 export const DODGE_SPEED_BONUS = 1500;
 
@@ -25,6 +28,9 @@ export const DODGE_GRACE_PERIOD = 300;
 
 /** From attack start, how long until the player can start moving and dodging again. */
 export const ATTACK_GRACE_PERIOD = 550;
+
+/** From attack start, how long until the player can start moving and dodging again. */
+export const ULTIMATE_ATTACK_GRACE_PERIOD = 1000;
 
 /** How far from the player the weapon should hover. */
 export const WEAPON_HOVER_DISTANCE = 34;
