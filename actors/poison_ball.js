@@ -5,21 +5,25 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
     super(scene, 0, 0, "poison-ball");
-    
+
     scene.physics.add.existing(this);
 
     this.setDataEnabled(true);
     this.data.set("actor", this);
 
-    scene.physics.add.overlap(this, scene.player.player, (projectile, player, colInfo) => {
-      if (this.active) {
-        let poisonActor = projectile.data.get("actor");
-        let playerActor = player.data.get("actor");
-        playerActor.inflictDamage(poisonActor.damage);
-        this.spawnExplosion();
-        this.die();
+    scene.physics.add.overlap(
+      this,
+      scene.player.player,
+      (projectile, player, colInfo) => {
+        if (this.active) {
+          let poisonActor = projectile.data.get("actor");
+          let playerActor = player.data.get("actor");
+          playerActor.inflictDamage(poisonActor.damage);
+          this.spawnExplosion();
+          this.die();
+        }
       }
-    });
+    );
 
     // adjust hitbox
     this.body.setSize(16, 16);
@@ -40,7 +44,7 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
     this.scene.time.addEvent({
       delay: 10000,
       callback: this.die,
-      callbackScope: this
+      callbackScope: this,
     });
   }
 
