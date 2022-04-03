@@ -55,14 +55,23 @@ class HubScene extends Phaser.Scene {
       this.player.player,
       this.doors,
       (player, door, colInfo) => {
-        console.log("overlap: " + door.info.name);
-        this.room_manager.initChain(door.info);
-        let room_config = this.room_manager.nextRoom();
-        this.scene.start(room_config.key, room_config.config);
+        this.enterDoor(door);
       }
     );
 
     this.cameras.main.startFollow(this.player.player, true, 0.4, 0.4);
+
+    // uncomment this to go straight into a room, helpful for quick iteration
+    // on certain things
+    // this.enterDoor(this.doors.children.getArray()[5]);
+  }
+
+  /** @param {HubDoor} door */
+  enterDoor(door) {
+    console.log("overlap: " + door.info.name);
+    this.room_manager.initChain(door.info);
+    let room_config = this.room_manager.nextRoom();
+    this.scene.start(room_config.key, room_config.config);
   }
 
   update() {
