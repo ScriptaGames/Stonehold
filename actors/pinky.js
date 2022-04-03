@@ -175,6 +175,7 @@ export class Pinky extends Actor {
   }
 
   playDeathAnim() {
+    super.playDeathAnim();
     console.log("playing pinky death anim");
     this.pinky.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
     this.pinky.anims.stop();

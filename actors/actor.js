@@ -87,23 +87,31 @@ export class Actor {
 
     // play the actor's unique death animation
     this.playDeathAnim();
+  }
 
-    // start death effect
+  /** Play the actor's death animation.  Override this to customize the death anim. */
+  playDeathAnim() {
+    this.scene.tweens.addCounter({
+      from: 255,
+      to: 0,
+      duration: 500,
+      ease: Phaser.Math.Easing.Elastic.In, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
+      onUpdate: (tween) => {
+        const value = Math.floor(tween.getValue());
+        this.mainSprite.setTint(
+          Phaser.Display.Color.GetColor(value, value, value)
+        );
+      },
+    });
 
     this.scene.tweens.add({
       targets: this.mainSprite,
-      tint: 0x00000000,
+      alpha: 0, // the property to tween
       duration: 1500, // ms
-      ease: Phaser.Math.Easing.Linear, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
+      ease: Phaser.Math.Easing.Quartic.In, // https://easings.net/ and https://photonstorm.github.io/phaser3-docs/Phaser.Math.Easing.html
       onComplete: () => {
-        console.log("ACTOR has ceased to be");
+        this.mainSprite.destroy();
       },
     });
-  }
-
-  playDeathAnim() {
-    console.log(
-      "Actor.playDeathAnim called, this should be overidden in the actor"
-    );
   }
 }
