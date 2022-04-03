@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import RoomManager from "./plugins/room_manager";
+import CellScene from "./scenes/cell";
 import HubScene from "./scenes/hub";
 import RoomScene from "./scenes/room";
 import MovementScene from "./scenes/movement";
@@ -32,5 +33,5 @@ new Phaser.Game({
       debug: true,
     },
   },
-  scene: [MainMenuScene, HubScene, RoomScene],
+  scene: [MainMenuScene, CellScene, HubScene, RoomScene],
 });
