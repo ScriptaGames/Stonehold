@@ -364,7 +364,6 @@ export class Player {
 
       this.smear.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         this.attack.attacking = false;
-        this.smear.body.enable = false;
         this.leftHand.setVisible(true);
         this.rightHand.setVisible(true);
       });

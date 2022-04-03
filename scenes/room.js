@@ -118,7 +118,9 @@ class RoomScene extends Phaser.Scene {
         let pinkyActor = enemy.data.get("actor");
 
         playerActor.applyDamage(pinkyActor.getAttackDamage());
-      }
+      },
+      // disable player collision during the dodge grace period
+      () => this.player.dodge.gracePeriod
     );
 
     this.keyEscape = this.input.keyboard.addKey(
