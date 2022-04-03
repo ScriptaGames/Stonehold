@@ -47,7 +47,7 @@ export class Actor {
    * Cause damage to this actor.
    * @param {number} inflictedDamage
    */
-  inflictDamage(inflictedDamage) {
+  takeDamage(inflictedDamage) {
     if (this.vulnerable) {
       this.hp -= inflictedDamage;
 
@@ -116,4 +116,10 @@ export class Actor {
       },
     });
   }
+
+  /**
+   * Meant to be overridden.  This method is run so the actor can do any
+   * custom stuff when it deals damage to another, like playing sfx.
+   */
+  dealDamage() {}
 }

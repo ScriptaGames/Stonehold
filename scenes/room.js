@@ -128,7 +128,8 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
 
-        playerActor.inflictDamage(enemyActor.damage);
+        enemyActor.dealDamage();
+        playerActor.takeDamage(enemyActor.damage);
       },
       // disable player collision during the dodge grace period
       () => this.player.vulnerable
@@ -149,7 +150,8 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
 
-        enemyActor.inflictDamage(this.player.damage);
+        this.player.dealDamage();
+        enemyActor.takeDamage(this.player.damage);
       },
       // check collision only when the axe is active, and when the enemy is vulnerable
       (player, enemy) => this.player.attack.activeFrame && enemy.vulnerable

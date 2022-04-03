@@ -18,7 +18,7 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
         if (this.active) {
           let poisonActor = projectile.data.get("actor");
           let playerActor = player.data.get("actor");
-          playerActor.inflictDamage(poisonActor.damage);
+          playerActor.takeDamage(poisonActor.damage);
           this.spawnExplosion();
           this.die();
         }
@@ -54,7 +54,7 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
     let explosion = this.scene.add.sprite(this.x, this.y);
     explosion.play("poison-ball-explosion");
     explosion.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      this.destroy();
+      explosion.destroy();
     });
   }
 

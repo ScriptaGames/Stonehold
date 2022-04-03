@@ -123,13 +123,13 @@ export class Player extends Actor {
         }
       }
     );
-    // stop footstep sfx immediately w
-    this.player.on(Phaser.Animations.Events.ANIMATION_STOP, () => {
+    // stop footstep sfx immediately when the dwarf-run animation is stopped or completed
+    this.player.on(Phaser.Animations.Events.ANIMATION_STOP, (anim) => {
       if (anim.key == "dwarf-run") {
         this.scene.sound.stopByKey("footstep");
       }
     });
-    this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+    this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (anim) => {
       if (anim.key == "dwarf-run") {
         this.scene.sound.stopByKey("footstep");
       }
@@ -445,7 +445,7 @@ export class Player extends Actor {
   }
 
   playDeathAnim() {
-    this.scene.sound.play();
+    this.scene.sound.play("player-hit-aah");
     this.scene.tweens.addCounter({
       from: 255,
       to: 0,
@@ -465,9 +465,15 @@ export class Player extends Actor {
    * Cause damage to this actor.
    * @param {number} inflictedDamage
    */
-  inflictDamage(inflictedDamage) {
-    super.inflictDamage(inflictedDamage);
+  takeDamage(inflictedDamage) {
+    if (this.vulnerable) {
+      console.log("player damaged");
+      this.scene.sound.play("player-damaged");
+    }
+    super.takeDamage(inflictedDamage);
+  }
 
-    this.scene.sound.play("player-damaged");
+  dealDamage() {
+    this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
   }
 }
