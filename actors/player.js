@@ -94,6 +94,7 @@ export class Player {
     // set a pretty-good not-too-bad fairly accurate hitbox
     /** @type {Phaser.Physics.Arcade.Body} */
     this.smearBody = this.smear.body;
+    this.smearBody.immovable = true;
     this.weaponLive(false);
 
     this.createKeyboardControls();
