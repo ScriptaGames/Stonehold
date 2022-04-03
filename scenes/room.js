@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
+import { GraphQLClient } from "../lib/GraphQLClient"
+
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -9,6 +11,8 @@ class RoomScene extends Phaser.Scene {
       ...config,
       key: "RoomScene",
     });
+
+    this.gqlClient = new GraphQLClient();
   }
 
   init(data) {
@@ -149,13 +153,13 @@ class RoomScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.ESC
     );
 
-    this.events.addListener("actor-death", (actor) => {
+    this.events.addListener("actor-death", async (actor) => {
       if (actor instanceof Player) {
         // TODO respawn in the player's room
         console.log("PLAYER DIED OH NOOOOOOOO");
       } else {
         console.log("ENEMY DIED OH YEAAAAAH");
-        this.enemyKilled();
+        await this.enemyKilled();
       }
     });
   }
@@ -169,18 +173,26 @@ class RoomScene extends Phaser.Scene {
   /**
    * Notify this room that an enemy was killed.
    */
-  enemyKilled() {
+  async enemyKilled() {
     this.numEnemies -= 1;
     console.log(`enemy killed! ${this.numEnemies} remain`);
     if (this.numEnemies == 0) {
-      this.unlockDoor();
+      await this.unlockDoor();
     }
   }
 
   /** Set the door to unlocked. */
-  unlockDoor() {
+  async unlockDoor() {
     this.doorUnlocked = true;
     this.doorExit.setTexture("door_open");
+
+    // Increment the players rooms cleared count
+    const playerId = localStorage.getItem("player_id");
+    let roomsCleared = parseInt(localStorage.getItem("player_rooms_cleared"));
+    roomsCleared++;
+    const updatedPlayer = await this.gqlClient.updatePlayer(playerId, roomsCleared);
+    console.debug('updatedPlayer:', updatedPlayer);
+    localStorage.setItem("player_rooms_cleared", roomsCleared.toString());
   }
 
   exitingRoom() {
