@@ -111,7 +111,6 @@ class RoomScene extends Phaser.Scene {
        * @param {Phaser.GameObjects.GameObject} enemy
        */
       (player, enemy, colInfo) => {
-        console.log("player collided with", enemy, player, colInfo);
         /** @type {Player} */
         let playerActor = player.data.get("actor");
         /** @type {Pinky} */
