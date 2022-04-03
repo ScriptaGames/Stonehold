@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { Actor } from "./actor";
 import {
   PLAYER_SPEED,
   DODGE_SPEED_BONUS,
@@ -11,12 +12,12 @@ import {
   PLAYER_BASE_HP,
 } from "../variables";
 
-export class Player {
+export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
-    this.scene = scene;
+    super({ hp: PLAYER_BASE_HP });
 
-    this.hp = PLAYER_BASE_HP;
+    this.scene = scene;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -86,15 +87,15 @@ export class Player {
 
     // this.scene.physics.add.existing(this.hands);
 
-    this.smear = this.scene.add.sprite(100, 100, "axe-attack");
-    this.smear.setScale(PIXEL_SCALE);
-    this.smear.visible = false;
-    this.scene.physics.add.existing(this.smear);
+    this.axe = this.scene.add.sprite(100, 100, "axe-attack");
+    this.axe.setScale(PIXEL_SCALE);
+    this.axe.visible = false;
+    this.scene.physics.add.existing(this.axe);
 
     // set a pretty-good not-too-bad fairly accurate hitbox
     /** @type {Phaser.Physics.Arcade.Body} */
-    this.smearBody = this.smear.body;
-    this.smearBody.immovable = true;
+    this.axeBody = this.axe.body;
+    this.axeBody.immovable = true;
     this.weaponLive(false);
 
     this.createKeyboardControls();
@@ -324,7 +325,7 @@ export class Player {
 
     // also update the weapon hitbox position
     if (!this.attack.attacking) {
-      this.smear.copyPosition(this.player);
+      this.axe.copyPosition(this.player);
     }
   }
 
@@ -343,7 +344,7 @@ export class Player {
       this.player.setFlipX(this.mouse.x - this.player.x < 0);
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
-      this.smear.setFlipX(this.player.flipX);
+      this.axe.setFlipX(this.player.flipX);
 
       const smearOffset = new Phaser.Math.Vector2()
         .copy(this.mouse)
@@ -354,22 +355,22 @@ export class Player {
       const smearPos = smearOffset.clone().add(this.player);
 
       // rotate towards the cursor
-      this.smear.setRotation(smearOffset.angle() * 2);
+      this.axe.setRotation(smearOffset.angle() * 2);
       // apply special compensation to make downward attacks look better (FRAGILE, hope to replace)
       if (smearOffset.y > 0) {
         if (smearOffset.x > 0) {
-          this.smear.rotation -= smearOffset.y / 36;
+          this.axe.rotation -= smearOffset.y / 36;
         } else {
-          this.smear.rotation += smearOffset.y / 36;
+          this.axe.rotation += smearOffset.y / 36;
         }
       }
 
-      this.smearBody.position.copy(smearPos);
+      this.axeBody.position.copy(smearPos);
 
-      this.smear.copyPosition(this.smearBody.position);
+      this.axe.copyPosition(this.axeBody.position);
 
       // play attack anims
-      this.smear.play({
+      this.axe.play({
         key: "axe-attack",
         hideOnComplete: true,
         showOnStart: true,
@@ -383,7 +384,7 @@ export class Player {
         },
       });
 
-      this.smear.on(
+      this.axe.on(
         Phaser.Animations.Events.ANIMATION_UPDATE,
         /** @param {number} frameIndex */
         // not sure what the first three args are
@@ -393,7 +394,7 @@ export class Player {
         }
       );
 
-      this.smear.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.axe.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         this.attack.attacking = false;
         this.leftHand.setVisible(true);
         this.rightHand.setVisible(true);
@@ -407,24 +408,9 @@ export class Player {
    */
   weaponLive(enabled) {
     if (enabled) {
-      this.smearBody.setSize(27, 27);
+      this.axeBody.setSize(27, 27);
     } else {
-      this.smearBody.setSize(1, 1);
+      this.axeBody.setSize(1, 1);
     }
-  }
-
-  /** @param {number} damage */
-  applyDamage(damage) {
-    this.hp -= damage;
-
-    console.log(`player took ${damage} damage and is now at ${this.hp} hp`);
-
-    if (this.hp <= 0) {
-      this.die();
-    }
-  }
-
-  die() {
-    console.log("TODO: death");
   }
 }

@@ -118,7 +118,7 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let pinkyActor = enemy.data.get("actor");
 
-        playerActor.applyDamage(pinkyActor.getAttackDamage());
+        playerActor.inflictDamage(pinkyActor.damage);
       },
       // disable player collision during the dodge grace period
       () => this.player.dodge.gracePeriod
@@ -127,7 +127,7 @@ class RoomScene extends Phaser.Scene {
     // collide player weapon with enemies
 
     this.physics.add.collider(
-      this.player.smear,
+      this.player.axe,
       [
         ...this.pinkies.map((pinky) => pinky.pinky),
         ...this.captains.map((captain) => captain.captain),

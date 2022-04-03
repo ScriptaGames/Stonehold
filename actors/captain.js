@@ -1,12 +1,16 @@
 import Phaser from "phaser";
-import { PIXEL_SCALE, CAPTAIN_ATTACK_DAMAGE } from "../variables";
+import { Actor } from "./actor";
+import {
+  PIXEL_SCALE,
+  CAPTAIN_ATTACK_DAMAGE,
+  CAPTAIN_BASE_HP,
+} from "../variables";
 
-export class Captain {
+export class Captain extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
+    super({ hp: CAPTAIN_BASE_HP, damage: CAPTAIN_ATTACK_DAMAGE });
     this.scene = scene;
-
-    this.baseAttackDamage = CAPTAIN_ATTACK_DAMAGE;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {

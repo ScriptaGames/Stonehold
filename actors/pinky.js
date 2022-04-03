@@ -1,12 +1,19 @@
 import Phaser from "phaser";
-import { PIXEL_SCALE, PINKY_ATTACK_DAMAGE, PINKY_SPEED, WEAPON_HOVER_DISTANCE, PINKY_ATTACK_RANGE } from "../variables";
+import { Actor } from "./actor";
+import {
+  PIXEL_SCALE,
+  PINKY_ATTACK_DAMAGE,
+  PINKY_SPEED,
+  WEAPON_HOVER_DISTANCE,
+  PINKY_ATTACK_RANGE,
+  PINKY_BASE_HP,
+} from "../variables";
 
-export class Pinky {
+export class Pinky extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene) {
+    super({ hp: PINKY_BASE_HP, damage: PINKY_ATTACK_DAMAGE });
     this.scene = scene;
-
-    this.baseAttackDamage = PINKY_ATTACK_DAMAGE;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -39,7 +46,7 @@ export class Pinky {
     /** @type {Phaser.Physics.Arcade.Body} */
     this.pinkyBody = this.pinky.body;
     this.pinkyBody.immovable = true;
-    
+
     // adjust hitbox
     this.pinkyBody.setSize(28, 26);
     this.pinkyBody.setOffset(17, 28);
@@ -60,7 +67,7 @@ export class Pinky {
     this.playerDistance = new Phaser.Math.Vector2()
       .copy(this.scene.player.player)
       .subtract(this.pinky);
-    
+
     if (this.playerDistance.length() < PINKY_ATTACK_RANGE) {
       this.attack();
     }
@@ -96,9 +103,7 @@ export class Pinky {
     if (!this.isAttacking) {
       const targetX = this.scene.player.player.x;
       this.pinky.setFlipX(targetX > this.pinky.x);
-      const vel = this.playerDistance
-        .normalize()
-        .scale(PINKY_SPEED);
+      const vel = this.playerDistance.normalize().scale(PINKY_SPEED);
       this.pinkyBody.setVelocity(vel.x, vel.y);
     }
   }
@@ -108,7 +113,7 @@ export class Pinky {
     if (this.isAttacking) return;
     const targetX = this.scene.player.player.x;
     this.pinky.setFlipX(targetX > this.pinky.x);
-    
+
     this.isAttacking = true;
 
     this.pinkyBody.setVelocity(0, 0);
@@ -127,18 +132,21 @@ export class Pinky {
     this.poison.copyPosition(poisonPos);
 
     // play attack anims
-    this.poison.playAfterDelay({
-      key: "poison",
-      hideOnComplete: true,
-      showOnStart: true,
-    }, 600);
+    this.poison.playAfterDelay(
+      {
+        key: "poison",
+        hideOnComplete: true,
+        showOnStart: true,
+      },
+      600
+    );
 
     this.pinky.anims.stop();
     this.pinky.play("pinky-attack");
 
     this.pinky.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       if (this.pinky.anims.currentAnim.key === "pinky-attack") {
-        this.pinky.play({key: "pinky-idle"});
+        this.pinky.play({ key: "pinky-idle" });
       } else if (this.pinky.anims.currentAnim.key === "pinky-idle") {
         this.pinky.play("pinky-run");
         this.isAttacking = false;

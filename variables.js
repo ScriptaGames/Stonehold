@@ -35,8 +35,14 @@ export const PIXEL_SCALE = 3;
 /** Damage from a pinky's attack. */
 export const PINKY_ATTACK_DAMAGE = 1;
 
+/** Pinky starting HP. */
+export const PINKY_BASE_HP = 7;
+
 /** Damage from a captain's attack. */
 export const CAPTAIN_ATTACK_DAMAGE = 1;
+
+/** Captain starting HP. */
+export const CAPTAIN_BASE_HP = 7;
 
 /** Pinky's speed */
 export const PINKY_SPEED = 100;

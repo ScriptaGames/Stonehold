@@ -24,7 +24,7 @@ new Phaser.Game({
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
   dom: {
-    createContainer: true
+    createContainer: true,
   },
   physics: {
     default: "arcade",
@@ -32,5 +32,5 @@ new Phaser.Game({
       debug: true,
     },
   },
-  scene: [MainMenuScene, HubScene, RoomScene],
+  scene: [HubScene, RoomScene],
 });
