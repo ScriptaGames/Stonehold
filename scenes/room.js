@@ -64,10 +64,10 @@ class RoomScene extends Phaser.Scene {
     }
 
     let maxEnemies = this.roomConfig.numEnemies;
-    let numEnemies = this.room_manager.rnd.between(maxEnemies / 2, maxEnemies);
+    this.numEnemies = this.room_manager.rnd.between(maxEnemies / 2, maxEnemies);
     let percentCaptains =
       (100 * this.room_manager.currentChainDepth) / maxEnemies;
-    for (let e = 0; e < numEnemies; e++) {
+    for (let e = 0; e < this.numEnemies; e++) {
       let x = this.room_manager.rnd.between(20, 800);
       let y = this.room_manager.rnd.between(20, 800);
       let enemyKey = "enemy";
@@ -148,12 +148,39 @@ class RoomScene extends Phaser.Scene {
     this.keyEscape = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ESC
     );
+
+    this.events.addListener("actor-death", (actor) => {
+      if (actor instanceof Player) {
+        // TODO respawn in the player's room
+        console.log("PLAYER DIED OH NOOOOOOOO");
+      } else {
+        console.log("ENEMY DIED OH YEAAAAAH");
+        this.enemyKilled();
+      }
+    });
   }
 
   update() {
     this.player.update();
     this.pinkies.forEach((pinky) => pinky.update());
     this.captains.forEach((captain) => captain.update());
+  }
+
+  /**
+   * Notify this room that an enemy was killed.
+   */
+  enemyKilled() {
+    this.numEnemies -= 1;
+    console.log(`enemy killed! ${this.numEnemies} remain`);
+    if (this.numEnemies == 0) {
+      this.unlockDoor();
+    }
+  }
+
+  /** Set the door to unlocked. */
+  unlockDoor() {
+    this.doorUnlocked = true;
+    this.doorExit.setTexture("door_open");
   }
 
   exitingRoom() {

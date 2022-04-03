@@ -87,6 +87,8 @@ export class Actor {
 
     // play the actor's unique death animation
     this.playDeathAnim();
+
+    this.scene.events.emit("actor-death", this);
   }
 
   /** Play the actor's death animation.  Override this to customize the death anim. */
