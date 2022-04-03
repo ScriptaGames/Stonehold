@@ -6,6 +6,7 @@ import { Captain } from "../actors/captain";
 class RoomScene extends Phaser.Scene {
   constructor(config) {
     super({
+      ...config,
       key: "RoomScene",
     });
 

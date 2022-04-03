@@ -6,6 +6,7 @@ import { GraphQLClient } from "../lib/GraphQLClient.js";
 class HubScene extends Phaser.Scene {
   constructor(config) {
     super({
+      ...config,
       key: "HubScene",
     });
 
