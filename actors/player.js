@@ -319,14 +319,6 @@ export class Player extends Actor {
 
     this.rightHand.copyPosition(this.player);
     this.rightHand.setFlipX(this.player.flipX);
-  }
-
-  updateHandPosition() {
-    this.leftHand.copyPosition(this.player);
-    this.leftHand.setFlipX(this.player.flipX);
-
-    this.rightHand.copyPosition(this.player);
-    this.rightHand.setFlipX(this.player.flipX);
 
     // also update the weapon hitbox position
     if (!this.attack.attacking) {
