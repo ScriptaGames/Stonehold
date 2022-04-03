@@ -117,16 +117,22 @@ export class Player extends Actor {
     this.player.on(
       Phaser.Animations.Events.ANIMATION_UPDATE,
       (anim, b, c, frameIndex) => {
+        // when dwarf-run hits frame 3, play footstep sfx
         if (anim.key == "dwarf-run" && frameIndex == 3) {
           this.scene.sound.play("footstep");
         }
       }
     );
+    // stop footstep sfx immediately w
     this.player.on(Phaser.Animations.Events.ANIMATION_STOP, () => {
-      this.scene.sound.stopByKey("footstep");
+      if (anim.key == "dwarf-run") {
+        this.scene.sound.stopByKey("footstep");
+      }
     });
     this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      this.scene.sound.stopByKey("footstep");
+      if (anim.key == "dwarf-run") {
+        this.scene.sound.stopByKey("footstep");
+      }
     });
   }
 
