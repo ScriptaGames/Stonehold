@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { PIXEL_SCALE, CAPTAIN_ATTACK_DAMAGE, CAPTAIN_SPEED, CAPTAIN_ATTACK_RANGE, CAPTAIN_PROJECTILE_SPEED, CAPTAIN_IDLE_AFTER_ATTACK } from "../variables";
+import { PoisonBall } from "./poison_ball";
 
 export class Captain {
   /** @param {Phaser.Scene} scene */
@@ -26,10 +27,14 @@ export class Captain {
         frameHeight: 64,
       }
     );
-    scene.load.spritesheet("poison-ball", "images/poisonBall_strip.png", {
-      frameWidth: 64,
-      frameHeight: 64,
-    });
+    scene.load.spritesheet(
+      "poison-ball",
+      "images/poisonBall_strip.png",
+      {
+        frameWidth: 36,
+        frameHeight: 36,
+      }
+    );
   }
   create() {
     this.captain = this.scene.add.sprite(250, 500);
@@ -39,11 +44,11 @@ export class Captain {
     this.captain.setDataEnabled();
     this.captain.data.set("actor", this);
 
-    // this.ball = this.scene.add.sprite(this.captain.x, this.captain.y, "poison-ball");
-    // this.ball.setScale(PIXEL_SCALE);
-    // this.ball.play("poison-ball");
-    // this.scene.physics.add.existing(this.ball);
-    //ball.body.setVelocity(this.playerDistance.normalize().scale(1));
+    this.poisonBalls = this.scene.add.group({
+      classType: PoisonBall,
+      maxSize: 50,
+      runChildUpdate: true,
+    });
 
     // save a reference to the captain body with the correct type
     /** @type {Phaser.Physics.Arcade.Body} */
@@ -55,8 +60,6 @@ export class Captain {
     this.captainBody.setOffset(17, 28);
 
     this.isAttacking = false;
-
-    this.projectiles = [];
   }
 
   update() {
@@ -70,8 +73,6 @@ export class Captain {
       this.attack();
     }
 
-    this.projectiles.forEach((projectile) => projectile.update());
-
     this.handleMovement();
   }
 
@@ -81,7 +82,7 @@ export class Captain {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["captain-idle", "captain-run"].forEach(
+    ["captain-idle", "captain-run", "poison-ball"].forEach(
       (name) => {
         scene.anims.create({
           key: name,
@@ -91,14 +92,16 @@ export class Captain {
         });
       }
     );
-    ["captain-attack", "poison-ball"].forEach(
+    ["captain-attack"].forEach(
       (name) => {
-        scene.anims.create({
+        let res = scene.anims.create({
           key: name,
           frames: scene.anims.generateFrameNumbers(name),
           frameRate: 10,
           repeat: 0,
         });
+
+        console.log(`anim ${name} returned ${JSON.stringify(res)}`);
       }
     );
   }
@@ -116,7 +119,7 @@ export class Captain {
 
   /** Attack, if we're in a state that allows attacking. */
   attack() {
-    if (this.isAttacking) return;
+    if (this.isAttacking || !this.playerDistance) return;
 
     const targetX = this.scene.player.player.x;
     this.captain.setFlipX(targetX > this.captain.x);
@@ -124,6 +127,20 @@ export class Captain {
     this.isAttacking = true;
 
     this.captainBody.setVelocity(0, 0);
+    
+    const poisonOffset = new Phaser.Math.Vector2(20, -50);
+    if (this.captain.flipX) {
+      poisonOffset.x *= -1;
+    }
+    const poisonPos = new Phaser.Math.Vector2()
+      .copy(this.captain)
+      .subtract(poisonOffset);
+
+    this.scene.time.addEvent({
+      delay: 600,
+      callback: () => this.spawnPoisonBalls(poisonPos, this.playerDistance),
+      callbackScope: this
+    });
 
     this.captain.anims.stop();
     this.captain.play("captain-attack");
@@ -141,6 +158,23 @@ export class Captain {
   attackComplete() {
     this.captain.play("captain-run");
     this.isAttacking = false;
+  }
+
+  spawnPoisonBalls(pos, dir) {
+    this.scene.time.addEvent({
+      delay: 50,
+      callback: () => this.spawnPoisonBall(pos, dir),
+      callbackScope: this,
+      repeat: 4,
+    });
+  }
+
+  spawnPoisonBall(pos, dir) {
+    let poisonBall = this.poisonBalls.get();
+    if (poisonBall) {
+      
+      poisonBall.fire(pos.x, pos.y, dir);
+    }
   }
 
   /** Get the attack damage of this captain.  May be adjusted from  */
