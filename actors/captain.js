@@ -161,6 +161,8 @@ export class Captain extends Actor {
   }
 
   attackComplete() {
+    if (!this.isAlive) return;
+
     this.captain.play("captain-run");
     this.isAttacking = false;
   }

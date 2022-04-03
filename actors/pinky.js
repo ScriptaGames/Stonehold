@@ -165,6 +165,8 @@ export class Pinky extends Actor {
   }
 
   attackComplete() {
+    if (!this.isAlive) return;
+
     this.pinky.play("pinky-run");
     this.isAttacking = false;
   }
