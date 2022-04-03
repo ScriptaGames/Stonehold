@@ -22,7 +22,9 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
           this.spawnExplosion();
           this.die();
         }
-      }
+      },
+      // collide only if the player is vulnerable
+      () => scene.player.vulnerable
     );
 
     // adjust hitbox
@@ -57,7 +59,6 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
   }
 
   die() {
-    this.setActive(false);
-    this.setVisible(false);
+    this.destroy();
   }
 }
