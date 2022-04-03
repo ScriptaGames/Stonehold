@@ -467,7 +467,6 @@ export class Player extends Actor {
    */
   takeDamage(inflictedDamage) {
     if (this.vulnerable) {
-      console.log("player damaged");
       this.scene.sound.play("player-damaged");
     }
     super.takeDamage(inflictedDamage);
