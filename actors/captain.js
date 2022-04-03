@@ -35,6 +35,14 @@ export class Captain {
         frameHeight: 36,
       }
     );
+    scene.load.spritesheet(
+      "poison-ball-explosion",
+      "images/poisonBall_explosion_strip.png",
+      {
+        frameWidth: 96,
+        frameHeight: 96,
+      }
+    );
   }
   create() {
     this.captain = this.scene.add.sprite(250, 500);
@@ -92,7 +100,7 @@ export class Captain {
         });
       }
     );
-    ["captain-attack"].forEach(
+    ["captain-attack", "poison-ball-explosion"].forEach(
       (name) => {
         let res = scene.anims.create({
           key: name,
