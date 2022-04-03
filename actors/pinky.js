@@ -39,6 +39,10 @@ export class Pinky {
     /** @type {Phaser.Physics.Arcade.Body} */
     this.pinkyBody = this.pinky.body;
     this.pinkyBody.immovable = true;
+    
+    // adjust hitbox
+    this.pinkyBody.setSize(28, 26);
+    this.pinkyBody.setOffset(17, 28);
 
     this.poison = this.scene.add.sprite(250, 500, "poison");
     this.poison.setScale(PIXEL_SCALE);

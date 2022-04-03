@@ -9,7 +9,7 @@ export const PLAYER_BASE_HP = 1;
 export const PLAYER_SPEED = 400;
 
 /** How much speed boost dodge should give.  Added to base player speed during a dodge. */
-export const DODGE_SPEED_BONUS = 1400;
+export const DODGE_SPEED_BONUS = 1500;
 
 /** How long, from dodge start, until the next dodge can start. */
 export const DODGE_COOLDOWN = 1000;
@@ -24,7 +24,7 @@ export const DODGE_GRACE_PERIOD = 300;
 export const ATTACK_GRACE_PERIOD = 550;
 
 /** How far from the player the weapon should hover. */
-export const WEAPON_HOVER_DISTANCE = 30;
+export const WEAPON_HOVER_DISTANCE = 34;
 
 /** GraphQL API URL **/
 export const API_URL = "http://66.228.50.201:3000/api/graphql";

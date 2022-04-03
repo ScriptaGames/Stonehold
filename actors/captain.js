@@ -43,6 +43,10 @@ export class Captain {
     /** @type {Phaser.Physics.Arcade.Body} */
     this.captainBody = this.captain.body;
     this.captainBody.immovable = true;
+
+    // adjust hitbox
+    this.captainBody.setSize(28, 26);
+    this.captainBody.setOffset(17, 28);
   }
 
   update() {

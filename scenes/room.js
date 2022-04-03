@@ -100,6 +100,8 @@ class RoomScene extends Phaser.Scene {
       }
     );
 
+    // collide player with enemies
+
     this.physics.add.collider(
       this.player.player,
       [
@@ -111,7 +113,6 @@ class RoomScene extends Phaser.Scene {
        * @param {Phaser.GameObjects.GameObject} enemy
        */
       (player, enemy, colInfo) => {
-        console.log("player collided with", enemy, player, colInfo);
         /** @type {Player} */
         let playerActor = player.data.get("actor");
         /** @type {Pinky} */
@@ -121,6 +122,22 @@ class RoomScene extends Phaser.Scene {
       },
       // disable player collision during the dodge grace period
       () => this.player.dodge.gracePeriod
+    );
+
+    // collide player weapon with enemies
+
+    this.physics.add.collider(
+      this.player.smear,
+      [
+        ...this.pinkies.map((pinky) => pinky.pinky),
+        ...this.captains.map((captain) => captain.captain),
+      ],
+      /** @param {Phaser.GameObjects.GameObject} player
+       * @param {Phaser.GameObjects.GameObject} enemy
+       */
+      (player, enemy, colInfo) => {
+        console.log("HIT ENEMY");
+      }
     );
 
     this.keyEscape = this.input.keyboard.addKey(
