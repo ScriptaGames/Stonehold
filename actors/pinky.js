@@ -172,7 +172,7 @@ export class Pinky extends Actor {
     super.playDeathAnim();
     this.pinky.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
     this.pinky.anims.stop();
-    this.scene.sound.play("grunt-dies");
+    this.scene.sound.play("grunt-dies", { volume: 4 });
   }
 
   /**

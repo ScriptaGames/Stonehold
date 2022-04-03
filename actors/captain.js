@@ -203,7 +203,7 @@ export class Captain extends Actor {
     this.captain.removeAllListeners();
     this.captain.anims.stop();
     // this seems like a good death anim, with the hands flying up
-    this.scene.sound.play("captain-dies");
+    this.scene.sound.play("captain-dies", { volume: 4 });
   }
 
   dealDamage() {
