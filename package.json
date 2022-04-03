@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "node build.js -w",
     "build": "node build.js",
-    "fmt": "prettier --write 'build.js' 'main.js' 'scenes/**/*.js'"
+    "fmt": "prettier --write 'build.js' 'main.js' 'scenes/**/*.js' 'lib/**/*.js' 'plugins/**/*.js' 'actors/**/*.js'"
   },
   "type": "module",
   "dependencies": {
