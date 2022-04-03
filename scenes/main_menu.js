@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import { GraphQLClient } from "../lib/GraphQLClient.js";
 import shortUUID from "short-uuid";
+import ProfanityFilter from "bad-words-relaxed";
+import xss from "xss";
 
 export default class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +24,7 @@ export default class MainMenuScene extends Phaser.Scene {
       .createFromCache("nameform");
     const scene = this.scene;
     const gqlClient = this.gqlClient;
+    const filterName = this.filterName;
 
     // Populate previous players name
     const localPlayerName = localStorage.getItem("player_name");
@@ -42,7 +45,7 @@ export default class MainMenuScene extends Phaser.Scene {
 
         //
         if (inputText.value !== "") {
-          name = inputText.value;
+          name = filterName(inputText.value);
         } else {
           name = "Prisoner" + rn;
         }
@@ -79,5 +82,22 @@ export default class MainMenuScene extends Phaser.Scene {
         scene.start("HubScene", { name });
       }
     });
+  }
+
+  filterName(name) {
+    const profanityFilter = new ProfanityFilter();
+    let filtered_name = xss(name);
+
+    // now also remove quotes because they break the backend
+    filtered_name = filtered_name.replace(/["']/g, '');
+
+    // now also replace any profane words with astrix
+    filtered_name = profanityFilter.clean( filtered_name );
+
+    if (name.length > 20) {
+      filtered_name = filtered_name.substring(0, 20);
+    }
+
+    return filtered_name;
   }
 }
