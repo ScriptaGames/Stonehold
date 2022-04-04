@@ -5,6 +5,7 @@ import { Captain } from "../actors/captain";
 import { GraphQLClient } from "../lib/GraphQLClient";
 import { Level } from "../actors/level";
 import { PIXEL_SCALE, ULTIMATE_ATTACK_DAMAGE } from "../variables";
+import { Utils } from "../lib/utils.js";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -45,6 +46,9 @@ class RoomScene extends Phaser.Scene {
     Pinky.createAnims(this);
     Player.createAnims(this);
     Captain.createAnims(this);
+
+    console.debug("Creating RoomScene with config:", this.roomConfig);
+    console.debug("In my chain:", this.room_manager.myChain);
 
     this.player = new Player(this);
     this.player.create();
@@ -246,7 +250,9 @@ class RoomScene extends Phaser.Scene {
 
         // TODO: add a fade scene transition here
         setTimeout(() => {
-          this.scene.start("CellScene");
+          this.scene.start("CellScene", {
+            player: Utils.getLocalStoragePlayer(),
+          });
         }, 4000);
       } else {
         console.log("ENEMY DIED OH YEAAAAAH");

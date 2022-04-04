@@ -12,10 +12,12 @@ import {
   PINKY_IDLE_AFTER_ATTACK,
   PINKY_SPEED,
 } from "../variables";
+import { Utils } from "../lib/utils.js";
 
 class RoomManager extends Phaser.Plugins.BasePlugin {
   init() {
-    this.myName = "nicksmaddog";
+    this.localPlayer = Utils.getLocalStoragePlayer();
+    this.myID = this.localPlayer.id;
   }
 
   getRoomConfig(depth) {
@@ -116,7 +118,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
 
     this.unlockedDepth = player_data.rooms_cleared;
     this.currentChainDepth = 0;
-    this.myChain = player_data.name === this.myName;
+    this.myChain = player_data.id === this.myID;
   }
 
   nextRoom() {

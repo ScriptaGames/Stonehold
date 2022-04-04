@@ -37,12 +37,12 @@ class CellScene extends Phaser.Scene {
     Player.preload(this);
   }
 
-  async create() {
+  async create(data) {
+    console.debug("Create CellScene with player:", data.player);
+
     this.sound.play("hub-music", {
       loop: true,
     });
-
-    this.localPlayer = Utils.getLocalStoragePlayer();
 
     this.cameras.main.backgroundColor.setTo(46, 49, 62);
 
@@ -50,6 +50,8 @@ class CellScene extends Phaser.Scene {
     this.player = new Player(this);
     Player.createAnims(this);
     this.player.create();
+    this.player.player.x = 400;
+    this.player.player.y = 400;
 
     const cellFloor = this.add.sprite(
       this.cameras.main.width / 2,
@@ -102,7 +104,7 @@ class CellScene extends Phaser.Scene {
       (player, rec, colInfo) => {
         console.log("collided with room Door");
         this.sound.stopAll();
-        this.room_manager.initChain(this.localPlayer);
+        this.room_manager.initChain(data.player);
         let room_config = this.room_manager.nextRoom();
         this.scene.start(room_config.key, room_config.config);
       }
