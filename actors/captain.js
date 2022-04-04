@@ -143,9 +143,11 @@ export class Captain extends Actor {
       .copy(this.captain)
       .subtract(poisonOffset);
 
+    let poisonBallDirection = this.playerDistance;
+
     this.scene.time.addEvent({
       delay: 600,
-      callback: () => this.spawnPoisonBalls(poisonPos, this.playerDistance),
+      callback: () => this.spawnPoisonBalls(poisonPos, poisonBallDirection),
       callbackScope: this,
     });
 
@@ -170,9 +172,32 @@ export class Captain extends Actor {
   }
 
   spawnPoisonBalls(pos, dir) {
+    let patternChance = Phaser.Math.RND.frac() * 100;
+    if (patternChance < 50) {
+      this.linearSpawnPattern(pos, dir);
+    } else {
+      this.arcSpawnPattern(pos, dir);
+    }
+  }
+
+  linearSpawnPattern(pos, dir) {
     this.scene.time.addEvent({
       delay: 50,
       callback: () => this.spawnPoisonBall(pos, dir),
+      callbackScope: this,
+      repeat: 4,
+    });
+  }
+
+  arcSpawnPattern(pos, dir) {
+    const spreadAngle = Phaser.Math.DegToRad(10);
+    let offsetAngle = -1.5 * spreadAngle;
+    this.scene.time.addEvent({
+      delay: 50,
+      callback: () => {
+        this.spawnPoisonBall(pos, dir.rotate(offsetAngle));
+        offsetAngle += spreadAngle;
+      },
       callbackScope: this,
       repeat: 4,
     });
