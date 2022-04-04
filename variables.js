@@ -27,7 +27,13 @@ export const DODGE_DURATION = 800;
 export const DODGE_GRACE_PERIOD = 300;
 
 /** From attack start, how long until the player can start moving and dodging again. */
-export const ATTACK_GRACE_PERIOD = 550;
+export const ATTACK_GRACE_PERIOD = 350;
+
+/** From attack combo start, how long until the player can start moving and dodging again. */
+export const ATTACK_COMBO_GRACE_PERIOD = 250;
+
+/** From first attack start, how much time to accept input for second part of combo attack. */
+export const COMBO_ATTACK_INPUT_PERIOD = 350;
 
 /** From attack start, how long until the player can start moving and dodging again. */
 export const ULTIMATE_ATTACK_GRACE_PERIOD = 1000;

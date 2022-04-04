@@ -15,6 +15,8 @@ import {
   ULTIMATE_ATTACK_GRACE_PERIOD,
   ULTIMATE_ATTACK_RADIUS,
   ULTIMATE_CHARGE_PER_ENEMY,
+  COMBO_ATTACK_INPUT_PERIOD,
+  ATTACK_COMBO_GRACE_PERIOD,
 } from "../variables";
 import { Captain } from "./captain";
 
@@ -41,14 +43,27 @@ export class Player extends Actor {
     });
 
     scene.load.spritesheet(
-      "dwarf-attack",
+      "dwarf-attack1",
       "images/dwarfBody_attack_strip.png",
-      { frameWidth: 36, frameHeight: 36 }
+      { frameWidth: 36, frameHeight: 36, startFrame: 0, endFrame: 4 }
+    );
+    scene.load.spritesheet(
+      "dwarf-attack2",
+      "images/dwarfBody_attack_strip.png",
+      { frameWidth: 36, frameHeight: 36, startFrame: 5 }
     );
 
-    scene.load.spritesheet("axe-attack", "images/dwarfAxe_attack_strip.png", {
+    scene.load.spritesheet("axe-attack1", "images/dwarfAxe_attack_strip.png", {
       frameWidth: 36,
       frameHeight: 36,
+      startFrame: 0,
+      endFrame: 4,
+    });
+    scene.load.spritesheet("axe-attack2", "images/dwarfAxe_attack_strip.png", {
+      frameWidth: 36,
+      frameHeight: 36,
+      startFrame: 5,
+      endFrame: 8,
     });
 
     scene.load.spritesheet(
@@ -198,7 +213,8 @@ export class Player extends Actor {
       "dwarf-dodge",
       "left-hand",
       "right-hand",
-      "dwarf-attack",
+      "dwarf-attack1",
+      
     ].forEach((name) => {
       scene.anims.create({
         key: name,
@@ -215,11 +231,23 @@ export class Player extends Actor {
         repeat: 0,
       });
     });
-    scene.anims.create({
-      key: "axe-attack",
-      frames: scene.anims.generateFrameNumbers("axe-attack"),
-      frameRate: 15,
-      repeat: 0,
+    ["axe-attack1"].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 15,
+        repeat: 0,
+      });
+    });
+    ["axe-attack2","dwarf-attack2",].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 15,
+        repeat: 0,
+        startFrame: 5,
+        endFrame: 8,
+      });
     });
   }
 
@@ -233,6 +261,10 @@ export class Player extends Actor {
 
     this.scene.input.on("pointerdown", (pointer) => {
       if (pointer.button == 0) {
+        // if trying to attack while already attacking, then try a combo
+        if (this.attack.attacking) {
+          this.attack.performCombo = true;
+        }
         this.trySwingAxe();
       } else if (pointer.button == 2) {
         this.tryUltimateAbility();
@@ -260,6 +292,8 @@ export class Player extends Actor {
       gracePeriod: true,
       /** True when the axe is in one of it's "damage frames", ie the frames in the spritesheet where there's a BIG SWOOSH. */
       activeFrame: false,
+      /** True when attacking during the first sequence of the combo. */
+      performCombo: false,
     };
 
     this.kb = this.scene.input.keyboard.addKeys("W,A,S,D,SPACE,SHIFT");
@@ -454,19 +488,6 @@ export class Player extends Actor {
 
       this.axe.copyPosition(this.axeBody.position);
 
-      // play attack anims
-      this.axe.play({
-        key: "axe-attack",
-        hideOnComplete: true,
-        showOnStart: true,
-      });
-      this.player.play("dwarf-attack");
-
-      this.scene.time.delayedCall(
-        ATTACK_GRACE_PERIOD,
-        () => (this.attack.gracePeriod = true)
-      );
-
       this.axe.on(
         Phaser.Animations.Events.ANIMATION_UPDATE,
         /** @param {number} frameIndex */
@@ -474,15 +495,76 @@ export class Player extends Actor {
         (foo, bar, baz, frameIndex) => {
           // enable hitbox on the big SWOOSH frames
           this.axeLive(frameIndex == 2 || frameIndex == 7);
+          console.log(`attack frame ${foo.key} ${frameIndex}`);
         }
       );
 
-      this.axe.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        this.attack.attacking = false;
-        this.leftHand.setVisible(true);
-        this.rightHand.setVisible(true);
+      this.axe.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (anim) => {
+        if (anim.key == "axe-attack1" && this.attack.performCombo) {
+          this.playSecondAttack();
+        } else {
+          this.attack.attacking = false;
+          this.leftHand.setVisible(true);
+          this.rightHand.setVisible(true);
+        }
       });
+
+      if (this.attack.performCombo) {
+        this.playSecondAttack();
+      } else {
+        this.playFirstAttack();
+      }
     }
+  }
+
+  playFirstAttack() {
+    console.log("first attack");
+    this.attack.canCombo = true;
+
+    // play attack anims
+    this.axe.stop();
+    this.axe.play({
+      key: "axe-attack1",
+      hideOnComplete: true,
+      showOnStart: true,
+    });
+    this.player.play("dwarf-attack1");
+
+    this.scene.time.delayedCall(
+      ATTACK_GRACE_PERIOD,
+      () => {
+        if (!this.attack.performCombo) {
+          this.attack.gracePeriod = true;
+        }
+      }
+    );
+
+    this.scene.time.delayedCall(
+      COMBO_ATTACK_INPUT_PERIOD,
+      () => {
+        this.attack.performCombo = false;
+    });
+  }
+
+  playSecondAttack() {
+    console.log("second attack");
+
+    // play attack anims
+    this.axe.play({
+      key: "axe-attack2",
+      hideOnComplete: true,
+      showOnStart: true,
+      startFrame: 5,
+    });
+    this.player.play({
+      key: "dwarf-attack2",
+      startFrame: 5,
+    });
+
+    this.scene.time.delayedCall(
+      ATTACK_COMBO_GRACE_PERIOD,
+      () => (this.attack.gracePeriod = true)
+    );
   }
 
   tryUltimateAbility() {
