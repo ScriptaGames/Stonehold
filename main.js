@@ -33,5 +33,5 @@ new Phaser.Game({
       debug: true,
     },
   },
-  scene: [MainMenuScene, CellScene, HubScene, RoomScene],
+  scene: [CellScene, HubScene, RoomScene],
 });
