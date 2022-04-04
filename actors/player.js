@@ -261,7 +261,8 @@ export class Player extends Actor {
       /** True when the axe is in one of it's "damage frames", ie the frames in the spritesheet where there's a BIG SWOOSH. */
       activeFrame: false,
     };
-    this.kb = this.scene.input.keyboard.addKeys("W,A,S,D,SPACE");
+
+    this.kb = this.scene.input.keyboard.addKeys("W,A,S,D,SPACE,SHIFT");
   }
 
   handleKeyboard() {
@@ -339,7 +340,7 @@ export class Player extends Actor {
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
     if (
-      this.kb.SPACE.isDown &&
+      (this.kb.SPACE.isDown || this.kb.SHIFT.isDown) &&
       this.dodge.ready &&
       this.dodge.keyReleased &&
       this.attack.gracePeriod
