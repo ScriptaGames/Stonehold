@@ -38,6 +38,9 @@ export const ULTIMATE_ATTACK_RADIUS = 100;
 /** Percent of ultimate charge refilled per enemey kill */
 export const ULTIMATE_CHARGE_PER_ENEMY = 0.25;
 
+/** Damage from the ultimate attack */
+export const ULTIMATE_ATTACK_DAMAGE = 50;
+
 /** How far from the player the weapon should hover. */
 export const WEAPON_HOVER_DISTANCE = 34;
 

@@ -3,6 +3,7 @@ import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
 import { GraphQLClient } from "../lib/GraphQLClient";
+import { ULTIMATE_ATTACK_DAMAGE } from "../variables";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -167,7 +168,7 @@ class RoomScene extends Phaser.Scene {
       ],
       (explosion, enemy, colInfo) => {
         let enemyActor = enemy.data.get("actor");
-        enemyActor.takeDamage(50);
+        enemyActor.takeDamage(ULTIMATE_ATTACK_DAMAGE);
       },
       (explosion, enemy) => this.player.ultimateActive
     );
