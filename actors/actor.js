@@ -49,7 +49,6 @@ export class Actor {
    * @returns boolean on whether the enemy was killed
    */
   takeDamage(inflictedDamage) {
-    let killedEnemy = false;
     if (this.vulnerable) {
       this.hp -= inflictedDamage;
 
@@ -62,7 +61,6 @@ export class Actor {
 
       if (this.hp <= 0) {
         console.log("ACTOR took fatal damage");
-        killedEnemy = true;
         this.die();
       } else {
         // make actor vulnerable again after a delay
@@ -75,7 +73,6 @@ export class Actor {
       this.mainSprite.setTintFill(0xf1f1f1);
       this.scene.time.delayedCall(128, () => this.mainSprite.clearTint());
     }
-    return killedEnemy;
   }
 
   /**

@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
-import { ULTIMATE_CHARGE_PER_ENEMY } from "../variables";
 import { GraphQLClient } from "../lib/GraphQLClient";
 
 class RoomScene extends Phaser.Scene {
@@ -153,13 +152,24 @@ class RoomScene extends Phaser.Scene {
         let enemyActor = enemy.data.get("actor");
 
         this.player.dealDamage();
-        let killedEnemy = enemyActor.takeDamage(this.player.damage);
-        if (killedEnemy) {
-          this.player.ultimateCharge += ULTIMATE_CHARGE_PER_ENEMY;
-        }
+        enemyActor.takeDamage(this.player.damage);
       },
       // check collision only when the axe is active, and when the enemy is vulnerable
       (player, enemy) => this.player.attack.activeFrame && enemy.vulnerable
+    );
+
+    // collide player ultimate with enemies
+    this.physics.add.overlap(
+      this.player.ultimateExplosion,
+      [
+        ...this.pinkies.map((pinky) => pinky.pinky),
+        ...this.captains.map((captain) => captain.captain),
+      ],
+      (explosion, enemy, colInfo) => {
+        let enemyActor = enemy.data.get("actor");
+        enemyActor.takeDamage(50);
+      },
+      (explosion, enemy) => this.player.ultimateActive
     );
 
     this.keyEscape = this.input.keyboard.addKey(
@@ -187,6 +197,7 @@ class RoomScene extends Phaser.Scene {
    * Notify this room that an enemy was killed.
    */
   async enemyKilled() {
+    this.player.addUltimateCharge();
     this.numEnemies -= 1;
     console.log(`enemy killed! ${this.numEnemies} remain`);
     if (this.numEnemies == 0) {

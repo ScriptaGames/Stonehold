@@ -24,13 +24,12 @@ class CellScene extends Phaser.Scene {
   }
 
   async create() {
-
     // Create the main player
     Player.createAnims(this);
     this.player.create();
 
     const background = this.add.sprite(0, 0, "cell_background");
-    background.setOrigin(0,0);
+    background.setOrigin(0, 0);
     background.setScale(1.1, 1.1);
 
     // for (let other_player_index in this.players) {
@@ -56,7 +55,6 @@ class CellScene extends Phaser.Scene {
     //     this.enterDoor(door);
     //   }
     // );
-
   }
 
   // /** @param {HubDoor} door */

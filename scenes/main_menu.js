@@ -62,7 +62,10 @@ export default class MainMenuScene extends Phaser.Scene {
           if (existingPlayer) {
             localStorage.setItem("player_name", existingPlayer.name);
             localStorage.setItem("player_seed", existingPlayer.seed);
-            localStorage.setItem("player_rooms_cleared", existingPlayer.rooms_cleared);
+            localStorage.setItem(
+              "player_rooms_cleared",
+              existingPlayer.rooms_cleared
+            );
           }
 
           console.debug("existingPlayer:", existingPlayer);

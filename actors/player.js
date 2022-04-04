@@ -14,7 +14,9 @@ import {
   PLAYER_AFTER_ULTIMATE_DELAY,
   ULTIMATE_ATTACK_GRACE_PERIOD,
   ULTIMATE_ATTACK_RADIUS,
+  ULTIMATE_CHARGE_PER_ENEMY,
 } from "../variables";
+import { Captain } from "./captain";
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
@@ -124,9 +126,15 @@ export class Player extends Actor {
     this.axe.setDepth(5000);
     this.scene.physics.add.existing(this.axe);
 
+    // configure ultimate explosion effect
     this.ultimateExplosion = this.scene.add.sprite(100, 100);
     this.ultimateExplosion.setScale(PIXEL_SCALE);
     this.ultimateExplosion.setVisible(false);
+    this.scene.physics.add.existing(this.ultimateExplosion);
+    this.ultimateExplosionBody = this.ultimateExplosion.body;
+    this.ultimateExplosionBody.setSize(100, 100);
+    this.ultimateExplosionBody.setOffset(25, 25);
+    this.ultimateActive = false;
 
     this.ultimateCharge = 1.0;
 
@@ -511,21 +519,13 @@ export class Player extends Actor {
   }
 
   spawnUltimateExplosion() {
+    this.ultimateActive = true;
     this.ultimateExplosion.setVisible(true);
     this.ultimateExplosion.setPosition(this.player.x, this.player.y);
     this.ultimateExplosion.play("ultimate-explosion");
 
-    this.scene.physics
-      .overlapCirc(
-        this.ultimateExplosion.x,
-        this.ultimateExplosion.y,
-        ULTIMATE_ATTACK_RADIUS
-      )
-      .forEach((obj) => {
-        if (obj.inflictDamage === "function") {
-          console.log(`ultimate hit ${obj}`);
-        }
-      });
+    // ultimate should only deal damage briefly when it lands
+    this.scene.time.delayedCall(5, () => (this.ultimateActive = false));
 
     this.ultimateExplosion.on(
       Phaser.Animations.Events.ANIMATION_COMPLETE,
@@ -533,6 +533,10 @@ export class Player extends Actor {
         this.ultimateExplosion.setVisible(false);
       }
     );
+  }
+
+  addUltimateCharge() {
+    this.ultimateCharge += ULTIMATE_CHARGE_PER_ENEMY;
   }
 
   /**

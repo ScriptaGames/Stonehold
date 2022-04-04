@@ -48,8 +48,8 @@ class HubScene extends Phaser.Scene {
       id: localStorage.getItem("player_id"),
       name: localStorage.getItem("player_name"),
       seed: localStorage.getItem("player_seed"),
-      rooms_cleared: localStorage.getItem("player_rooms_cleared")
-    }
+      rooms_cleared: localStorage.getItem("player_rooms_cleared"),
+    };
     let first_door_x = 0;
     let first_door_y = 300;
     let first_door = new HubDoor({
