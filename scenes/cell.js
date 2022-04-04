@@ -60,9 +60,7 @@ class CellScene extends Phaser.Scene {
     this.map.setPosition(cellFloor.getTopLeft().x, cellFloor.getTopLeft().y);
 
     this.physics.add.existing(this.player.player);
-    this.physics.add.collider(this.player.player, this.map, () => {
-      console.log("player hit wall");
-    });
+    this.physics.add.collider(this.player.player, this.map, () => {});
 
     for (let other_player_index in this.players) {
       let other_player = this.players[other_player_index];
@@ -81,7 +79,7 @@ class CellScene extends Phaser.Scene {
     }
 
     // Hub Door
-    let hubDoorBounds = this.add.rectangle(390, 160, 70, 100);
+    let hubDoorBounds = this.add.rectangle(390, 120, 70, 100);
     this.physics.add.existing(hubDoorBounds);
 
     this.physics.add.overlap(
@@ -94,7 +92,7 @@ class CellScene extends Phaser.Scene {
     );
 
     // First room door
-    let roomDoorBounds = this.add.rectangle(705, 160, 70, 100);
+    let roomDoorBounds = this.add.rectangle(687, 120, 70, 100);
     this.physics.add.existing(roomDoorBounds);
 
     this.physics.add.overlap(
