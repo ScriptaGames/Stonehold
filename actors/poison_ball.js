@@ -1,5 +1,9 @@
 import Phaser from "phaser";
-import { CAPTAIN_ATTACK_DAMAGE, CAPTAIN_PROJECTILE_SPEED } from "../variables";
+import {
+  CAPTAIN_ATTACK_DAMAGE,
+  CAPTAIN_PROJECTILE_SPEED,
+  PIXEL_SCALE,
+} from "../variables";
 
 export class PoisonBall extends Phaser.GameObjects.Sprite {
   /** @param {Phaser.Scene} scene */
@@ -7,6 +11,7 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
     super(scene, 0, 0, "poison-ball");
 
     scene.physics.add.existing(this);
+    this.setScale(PIXEL_SCALE);
 
     this.setDataEnabled(true);
     this.data.set("actor", this);
@@ -18,11 +23,13 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
         if (this.active) {
           let poisonActor = projectile.data.get("actor");
           let playerActor = player.data.get("actor");
-          playerActor.inflictDamage(poisonActor.damage);
+          playerActor.takeDamage(poisonActor.damage);
           this.spawnExplosion();
           this.die();
         }
-      }
+      },
+      // collide only if the player is vulnerable
+      () => scene.player.vulnerable
     );
 
     // adjust hitbox
@@ -50,14 +57,16 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
 
   spawnExplosion() {
     let explosion = this.scene.add.sprite(this.x, this.y);
+    explosion.setScale(PIXEL_SCALE);
+    // put explosion on top of everything (probably)
+    explosion.setDepth(5000);
     explosion.play("poison-ball-explosion");
     explosion.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-      this.destroy();
+      explosion.destroy();
     });
   }
 
   die() {
-    this.setActive(false);
-    this.setVisible(false);
+    this.destroy();
   }
 }

@@ -3,6 +3,7 @@ import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
 import { ULTIMATE_CHARGE_PER_ENEMY } from "../variables";
+import { GraphQLClient } from "../lib/GraphQLClient";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -10,6 +11,8 @@ class RoomScene extends Phaser.Scene {
       ...config,
       key: "RoomScene",
     });
+
+    this.gqlClient = new GraphQLClient();
   }
 
   init(data) {
@@ -25,6 +28,8 @@ class RoomScene extends Phaser.Scene {
     this.load.image("door_locked", "images/door_locked.png");
     this.load.image("mushroom", "images/mushroom.png");
 
+    this.load.audio("room-music", "audio/ld50-menumusic.mp3");
+
     Player.preload(this);
     Pinky.preload(this);
     Captain.preload(this);
@@ -34,6 +39,11 @@ class RoomScene extends Phaser.Scene {
     this.player = new Player(this);
     this.pinkies = [];
     this.captains = [];
+
+    // play room music if it isn't already playing from the previous room
+    if (!this.sound.get("room-music")?.isPlaying) {
+      this.sound.play("room-music", { loop: true, volume: 0.3 });
+    }
 
     this.add.sprite(0, 0, this.roomConfig.background);
 
@@ -119,10 +129,12 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
 
-        playerActor.inflictDamage(enemyActor.damage);
+        enemyActor.dealDamage();
+        playerActor.takeDamage(enemyActor.damage);
       },
       // disable player collision during the dodge grace period
-      () => this.player.vulnerable
+      (player, enemy) =>
+        player.data.get("actor").vulnerable && enemy.data.get("actor").isAlive
     );
 
     // collide player weapon with enemies
@@ -140,7 +152,8 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
 
-        let killedEnemy = enemyActor.inflictDamage(this.player.damage);
+        this.player.dealDamage();
+        let killedEnemy = enemyActor.takeDamage(this.player.damage);
         if (killedEnemy) {
           this.player.ultimateCharge += ULTIMATE_CHARGE_PER_ENEMY;
         }
@@ -153,13 +166,13 @@ class RoomScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.ESC
     );
 
-    this.events.addListener("actor-death", (actor) => {
+    this.events.addListener("actor-death", async (actor) => {
       if (actor instanceof Player) {
         // TODO respawn in the player's room
         console.log("PLAYER DIED OH NOOOOOOOO");
       } else {
         console.log("ENEMY DIED OH YEAAAAAH");
-        this.enemyKilled();
+        await this.enemyKilled();
       }
     });
   }
@@ -173,18 +186,29 @@ class RoomScene extends Phaser.Scene {
   /**
    * Notify this room that an enemy was killed.
    */
-  enemyKilled() {
+  async enemyKilled() {
     this.numEnemies -= 1;
     console.log(`enemy killed! ${this.numEnemies} remain`);
     if (this.numEnemies == 0) {
-      this.unlockDoor();
+      await this.unlockDoor();
     }
   }
 
   /** Set the door to unlocked. */
-  unlockDoor() {
+  async unlockDoor() {
     this.doorUnlocked = true;
     this.doorExit.setTexture("door_open");
+
+    // Increment the players rooms cleared count
+    const playerId = localStorage.getItem("player_id");
+    let roomsCleared = parseInt(localStorage.getItem("player_rooms_cleared"));
+    roomsCleared++;
+    const updatedPlayer = await this.gqlClient.updatePlayer(
+      playerId,
+      roomsCleared
+    );
+    console.debug("updatedPlayer:", updatedPlayer);
+    localStorage.setItem("player_rooms_cleared", roomsCleared.toString());
   }
 
   exitingRoom() {

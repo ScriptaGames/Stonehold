@@ -33,6 +33,10 @@ export class Pinky extends Actor {
       frameWidth: 64,
       frameHeight: 64,
     });
+
+    scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");
+    scene.load.audio("enemy-hit-aah", "audio/enemy-hit-aah.mp3");
+    scene.load.audio("grunt-dies", "audio/grunt-dies.mp3");
   }
   create() {
     super.create();
@@ -100,13 +104,6 @@ export class Pinky extends Actor {
         repeat: 0,
       });
     });
-    scene.anims.create({
-      key: "pinky-death",
-      defaultTextureKey: "pinky-attack",
-      frames: [8, 9],
-      frameRate: 10,
-      repeat: -1,
-    });
   }
 
   handleMovement() {
@@ -171,17 +168,27 @@ export class Pinky extends Actor {
     this.isAttacking = false;
   }
 
-  /** Get the attack damage of this pinky.  May be adjusted from  */
-  getAttackDamage() {
-    return this.baseAttackDamage;
-  }
-
   playDeathAnim() {
     super.playDeathAnim();
-    console.log("playing pinky death anim");
     this.pinky.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
     this.pinky.anims.stop();
-    // this seems like a good death anim, with the hands flying up
-    this.pinky.play("pinky-death");
+    this.scene.sound.play("grunt-dies", { volume: 4 });
+  }
+
+  /**
+   * Cause damage to this actor.
+   * @param {number} inflictedDamage
+   */
+  takeDamage(inflictedDamage) {
+    super.takeDamage(inflictedDamage);
+    if (this.vulnerable) {
+      this.scene.sound.play(
+        ["enemy-damaged", "enemy-hit-aah"][Math.round(Math.random())]
+      );
+    }
+  }
+
+  dealDamage() {
+    this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
   }
 }

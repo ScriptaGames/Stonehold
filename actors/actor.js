@@ -48,7 +48,7 @@ export class Actor {
    * @param {number} inflictedDamage
    * @returns boolean on whether the enemy was killed
    */
-  inflictDamage(inflictedDamage) {
+  takeDamage(inflictedDamage) {
     let killedEnemy = false;
     if (this.vulnerable) {
       this.hp -= inflictedDamage;
@@ -120,4 +120,10 @@ export class Actor {
       },
     });
   }
+
+  /**
+   * Meant to be overridden.  This method is run so the actor can do any
+   * custom stuff when it deals damage to another, like playing sfx.
+   */
+  dealDamage() {}
 }

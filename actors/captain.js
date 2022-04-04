@@ -45,6 +45,10 @@ export class Captain extends Actor {
         frameHeight: 96,
       }
     );
+    scene.load.audio("captain-dies", "audio/captain-dies.mp3");
+    scene.load.audio("captain-roar", "audio/captain-roar.mp3");
+    scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");
+    scene.load.audio("enemy-hit-aah", "audio/enemy-hit-aah.mp3");
   }
   create() {
     super.create();
@@ -108,8 +112,6 @@ export class Captain extends Actor {
         frameRate: 10,
         repeat: 0,
       });
-
-      console.log(`anim ${name} returned ${JSON.stringify(res)}`);
     });
   }
 
@@ -183,8 +185,28 @@ export class Captain extends Actor {
     }
   }
 
-  /** Get the attack damage of this captain.  May be adjusted from  */
-  getAttackDamage() {
-    return this.baseAttackDamage;
+  /**
+   * Cause damage to this actor.
+   * @param {number} inflictedDamage
+   */
+  takeDamage(inflictedDamage) {
+    super.takeDamage(inflictedDamage);
+    if (this.vulnerable) {
+      this.scene.sound.play(
+        ["enemy-damaged", "enemy-hit-aah"][Math.round(Math.random())]
+      );
+    }
+  }
+
+  playDeathAnim() {
+    super.playDeathAnim();
+    this.captain.removeAllListeners();
+    this.captain.anims.stop();
+    // this seems like a good death anim, with the hands flying up
+    this.scene.sound.play("captain-dies", { volume: 4 });
+  }
+
+  dealDamage() {
+    this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
   }
 }

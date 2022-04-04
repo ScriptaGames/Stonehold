@@ -58,6 +58,13 @@ export default class MainMenuScene extends Phaser.Scene {
             localPlayerId,
             name
           );
+
+          if (existingPlayer) {
+            localStorage.setItem("player_name", existingPlayer.name);
+            localStorage.setItem("player_seed", existingPlayer.seed);
+            localStorage.setItem("player_rooms_cleared", existingPlayer.rooms_cleared);
+          }
+
           console.debug("existingPlayer:", existingPlayer);
         }
 
@@ -74,6 +81,7 @@ export default class MainMenuScene extends Phaser.Scene {
           localStorage.setItem("player_id", createdPlayer.id);
           localStorage.setItem("player_name", name);
           localStorage.setItem("player_seed", seed);
+          localStorage.setItem("player_rooms_cleared", 0);
         }
 
         //  Turn off the click events
