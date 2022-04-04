@@ -340,7 +340,7 @@ export class Player extends Actor {
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
     if (
-      (this.kb.SPACE.isDown || this.kb.SHIFT.isDown) &&
+      (this.kb.SPACE.isDown) &&
       this.dodge.ready &&
       this.dodge.keyReleased &&
       this.attack.gracePeriod

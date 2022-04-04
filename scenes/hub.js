@@ -50,7 +50,12 @@ class HubScene extends Phaser.Scene {
       info: this.localPlayer,
     });
     this.doors.add(first_door, true);
-    this.add.text(first_door_x - 32, first_door_y - 100, this.localPlayer.name);
+    this.add.text(
+      first_door_x - 32,
+      first_door_y - 100,
+      this.localPlayer.name,
+      { fontFamily: "DungeonFont", fontSize: "24px"}
+    );
 
     let other_player_index = 0;
     for (let other_player of this.players) {
@@ -66,7 +71,10 @@ class HubScene extends Phaser.Scene {
         info: other_player,
       });
       this.doors.add(door, true);
-      this.add.text(x - 32, y - 100, other_player.name);
+      const namePlateText = this.add.text(x - 32, y - 100, other_player.name, {
+        fontFamily: "DungeonFont",
+        fontSize: "24px",
+      });
 
       other_player_index++;
     }
