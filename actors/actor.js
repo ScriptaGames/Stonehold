@@ -79,17 +79,19 @@ export class Actor {
    * Make this actor die.
    */
   die() {
-    this.isAlive = false;
+    if (this.isAlive) {
+      this.isAlive = false;
 
-    // set invul on death to avoid taking more damage. TODO consider removing
-    // this, it might feel cool for further weapon swipes to cause flash
-    // effects even during the death anim
-    this.setVulnerable(false);
+      // set invul on death to avoid taking more damage. TODO consider removing
+      // this, it might feel cool for further weapon swipes to cause flash
+      // effects even during the death anim
+      this.setVulnerable(false);
 
-    // play the actor's unique death animation
-    this.playDeathAnim();
+      // play the actor's unique death animation
+      this.playDeathAnim();
 
-    this.scene.events.emit("actor-death", this);
+      this.scene.events.emit("actor-death", this);
+    }
   }
 
   /** Play the actor's death animation.  Override this to customize the death anim. */

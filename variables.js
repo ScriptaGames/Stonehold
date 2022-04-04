@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////
 
 /** Player base HP. */
-export const PLAYER_BASE_HP = 50;
+export const PLAYER_BASE_HP = 40;
 
 /** Player base damage. */
 export const PLAYER_BASE_DAMAGE = 1;
@@ -60,10 +60,10 @@ export const API_URL = "http://66.228.50.201:3000/api/graphql";
 export const PIXEL_SCALE = 3;
 
 /** Damage from a pinky's attack. */
-export const PINKY_ATTACK_DAMAGE = 1;
+export const PINKY_ATTACK_DAMAGE = 2;
 
 /** Pinky starting HP. */
-export const PINKY_BASE_HP = 7;
+export const PINKY_BASE_HP = 5;
 
 /** Damage from a captain's attack. */
 export const CAPTAIN_ATTACK_DAMAGE = 1;

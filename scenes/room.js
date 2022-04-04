@@ -109,8 +109,6 @@ class RoomScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player.player, 200, 30, 30, 0, -20);
     this.cameras.main.backgroundColor.setTo(46, 49, 62);
 
-    // rfolrtptlptlhp[loupy
-
     this.portcullis = new Portcullis(this);
     this.portcullis.create(this.roomConfig.levelMap.doorPosition);
 
@@ -124,11 +122,12 @@ class RoomScene extends Phaser.Scene {
     // this.doorExit.setSize(70, 100);
 
     console.log("room1 mushrooms: " + this.roomConfig.numMushrooms);
-    for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
-      let x = this.room_manager.rnd.between(20, 800);
-      let y = this.room_manager.rnd.between(20, 800);
-      this.add.sprite(x, y, "mushroom");
-    }
+    // TODO: Replace this with the pixel art mushrooms
+    // for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
+    //   let x = this.room_manager.rnd.between(20, 800);
+    //   let y = this.room_manager.rnd.between(20, 800);
+    //   this.add.sprite(x, y, "mushroom");
+    // }
 
     this.numEnemies = this.roomConfig.numEnemies;
     let percentCaptains = this.roomConfig.percentCaptains;
@@ -286,6 +285,8 @@ class RoomScene extends Phaser.Scene {
 
         // TODO: add a fade scene transition here
         setTimeout(() => {
+          const uiScene = this.scene.get("PlayUIScene");
+          uiScene.scene.restart();
           this.sound.stopAll();
           this.scene.start("CellScene", {
             player: Utils.getLocalStoragePlayer(),
@@ -313,33 +314,40 @@ class RoomScene extends Phaser.Scene {
   async enemyKilled() {
     this.player.addUltimateCharge();
     this.numEnemies -= 1;
+    if (this.numEnemies < 0) {
+      this.numEnemies = 0;
+    }
     console.log(`enemy killed! ${this.numEnemies} remain`);
-    if (this.numEnemies == 0) {
+    if (this.numEnemies === 0) {
       await this.unlockDoor();
     }
   }
 
   /** Set the door to unlocked. */
   async unlockDoor() {
-    // allow player to start hitting the door
-    this.portcullis.setVulnerable(true);
+    if (!this.portcullis.vulnerable) {
+      // allow player to start hitting the door
+      this.portcullis.setVulnerable(true);
 
-    // Increment the players rooms cleared count
-    const playerId = localStorage.getItem("player_id");
-    let roomsCleared = parseInt(localStorage.getItem("player_rooms_cleared"));
-    roomsCleared++;
-    const updatedPlayer = await this.gqlClient.updatePlayer(
-      playerId,
-      roomsCleared
-    );
-    console.debug("updatedPlayer:", updatedPlayer);
-    localStorage.setItem("player_rooms_cleared", roomsCleared.toString());
+      // Increment the players rooms cleared count
+      const playerId = localStorage.getItem("player_id");
+      let roomsCleared = parseInt(localStorage.getItem("player_rooms_cleared"));
+      roomsCleared++;
+      const updatedPlayer = await this.gqlClient.updatePlayer(
+        playerId,
+        roomsCleared
+      );
+      console.debug("updatedPlayer:", updatedPlayer);
+      localStorage.setItem("player_rooms_cleared", roomsCleared.toString());
+    }
   }
 
   exitingRoom() {
     console.log("exiting room");
     let room_config = this.room_manager.nextRoom();
-    this.scene.start(room_config.key, {
+    this.registry.destroy(); // destroy registry
+    this.events.off('actor-death');       // disable all active events
+    this.scene.restart({
       roomConfig: room_config.config,
       playerState: {
         hp: this.player.hp,
