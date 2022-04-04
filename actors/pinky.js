@@ -65,9 +65,26 @@ export class Pinky extends Actor {
     this.poison.setScale(PIXEL_SCALE);
     this.poison.anims.hideOnComplete = true;
     this.poison.visible = false;
+    this.poison.setDataEnabled();
+    this.poison.data.set("actor", this);
     this.scene.physics.add.existing(this.poison);
 
-    this.isAttacking = false;
+    this.attack = {
+      attacking: false,
+      activeFrame: false,
+    };
+
+    this.scene.physics.add.overlap(
+      this.poison,
+      this.scene.player.player,
+      (pinky, player, colInfo) => {
+        let playerActor = player.data.get("actor");
+        let pinkyActor = pinky.data.get("actor");
+        playerActor.takeDamage(PINKY_ATTACK_DAMAGE);
+        pinkyActor.dealDamage();
+      },
+      () => this.attack.activeFrame
+    );
   }
 
   update() {
@@ -80,7 +97,7 @@ export class Pinky extends Actor {
         .subtract(this.pinky);
 
       if (this.playerDistance.length() < PINKY_ATTACK_RANGE) {
-        this.attack();
+        this.performAttack();
       }
 
       this.handleMovement();
@@ -112,7 +129,7 @@ export class Pinky extends Actor {
   }
 
   handleMovement() {
-    if (!this.isAttacking) {
+    if (!this.attack.attacking) {
       const targetX = this.scene.player.player.x;
       this.pinky.setFlipX(targetX > this.pinky.x);
       const vel = this.playerDistance.normalize().scale(this.pinkySpeed);
@@ -121,12 +138,12 @@ export class Pinky extends Actor {
   }
 
   /** Attack, if we're in a state that allows attacking. */
-  attack() {
-    if (this.isAttacking) return;
+  performAttack() {
+    if (this.attack.attacking) return;
     const targetX = this.scene.player.player.x;
     this.pinky.setFlipX(targetX > this.pinky.x);
 
-    this.isAttacking = true;
+    this.attack.attacking = true;
 
     this.pinkyBody.setVelocity(0, 0);
 
@@ -144,17 +161,23 @@ export class Pinky extends Actor {
     this.poison.copyPosition(poisonPos);
 
     // play attack anims
-    this.poison.playAfterDelay(
-      {
-        key: "poison",
-        hideOnComplete: true,
-        showOnStart: true,
-      },
-      600
-    );
-
     this.pinky.anims.stop();
     this.pinky.play("pinky-attack");
+
+    this.pinky.on(
+      Phaser.Animations.Events.ANIMATION_UPDATE,
+      (anim, foor, bar, frameIndex) => {
+        if (anim.key == "pinky-attack" && frameIndex == 7) {
+          this.poison.play({
+            key: "poison",
+            hideOnComplete: true,
+            showOnStart: true,
+          });
+
+          this.attack.activeFrame = true;
+        }
+      }
+    );
 
     this.pinky.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.pinky.play("pinky-idle");
@@ -164,13 +187,26 @@ export class Pinky extends Actor {
         callbackScope: this,
       });
     });
+
+    this.poison.on(
+      Phaser.Animations.Events.ANIMATION_UPDATE,
+      (anim, foor, bar, frameIndex) => {
+        if (anim.key == "poison" && frameIndex >= 1) {
+          this.attack.activeFrame = false;
+        }
+      }
+    );
+
+    this.poison.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      this.attack.activeFrame = false;
+    });
   }
 
   attackComplete() {
     if (!this.isAlive) return;
 
     this.pinky.play("pinky-run");
-    this.isAttacking = false;
+    this.attack.attacking = false;
   }
 
   playDeathAnim() {

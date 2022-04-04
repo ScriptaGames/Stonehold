@@ -500,7 +500,6 @@ export class Player extends Actor {
         (foo, bar, baz, frameIndex) => {
           // enable hitbox on the big SWOOSH frames
           this.axeLive(frameIndex == 2 || frameIndex == 7);
-          console.log(`attack frame ${foo.key} ${frameIndex}`);
         }
       );
 
