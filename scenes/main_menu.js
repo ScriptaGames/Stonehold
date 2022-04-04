@@ -4,6 +4,7 @@ import shortUUID from "short-uuid";
 import ProfanityFilter from "bad-words-relaxed";
 import xss from "xss";
 import { Utils } from "../lib/utils.js";
+import { PIXEL_SCALE } from "../variables.js";
 
 export default class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -13,15 +14,24 @@ export default class MainMenuScene extends Phaser.Scene {
 
   preload() {
     this.load.html("nameform", "nameform.html");
+    this.load.image("title_background", "images/Stonehold_title_688_x_512.png");
   }
 
   async create() {
+    // Add background image
+    const titleImage = this.add.image(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2,
+      "title_background"
+    );
+    titleImage.setScale(PIXEL_SCALE / 2);
+
     const screenCenterX =
       this.cameras.main.worldView.x + this.cameras.main.width / 2;
     const screenCenterY =
       this.cameras.main.worldView.y + this.cameras.main.height / 2;
     const element = this.add
-      .dom(screenCenterX, screenCenterY)
+      .dom(screenCenterX, screenCenterY + 150)
       .createFromCache("nameform");
     const scene = this.scene;
     const gqlClient = this.gqlClient;
@@ -91,6 +101,7 @@ export default class MainMenuScene extends Phaser.Scene {
         //  Turn off the click events
         this.removeListener("click");
 
+        scene.start("PlayUIScene");
         scene.start("CellScene", { player: Utils.getLocalStoragePlayer() });
       }
     });

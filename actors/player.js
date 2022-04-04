@@ -688,6 +688,9 @@ export class Player extends Actor {
     this.scene.time.delayedCall(128, () => this.leftHand.clearTint());
     this.rightHand.setTintFill(0xf1f1f1);
     this.scene.time.delayedCall(128, () => this.rightHand.clearTint());
+
+    console.debug("emitting event playerTakeDamage");
+    this.scene.events.emit("playerTakeDamage", this.hp / PLAYER_BASE_HP, this);
   }
 
   dealDamage() {

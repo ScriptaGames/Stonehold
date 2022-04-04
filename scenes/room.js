@@ -5,7 +5,11 @@ import { Captain } from "../actors/captain";
 import { Portcullis } from "../actors/portcullis";
 import { GraphQLClient } from "../lib/GraphQLClient";
 import { Level } from "../actors/level";
-import { PIXEL_SCALE, ULTIMATE_ATTACK_DAMAGE } from "../variables";
+import {
+  PIXEL_SCALE,
+  ULTIMATE_ATTACK_DAMAGE,
+  PLAYER_BASE_HP,
+} from "../variables";
 import { Utils } from "../lib/utils.js";
 
 class RoomScene extends Phaser.Scene {
@@ -150,7 +154,6 @@ class RoomScene extends Phaser.Scene {
     );
 
     // collide player with enemies
-    const sEvents = this.events;
     this.physics.add.collider(
       this.player.player,
       [
