@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
+import { Portcullis } from "../actors/portcullis";
 import { GraphQLClient } from "../lib/GraphQLClient";
 import { Level } from "../actors/level";
 import { PIXEL_SCALE, ULTIMATE_ATTACK_DAMAGE } from "../variables";
@@ -29,8 +30,6 @@ class RoomScene extends Phaser.Scene {
   preload() {
     this.load.image("floor", "images/fightRooms_floor.png");
     this.load.image("door", "images/door_rubble.png");
-    this.load.image("door_open", "images/door_open.png");
-    this.load.image("door_locked", "images/door_locked.png");
     this.load.image("mushroom", "images/mushroom.png");
 
     this.load.audio("room-music", "audio/ld50-menumusic.mp3");
@@ -40,12 +39,14 @@ class RoomScene extends Phaser.Scene {
     Player.preload(this);
     Pinky.preload(this);
     Captain.preload(this);
+    Portcullis.preload(this);
   }
 
   create() {
     Pinky.createAnims(this);
     Player.createAnims(this);
     Captain.createAnims(this);
+    Portcullis.createAnims(this);
 
     console.debug("Creating RoomScene with config:", this.roomConfig);
     console.debug("In my chain:", this.room_manager.myChain);
@@ -91,23 +92,17 @@ class RoomScene extends Phaser.Scene {
 
     // rfolrtptlptlhp[loupy
 
-    this.doorUnlocked = false;
-    let doorTexture = "door";
+    this.portcullis = new Portcullis(this);
+    this.portcullis.create(this.roomConfig.levelMap.doorPosition);
+
     if (
       this.room_manager.currentChainDepth <= this.room_manager.unlockedDepth
     ) {
-      doorTexture = "door_open";
-      this.doorUnlocked = true;
+      this.portcullis.setVulnerable(true);
     } else if (!this.room_manager.myChain) {
-      doorTexture = "door_locked";
     }
-    this.doorExit = this.physics.add.staticSprite(
-      this.roomConfig.levelMap.doorPosition.x,
-      this.roomConfig.levelMap.doorPosition.y,
-      doorTexture
-    );
-    this.doorExit.setVisible(false);
-    this.doorExit.setSize(70, 100);
+
+    // this.doorExit.setSize(70, 100);
 
     console.log("room1 mushrooms: " + this.roomConfig.numMushrooms);
     for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
@@ -136,16 +131,16 @@ class RoomScene extends Phaser.Scene {
 
     this.physics.add.collider(
       this.player.player,
-      this.doorExit,
+      this.portcullis.portcullis,
       (player, door, colInfo) => {
-        console.log("exit overlap");
-        if (this.doorUnlocked) {
+        if (!this.portcullis.locked) {
           this.exitingRoom();
         } else if (this.room_manager.myChain) {
           this.room_manager.unlockedDepth++;
           this.exitingRoom();
         }
-      }
+      },
+      () => !this.portcullis.locked
     );
 
     // collide player with enemies
@@ -190,6 +185,7 @@ class RoomScene extends Phaser.Scene {
     this.physics.add.collider(
       this.player.axe,
       [
+        this.portcullis.portcullis,
         ...this.pinkies.map((pinky) => pinky.pinky),
         ...this.captains.map((captain) => captain.captain),
       ],
@@ -285,8 +281,8 @@ class RoomScene extends Phaser.Scene {
 
   /** Set the door to unlocked. */
   async unlockDoor() {
-    this.doorUnlocked = true;
-    this.doorExit.setTexture("door_open");
+    // allow player to start hitting the door
+    this.portcullis.setVulnerable(true);
 
     // Increment the players rooms cleared count
     const playerId = localStorage.getItem("player_id");
