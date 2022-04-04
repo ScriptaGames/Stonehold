@@ -40,9 +40,10 @@ class CellScene extends Phaser.Scene {
   async create(data) {
     console.debug("Create CellScene with player:", data.player);
 
-    this.sound.play("hub-music", {
-      loop: true,
-    });
+    // play room music if it isn't already playing from the previous room
+    if (!this.game.sound.get("hub-music")?.isPlaying) {
+      this.game.sound.play("hub-music", { loop: true });
+    }
 
     this.cameras.main.backgroundColor.setTo(46, 49, 62);
 

@@ -31,7 +31,7 @@ new Phaser.Game({
   physics: {
     default: "arcade",
     arcade: {
-      debug: true,
+      debug: false,
     },
   },
   scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],

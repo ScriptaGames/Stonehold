@@ -15,6 +15,7 @@ export default class MainMenuScene extends Phaser.Scene {
   preload() {
     this.load.html("nameform", "nameform.html");
     this.load.image("title_background", "images/Stonehold_title_688_x_512.png");
+    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
   }
 
   async create() {
@@ -105,6 +106,11 @@ export default class MainMenuScene extends Phaser.Scene {
         scene.start("CellScene", { player: Utils.getLocalStoragePlayer() });
       }
     });
+
+    // play room music if it isn't already playing from the previous room
+    if (!this.game.sound.get("hub-music")?.isPlaying) {
+      this.game.sound.play("hub-music", { loop: true, volume: 0.3 });
+    }
   }
 
   filterName(name) {
