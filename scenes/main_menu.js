@@ -3,6 +3,7 @@ import { GraphQLClient } from "../lib/GraphQLClient.js";
 import shortUUID from "short-uuid";
 import ProfanityFilter from "bad-words-relaxed";
 import xss from "xss";
+import { Utils } from "../lib/utils.js";
 
 export default class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -78,7 +79,7 @@ export default class MainMenuScene extends Phaser.Scene {
             seed,
             rooms_cleared: 0,
           });
-          console.log("Created player:", createdPlayer);
+          console.debug("Created player:", createdPlayer);
 
           // Save player to local storage
           localStorage.setItem("player_id", createdPlayer.id);
@@ -90,7 +91,7 @@ export default class MainMenuScene extends Phaser.Scene {
         //  Turn off the click events
         this.removeListener("click");
 
-        scene.start("CellScene", { name });
+        scene.start("CellScene", { player: Utils.getLocalStoragePlayer() });
       }
     });
   }
