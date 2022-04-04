@@ -22,16 +22,11 @@ class HubScene extends Phaser.Scene {
     this.load.image("cell_door", "images/cell_door.png");
     this.load.image("player", "images/player.png");
 
-    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
     Player.preload(this);
   }
 
   async create(data) {
     console.log("name:", data.name);
-
-    this.sound.play("hub-music", {
-      loop: true,
-    });
 
     // Create the main player
     Player.createAnims(this);
