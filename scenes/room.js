@@ -81,8 +81,8 @@ class RoomScene extends Phaser.Scene {
     );
 
     // play room music if it isn't already playing from the previous room
-    if (!this.sound.get("room-music")?.isPlaying) {
-      this.sound.play("room-music", { loop: true, volume: 0.3 });
+    if (!this.game.sound.get("room-music")?.isPlaying) {
+      this.game.sound.play("room-music", { loop: true, volume: 0.3 });
     }
 
     window.cam = this.cameras.main;
