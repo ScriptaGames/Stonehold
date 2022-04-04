@@ -524,7 +524,7 @@ export class Player extends Actor {
     this.ultimateExplosion.setVisible(true);
     this.ultimateExplosion.setPosition(this.player.x, this.player.y);
     this.ultimateExplosion.play("ultimate-explosion");
-    this.scene.sound.play("ultimate-boom");
+    this.scene.sound.play("ultimate-boom", { volume: 4 });
 
     // ultimate should only deal damage briefly when it lands
     this.scene.time.delayedCall(5, () => (this.ultimateActive = false));
