@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { Player } from "../actors/player";
+import HubDoor from "../actors/hub_door.js";
 
 class CellScene extends Phaser.Scene {
   constructor(config) {
@@ -31,9 +32,23 @@ class CellScene extends Phaser.Scene {
     const background = this.add.sprite(0, 0, "cell_background");
     background.setOrigin(0,0);
     background.setScale(1.1, 1.1);
-    // background.width = this.cameras.main.width;
-    // background.height = this.cameras.main.height;
 
+    // for (let other_player_index in this.players) {
+    //   let other_player = this.players[other_player_index];
+    //   console.debug("player:", other_player);
+    //   let x = other_player_index * 256 + 200;
+    //   let y = 300;
+    //   let door = new HubDoor({
+    //     scene: this,
+    //     x: x,
+    //     y: y,
+    //     info: other_player,
+    //   });
+    //   this.doors.add(door, true);
+    //   this.add.text(x - 32, y - 100, other_player.name);
+    //   this.add.text(x - 32, y - 150, other_player.seed);
+    // }
+    //
     // this.physics.add.overlap(
     //   this.player.player,
     //   this.doors,
@@ -42,11 +57,6 @@ class CellScene extends Phaser.Scene {
     //   }
     // );
 
-    // this.cameras.main.startFollow(this.player.player, true, 0.4, 0.4);
-
-    // uncomment this to go straight into a room, helpful for quick iteration
-    // on certain things
-    // this.enterDoor(this.doors.children.getArray()[5]);
   }
 
   // /** @param {HubDoor} door */

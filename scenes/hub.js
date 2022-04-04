@@ -43,10 +43,30 @@ class HubScene extends Phaser.Scene {
     // Dynamically create the doors based on players
     this.doors = this.physics.add.staticGroup();
 
-    for (let other_player_index in this.players) {
-      let other_player = this.players[other_player_index];
-      console.debug("player:", other_player);
-      let x = other_player_index * 256 + 200;
+    // Add current player's door first
+    this.localPlayer = {
+      id: localStorage.getItem("player_id"),
+      name: localStorage.getItem("player_name"),
+      seed: localStorage.getItem("player_seed"),
+      rooms_cleared: localStorage.getItem("player_rooms_cleared")
+    }
+    let first_door_x = 0;
+    let first_door_y = 300;
+    let first_door = new HubDoor({
+      scene: this,
+      x: first_door_x,
+      y: first_door_y,
+      info: this.localPlayer,
+    });
+    this.doors.add(first_door, true);
+    this.add.text(first_door_x - 32, first_door_y - 100, this.localPlayer.name);
+
+    let other_player_index = 0;
+    for (let other_player of this.players) {
+      if (other_player.id === this.localPlayer.id) {
+        continue; // skip local player
+      }
+      let x = other_player_index * 200 + 200;
       let y = 300;
       let door = new HubDoor({
         scene: this,
@@ -56,7 +76,8 @@ class HubScene extends Phaser.Scene {
       });
       this.doors.add(door, true);
       this.add.text(x - 32, y - 100, other_player.name);
-      this.add.text(x - 32, y - 150, other_player.seed);
+
+      other_player_index++;
     }
 
     this.physics.add.overlap(
