@@ -3,7 +3,8 @@ import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
 import { GraphQLClient } from "../lib/GraphQLClient";
-import { ULTIMATE_ATTACK_DAMAGE } from "../variables";
+import { Level } from "../actors/level";
+import { PIXEL_SCALE, ULTIMATE_ATTACK_DAMAGE } from "../variables";
 import { Utils } from "../lib/utils.js";
 
 class RoomScene extends Phaser.Scene {
@@ -19,11 +20,14 @@ class RoomScene extends Phaser.Scene {
   init(data) {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.roomConfig = data;
+
+    console.log(this.roomConfig.levelMap);
+
+    this.level = new Level(this, this.roomConfig.levelMap);
   }
 
   preload() {
-    this.load.image("room_background", "images/room_background.png");
-    this.load.image("room2_background", "images/room2_background.png");
+    this.load.image("floor", "images/fightRooms_floor.png");
     this.load.image("door", "images/door_rubble.png");
     this.load.image("door_open", "images/door_open.png");
     this.load.image("door_locked", "images/door_locked.png");
@@ -31,29 +35,61 @@ class RoomScene extends Phaser.Scene {
 
     this.load.audio("room-music", "audio/ld50-menumusic.mp3");
 
+    this.level.preload();
+
     Player.preload(this);
     Pinky.preload(this);
     Captain.preload(this);
   }
 
   create() {
+    Pinky.createAnims(this);
+    Player.createAnims(this);
+    Captain.createAnims(this);
+
     console.debug("Creating RoomScene with config:", this.roomConfig);
     console.debug("In my chain:", this.room_manager.myChain);
 
     this.player = new Player(this);
+    this.player.create();
+    this.player.player.copyPosition(this.roomConfig.levelMap.playerSpawn);
     this.pinkies = [];
     this.captains = [];
+
+    this.floor = this.add
+      .image(0, 0, "floor")
+      .setScale(PIXEL_SCALE)
+      .setOrigin(0, 0);
+
+    this.map = this.level.createMap();
+    this.map.setPosition(this.floor.x, this.floor.y);
+
+    this.physics.world.setBounds(
+      this.floor.x,
+      this.floor.y,
+      this.floor.width,
+      this.floor.height
+    );
+    console.log(
+      this.floor.x,
+      this.floor.y,
+      this.floor.width,
+      this.floor.height,
+      this.floor.getTopLeft().x,
+      this.floor.getTopLeft().y
+    );
 
     // play room music if it isn't already playing from the previous room
     if (!this.sound.get("room-music")?.isPlaying) {
       this.sound.play("room-music", { loop: true, volume: 0.3 });
     }
 
-    this.add.sprite(0, 0, this.roomConfig.background);
+    window.cam = this.cameras.main;
 
-    Pinky.createAnims(this);
-    Player.createAnims(this);
-    Captain.createAnims(this);
+    this.cameras.main.startFollow(this.player.player, 200, 30, 30, 0, -20);
+    this.cameras.main.backgroundColor.setTo(46, 49, 62);
+
+    // rfolrtptlptlhp[loupy
 
     this.doorUnlocked = false;
     let doorTexture = "door";
@@ -65,27 +101,26 @@ class RoomScene extends Phaser.Scene {
     } else if (!this.room_manager.myChain) {
       doorTexture = "door_locked";
     }
-    this.doorExit = this.physics.add.staticSprite(1024, 150, doorTexture);
-
-    let numMushrooms = this.room_manager.rnd.between(
-      1,
-      this.roomConfig.numMushrooms
+    this.doorExit = this.physics.add.staticSprite(
+      this.roomConfig.levelMap.doorPosition.x,
+      this.roomConfig.levelMap.doorPosition.y,
+      doorTexture
     );
-    console.log("room1 mushrooms: " + numMushrooms);
-    for (let m = 0; m < numMushrooms; m++) {
+    this.doorExit.setVisible(false);
+    this.doorExit.setSize(70, 100);
+
+    console.log("room1 mushrooms: " + this.roomConfig.numMushrooms);
+    for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
       let x = this.room_manager.rnd.between(20, 800);
       let y = this.room_manager.rnd.between(20, 800);
       this.add.sprite(x, y, "mushroom");
     }
 
-    let maxEnemies = this.roomConfig.numEnemies;
-    this.numEnemies = this.room_manager.rnd.between(maxEnemies / 2, maxEnemies);
-    let percentCaptains =
-      (100 * this.room_manager.currentChainDepth) / maxEnemies;
+    this.numEnemies = this.roomConfig.numEnemies;
+    let percentCaptains = this.roomConfig.percentCaptains;
     for (let e = 0; e < this.numEnemies; e++) {
       let x = this.room_manager.rnd.between(20, 800);
       let y = this.room_manager.rnd.between(20, 800);
-      let enemyKey = "enemy";
       if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
         let captain = new Captain(this);
         captain.create();
@@ -98,8 +133,6 @@ class RoomScene extends Phaser.Scene {
         this.pinkies.push(pinky);
       }
     }
-
-    this.player.create();
 
     this.physics.add.collider(
       this.player.player,
@@ -139,6 +172,17 @@ class RoomScene extends Phaser.Scene {
       // disable player collision during the dodge grace period
       (player, enemy) =>
         player.data.get("actor").vulnerable && enemy.data.get("actor").isAlive
+    );
+
+    // collide player and enemies with the map
+    this.physics.add.collider(
+      [
+        this.player.player,
+        ...this.pinkies.map((pinky) => pinky.pinky),
+        ...this.captains.map((captain) => captain.captain),
+      ],
+      this.map,
+      () => {}
     );
 
     // collide player weapon with enemies
@@ -196,7 +240,8 @@ class RoomScene extends Phaser.Scene {
             fontFamily: "DungeonFont",
             fontSize: "70px",
           })
-          .setOrigin(0.5);
+          .setOrigin(0.5)
+          .setDepth(1000);
 
         // TODO: fade out player
         setTimeout(() => {

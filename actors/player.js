@@ -455,7 +455,11 @@ export class Player extends Actor {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
 
-      this.player.setFlipX(this.mouse.x - this.player.x < 0);
+      this.player.setFlipX(
+        this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y).x -
+          this.player.x <
+          0
+      );
 
       // also set the horizontal dodge direction to match the direction the player is facing
       this.dodge.x = this.player.flipX ? -1 : 1;
@@ -465,7 +469,7 @@ export class Player extends Actor {
       this.axe.setFlipX(this.player.flipX);
 
       const axeOffset = new Phaser.Math.Vector2()
-        .copy(this.mouse)
+        .copy(this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y))
         .subtract(this.player)
         .normalize()
         .scale(WEAPON_HOVER_DISTANCE);
@@ -664,6 +668,11 @@ export class Player extends Actor {
       this.scene.sound.play("player-damaged");
     }
     super.takeDamage(inflictedDamage);
+    // use damage flash effect on hands too
+    this.leftHand.setTintFill(0xf1f1f1);
+    this.scene.time.delayedCall(128, () => this.leftHand.clearTint());
+    this.rightHand.setTintFill(0xf1f1f1);
+    this.scene.time.delayedCall(128, () => this.rightHand.clearTint());
   }
 
   dealDamage() {
