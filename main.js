@@ -30,7 +30,7 @@ new Phaser.Game({
   physics: {
     default: "arcade",
     arcade: {
-      debug: false,
+      debug: true,
     },
   },
   scene: [CellScene, HubScene, RoomScene],
