@@ -76,7 +76,6 @@ class HubScene extends Phaser.Scene {
     this.cameras.main.setDeadzone(400, 2000);
     this.cameras.main.startFollow(this.player.player, true, 0.4, 0.4);
     this.cameras.main.backgroundColor.setTo(46, 49, 62);
-
   }
 
   drawSection(startX, playerObj) {

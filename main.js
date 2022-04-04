@@ -5,6 +5,7 @@ import HubScene from "./scenes/hub";
 import RoomScene from "./scenes/room";
 import MovementScene from "./scenes/movement";
 import MainMenuScene from "./scenes/main_menu.js";
+import PlayUIScene from "./scenes/play_ui";
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -33,5 +34,5 @@ new Phaser.Game({
       debug: true,
     },
   },
-  scene: [MainMenuScene, CellScene, HubScene, RoomScene],
+  scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
 });

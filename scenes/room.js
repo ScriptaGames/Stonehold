@@ -144,7 +144,7 @@ class RoomScene extends Phaser.Scene {
     );
 
     // collide player with enemies
-
+    const sEvents = this.events;
     this.physics.add.collider(
       this.player.player,
       [
@@ -163,6 +163,9 @@ class RoomScene extends Phaser.Scene {
 
         enemyActor.dealDamage();
         playerActor.takeDamage(enemyActor.damage);
+
+        // Emit event so UI can update
+        sEvents.emit("playerTakeDamage", this);
       },
       // disable player collision during the dodge grace period
       (player, enemy) =>
