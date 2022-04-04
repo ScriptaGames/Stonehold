@@ -88,6 +88,7 @@ export class Player extends Actor {
     scene.load.audio("player-hit-aah", "audio/player-hit-aah.mp3");
     scene.load.audio("axe-hit1", "audio/weapon-hit.mp3");
     scene.load.audio("axe-hit2", "audio/weapon-hit2.mp3");
+    scene.load.audio("ultimate-boom", "audio/ultimate-boom.mp3");
   }
   create() {
     super.create();
@@ -523,6 +524,7 @@ export class Player extends Actor {
     this.ultimateExplosion.setVisible(true);
     this.ultimateExplosion.setPosition(this.player.x, this.player.y);
     this.ultimateExplosion.play("ultimate-explosion");
+    this.scene.sound.play("ultimate-boom");
 
     // ultimate should only deal damage briefly when it lands
     this.scene.time.delayedCall(5, () => (this.ultimateActive = false));
