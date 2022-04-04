@@ -62,8 +62,8 @@ class RoomScene extends Phaser.Scene {
       .setScale(PIXEL_SCALE)
       .setOrigin(0, 0);
 
-    this.map = this.level.createMap();
-    this.map.setPosition(this.floor.x, this.floor.y);
+    this.tileMap = this.level.createMap();
+    this.tileMap.map.setPosition(this.floor.x, this.floor.y);
 
     this.physics.world.setBounds(
       this.floor.x,
@@ -114,19 +114,25 @@ class RoomScene extends Phaser.Scene {
     this.numEnemies = this.roomConfig.numEnemies;
     let percentCaptains = this.roomConfig.percentCaptains;
     for (let e = 0; e < this.numEnemies; e++) {
-      let x = this.room_manager.rnd.between(20, 800);
-      let y = this.room_manager.rnd.between(20, 800);
+      let enemy;
       if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
-        let captain = new Captain(this);
-        captain.create();
-        captain.captain.copyPosition({ x, y });
-        this.captains.push(captain);
+        enemy = new Captain(this);
+        enemy.create();
+        this.captains.push(enemy);
       } else {
-        let pinky = new Pinky(this);
-        pinky.create();
-        pinky.pinky.copyPosition({ x, y });
-        this.pinkies.push(pinky);
+        enemy = new Pinky(this);
+        enemy.create();
+        this.pinkies.push(enemy);
       }
+
+      // pick one of the enemy placements objects file the tiled map
+      enemy.mainSprite.copyPosition(
+        this.room_manager.rnd.pick(
+          this.tileMap.tileMap.getObjectLayer("Object Layer 1").objects
+        )
+      );
+      enemy.mainSprite.x *= PIXEL_SCALE;
+      enemy.mainSprite.y *= PIXEL_SCALE;
     }
 
     this.physics.add.collider(
@@ -179,9 +185,20 @@ class RoomScene extends Phaser.Scene {
         ...this.pinkies.map((pinky) => pinky.pinky),
         ...this.captains.map((captain) => captain.captain),
       ],
-      this.map,
-      () => {}
+      this.tileMap.map
     );
+
+    // // position the enemies
+    // [
+    //   ...this.pinkies.map((pinky) => pinky.pinky),
+    //   ...this.captains.map((captain) => captain.captain),
+    // ].forEach((enemy) => {
+    //   // keep randomly repositioning each enemy until they don't overlap the walls
+    //   while (this.physics.overlap(enemy, this.map)) {
+    //     enemy.setRandomPosition();
+    //     console.log(`repositioning enemy to ${enemy.x},${enemy.y}`);
+    //   }
+    // });
 
     // collide player weapon with enemies
 
