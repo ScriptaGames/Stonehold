@@ -166,12 +166,6 @@ class RoomScene extends Phaser.Scene {
         let playerActor = player.data.get("actor");
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
-
-        enemyActor.dealDamage();
-        playerActor.takeDamage(enemyActor.damage);
-
-        // Emit event so UI can update
-        sEvents.emit("playerTakeDamage", this);
       },
       // disable player collision during the dodge grace period
       (player, enemy) =>
