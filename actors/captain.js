@@ -12,8 +12,13 @@ import { PoisonBall } from "./poison_ball";
 
 export class Captain extends Actor {
   /** @param {Phaser.Scene} scene */
-  constructor(scene) {
-    super(scene, { hp: CAPTAIN_BASE_HP, damage: CAPTAIN_ATTACK_DAMAGE });
+  constructor(scene, config) {
+    super(scene, { hp: config.captainHP, damage: config.captainAttackDamage });
+
+    this.captainAttackRange = config.captainAttackRange;
+    this.captainIdleAfterAttack = config.captainIdleAfterAttack;
+    this.captainProjectileSpeed = config.captainProjectileSpeed;
+    this.captainSpeed = config.captainSpeed;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -84,7 +89,7 @@ export class Captain extends Actor {
       .copy(this.scene.player.player)
       .subtract(this.captain);
 
-    if (this.playerDistance.length() < CAPTAIN_ATTACK_RANGE) {
+    if (this.playerDistance.length() < this.captainAttackRange) {
       this.attack();
     }
 
@@ -119,7 +124,7 @@ export class Captain extends Actor {
     if (!this.isAttacking) {
       const targetX = this.scene.player.player.x;
       this.captain.setFlipX(targetX > this.captain.x);
-      const vel = this.playerDistance.normalize().scale(CAPTAIN_SPEED);
+      const vel = this.playerDistance.normalize().scale(this.captainSpeed);
       this.captainBody.setVelocity(vel.x, vel.y);
     }
   }
@@ -157,7 +162,7 @@ export class Captain extends Actor {
     this.captain.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.captain.play("captain-idle");
       this.scene.time.addEvent({
-        delay: CAPTAIN_IDLE_AFTER_ATTACK,
+        delay: this.captainIdleAfterAttack,
         callback: this.attackComplete,
         callbackScope: this,
       });

@@ -34,14 +34,14 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     const percentCaptains = Math.min(100, depth);
     const pinkyHP = PINKY_BASE_HP + depth;
     const captainHP = CAPTAIN_BASE_HP + Math.ceil(depth + depth / 2);
-    const captainAttackDamage = CAPTAIN_ATTACK_DAMAGE;
-    const captainAttackRange = CAPTAIN_ATTACK_RANGE;
+    const captainAttackDamage = CAPTAIN_ATTACK_DAMAGE + depth;
+    const captainAttackRange = CAPTAIN_ATTACK_RANGE + depth * 5;
     const captainIdleAfterAttack = CAPTAIN_IDLE_AFTER_ATTACK;
-    const captainProjectileSpeed = CAPTAIN_PROJECTILE_SPEED;
-    const captainSpeed = CAPTAIN_SPEED;
-    const pinkyAttackDamage = PINKY_ATTACK_DAMAGE;
+    const captainProjectileSpeed = CAPTAIN_PROJECTILE_SPEED + depth;
+    const captainSpeed = CAPTAIN_SPEED + depth;
+    const pinkyAttackDamage = PINKY_ATTACK_DAMAGE + depth;
     const pinkyIdleAfterAttack = PINKY_IDLE_AFTER_ATTACK;
-    const pinkySpeed = PINKY_SPEED;
+    const pinkySpeed = PINKY_SPEED + depth;
 
     const levelMap = this.rnd.pick(this.getLevels());
 

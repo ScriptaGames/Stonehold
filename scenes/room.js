@@ -120,11 +120,11 @@ class RoomScene extends Phaser.Scene {
     for (let e = 0; e < this.numEnemies; e++) {
       let enemy;
       if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
-        enemy = new Captain(this);
+        enemy = new Captain(this, this.roomConfig);
         enemy.create();
         this.captains.push(enemy);
       } else {
-        enemy = new Pinky(this);
+        enemy = new Pinky(this, this.roomConfig);
         enemy.create();
         this.pinkies.push(enemy);
       }

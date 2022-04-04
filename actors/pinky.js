@@ -12,8 +12,13 @@ import {
 
 export class Pinky extends Actor {
   /** @param {Phaser.Scene} scene */
-  constructor(scene) {
-    super(scene, { hp: PINKY_BASE_HP, damage: PINKY_ATTACK_DAMAGE });
+  constructor(scene, config) {
+    super(scene, { hp: config.pinkyHP, damage: config.pinkyAttackDamage });
+
+    console.log("spawning pinky with hp", config.pinkyHP);
+
+    this.pinkyIdleAfterAttack = config.pinkyIdleAfterAttack;
+    this.pinkySpeed = config.pinkySpeed;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -110,7 +115,7 @@ export class Pinky extends Actor {
     if (!this.isAttacking) {
       const targetX = this.scene.player.player.x;
       this.pinky.setFlipX(targetX > this.pinky.x);
-      const vel = this.playerDistance.normalize().scale(PINKY_SPEED);
+      const vel = this.playerDistance.normalize().scale(this.pinkySpeed);
       this.pinkyBody.setVelocity(vel.x, vel.y);
     }
   }
@@ -154,7 +159,7 @@ export class Pinky extends Actor {
     this.pinky.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       this.pinky.play("pinky-idle");
       this.scene.time.addEvent({
-        delay: PINKY_IDLE_AFTER_ATTACK,
+        delay: this.pinkyIdleAfterAttack,
         callback: this.attackComplete,
         callbackScope: this,
       });
