@@ -54,7 +54,7 @@ class HubScene extends Phaser.Scene {
       first_door_x - 32,
       first_door_y - 100,
       this.localPlayer.name,
-      { fontFamily: "DungeonFont", fontSize: "24px"}
+      { fontFamily: "DungeonFont", fontSize: "24px" }
     );
 
     let other_player_index = 0;

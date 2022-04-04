@@ -181,6 +181,28 @@ class RoomScene extends Phaser.Scene {
       if (actor instanceof Player) {
         // TODO respawn in the player's room
         console.log("PLAYER DIED OH NOOOOOOOO");
+
+        // Display "You Died" message
+        const screenCenterX =
+          this.cameras.main.worldView.x + this.cameras.main.width / 2;
+        const screenCenterY =
+          this.cameras.main.worldView.y + this.cameras.main.height / 2;
+        this.add
+          .text(screenCenterX, screenCenterY, "You Died", {
+            fontFamily: "DungeonFont",
+            fontSize: "70px",
+          })
+          .setOrigin(0.5);
+
+        // TODO: fade out player
+        setTimeout(() => {
+          this.player.hide();
+        }, 1000);
+
+        // TODO: add a fade scene transition here
+        setTimeout(() => {
+          this.scene.start("CellScene");
+        }, 4000);
       } else {
         console.log("ENEMY DIED OH YEAAAAAH");
         await this.enemyKilled();
@@ -189,7 +211,10 @@ class RoomScene extends Phaser.Scene {
   }
 
   update() {
-    this.player.update();
+    if (this.player.isAlive) {
+      this.player.update();
+    }
+
     this.pinkies.forEach((pinky) => pinky.update());
     this.captains.forEach((captain) => captain.update());
   }
