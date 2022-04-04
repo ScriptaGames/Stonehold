@@ -644,7 +644,7 @@ export class Player extends Actor {
   }
 
   playDeathAnim() {
-    this.scene.sound.play("dwarf-dies");
+    this.scene.sound.play("dwarf-dies", { volume: 3 });
     this.scene.tweens.addCounter({
       from: 255,
       to: 0,
