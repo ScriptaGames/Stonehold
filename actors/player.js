@@ -104,6 +104,7 @@ export class Player extends Actor {
     scene.load.audio("axe-hit1", "audio/weapon-hit.mp3");
     scene.load.audio("axe-hit2", "audio/weapon-hit2.mp3");
     scene.load.audio("ultimate-boom", "audio/ultimate-boom.mp3");
+    scene.load.audio("dwarf-dies", "audio/player-dies.mp3");
   }
   create() {
     super.create();
@@ -643,7 +644,7 @@ export class Player extends Actor {
   }
 
   playDeathAnim() {
-    this.scene.sound.play("player-hit-aah");
+    this.scene.sound.play("dwarf-dies");
     this.scene.tweens.addCounter({
       from: 255,
       to: 0,
