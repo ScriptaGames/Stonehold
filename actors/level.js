@@ -33,7 +33,7 @@ export class Level {
     );
 
     // this should be the same in all maps made in Tiled
-    const visualLayerNameFromTiled = "layout";
+    const visualLayerNameFromTiled = "Tile Layer 1";
 
     // add the layer to the scene so it can be referenced as "this.level"
     // within scenes, to set up collision, etc

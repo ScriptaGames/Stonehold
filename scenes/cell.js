@@ -16,7 +16,7 @@ class CellScene extends Phaser.Scene {
       mapName: "cell-map",
       mapImagePath: "images/player_cell_walls.png",
       jsonName: "cell-map",
-      jsonPath: "maps/test.json",
+      jsonPath: "maps/cell.json",
       tilesetNameFromTiled: "player_cell_walls",
     });
   }
@@ -44,6 +44,8 @@ class CellScene extends Phaser.Scene {
 
     this.localPlayer = Utils.getLocalStoragePlayer();
 
+    this.cameras.main.backgroundColor.setTo(46, 49, 62);
+
     // Create the main player
     this.player = new Player(this);
     Player.createAnims(this);
@@ -59,7 +61,6 @@ class CellScene extends Phaser.Scene {
     this.map = this.level.createMap();
     this.map.setPosition(cellFloor.getTopLeft().x, cellFloor.getTopLeft().y);
 
-    this.physics.add.existing(this.player.player);
     this.physics.add.collider(this.player.player, this.map, () => {});
 
     for (let other_player_index in this.players) {
@@ -106,6 +107,12 @@ class CellScene extends Phaser.Scene {
         this.scene.start(room_config.key, room_config.config);
       }
     );
+
+    // // uncomment this to enter door immediately for debugging
+    // this.sound.stopAll();
+    // this.room_manager.initChain(this.localPlayer);
+    // let room_config = this.room_manager.nextRoom();
+    // this.scene.start(room_config.key, room_config.config);
   }
 
   update() {
