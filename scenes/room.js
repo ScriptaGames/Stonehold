@@ -213,8 +213,16 @@ class RoomScene extends Phaser.Scene {
         /** @type {Pinky} */
         let enemyActor = enemy.data.get("actor");
 
-        this.player.dealDamage();
-        enemyActor.takeDamage(this.player.damage);
+        if (enemyActor instanceof Portcullis) {
+          if (this.numEnemies == 0) {
+            this.player.dealDamage();
+            enemyActor.takeDamage(this.player.damage);
+          }
+        } else {
+          // deal damage to enemy
+          this.player.dealDamage();
+          enemyActor.takeDamage(this.player.damage);
+        }
       },
       // check collision only when the axe is active, and when the enemy is vulnerable
       (player, enemy) => this.player.attack.activeFrame && enemy.vulnerable
