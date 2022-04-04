@@ -28,12 +28,12 @@ class CellScene extends Phaser.Scene {
     Player.preload(this);
   }
 
-  async create() {
+  async create(data) {
+    console.debug("Create CellScene with player:", data.player);
+
     this.sound.play("hub-music", {
       loop: true,
     });
-
-    this.localPlayer = Utils.getLocalStoragePlayer();
 
     // Create the main player
     Player.createAnims(this);
@@ -78,7 +78,7 @@ class CellScene extends Phaser.Scene {
       (player, rec, colInfo) => {
         console.log("collided with room Door");
         this.sound.stopAll();
-        this.room_manager.initChain(this.localPlayer);
+        this.room_manager.initChain(data.player);
         let room_config = this.room_manager.nextRoom();
         this.scene.start(room_config.key, room_config.config);
       }

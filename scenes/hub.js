@@ -126,7 +126,7 @@ class HubScene extends Phaser.Scene {
       entryBounds,
       (player, rec, colInfo) => {
         console.debug("collided door entry");
-        this.scene.start("CellScene", playerObj);
+        this.scene.start("CellScene", { player: playerObj });
       }
     );
 

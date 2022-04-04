@@ -1,6 +1,10 @@
+import { Utils } from "../lib/utils.js";
+
 class RoomManager extends Phaser.Plugins.BasePlugin {
   init() {
-    this.myName = "nicksmaddog";
+    this.localPlayer = Utils.getLocalStoragePlayer();
+
+    this.myID = this.localPlayer.id;
     this.roomChoices = [
       {
         key: "RoomScene",
@@ -23,7 +27,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
 
     this.unlockedDepth = player_data.rooms_cleared;
     this.currentChainDepth = 0;
-    this.myChain = player_data.name === this.myName;
+    this.myChain = player_data.id === this.myID;
   }
 
   nextRoom() {
