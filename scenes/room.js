@@ -4,7 +4,7 @@ import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
 import { GraphQLClient } from "../lib/GraphQLClient";
 import { ULTIMATE_ATTACK_DAMAGE } from "../variables";
-import {Utils} from "../lib/utils.js";
+import { Utils } from "../lib/utils.js";
 
 class RoomScene extends Phaser.Scene {
   constructor(config) {
@@ -205,7 +205,9 @@ class RoomScene extends Phaser.Scene {
 
         // TODO: add a fade scene transition here
         setTimeout(() => {
-          this.scene.start("CellScene", {player: Utils.getLocalStoragePlayer()});
+          this.scene.start("CellScene", {
+            player: Utils.getLocalStoragePlayer(),
+          });
         }, 4000);
       } else {
         console.log("ENEMY DIED OH YEAAAAAH");

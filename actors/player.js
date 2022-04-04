@@ -214,7 +214,6 @@ export class Player extends Actor {
       "left-hand",
       "right-hand",
       "dwarf-attack1",
-      
     ].forEach((name) => {
       scene.anims.create({
         key: name,
@@ -239,7 +238,7 @@ export class Player extends Actor {
         repeat: 0,
       });
     });
-    ["axe-attack2","dwarf-attack2",].forEach((name) => {
+    ["axe-attack2", "dwarf-attack2"].forEach((name) => {
       scene.anims.create({
         key: name,
         frames: scene.anims.generateFrameNumbers(name),
@@ -530,19 +529,14 @@ export class Player extends Actor {
     });
     this.player.play("dwarf-attack1");
 
-    this.scene.time.delayedCall(
-      ATTACK_GRACE_PERIOD,
-      () => {
-        if (!this.attack.performCombo) {
-          this.attack.gracePeriod = true;
-        }
+    this.scene.time.delayedCall(ATTACK_GRACE_PERIOD, () => {
+      if (!this.attack.performCombo) {
+        this.attack.gracePeriod = true;
       }
-    );
+    });
 
-    this.scene.time.delayedCall(
-      COMBO_ATTACK_INPUT_PERIOD,
-      () => {
-        this.attack.performCombo = false;
+    this.scene.time.delayedCall(COMBO_ATTACK_INPUT_PERIOD, () => {
+      this.attack.performCombo = false;
     });
   }
 
