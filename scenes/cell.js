@@ -60,10 +60,13 @@ class CellScene extends Phaser.Scene {
     );
     cellFloor.setScale(PIXEL_SCALE);
 
-    this.map = this.level.createMap();
-    this.map.setPosition(cellFloor.getTopLeft().x, cellFloor.getTopLeft().y);
+    this.tileMap = this.level.createMap();
+    this.tileMap.map.setPosition(
+      cellFloor.getTopLeft().x,
+      cellFloor.getTopLeft().y
+    );
 
-    this.physics.add.collider(this.player.player, this.map, () => {});
+    this.physics.add.collider(this.player.player, this.tileMap.map, () => {});
 
     for (let other_player_index in this.players) {
       let other_player = this.players[other_player_index];

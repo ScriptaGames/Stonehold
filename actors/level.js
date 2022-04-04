@@ -41,6 +41,6 @@ export class Level {
     map.setScale(PIXEL_SCALE);
     map.setCollisionByProperty({ collide: "true" });
 
-    return map;
+    return { tileMap, map };
   }
 }
