@@ -250,6 +250,7 @@ class RoomScene extends Phaser.Scene {
 
         // TODO: add a fade scene transition here
         setTimeout(() => {
+          this.sound.stopAll();
           this.scene.start("CellScene", {
             player: Utils.getLocalStoragePlayer(),
           });
