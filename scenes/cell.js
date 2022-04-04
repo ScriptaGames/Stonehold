@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { Player } from "../actors/player";
 import HubDoor from "../actors/hub_door.js";
-import { Tilemap } from "../actors/tilemap";
+import { Level } from "../actors/level";
 
 class CellScene extends Phaser.Scene {
   constructor(config) {
@@ -10,7 +10,7 @@ class CellScene extends Phaser.Scene {
       key: "CellScene",
     });
 
-    this.map = new Tilemap(this, {
+    this.level = new Level(this, {
       mapName: "cell-map",
       mapImagePath: "images/player_cell_walls.png",
       jsonName: "cell-map",
@@ -29,7 +29,7 @@ class CellScene extends Phaser.Scene {
     this.load.image("player", "images/player.png");
 
     // cell tile stuff
-    this.map.preload();
+    this.level.preload();
 
     Player.preload(this);
   }
@@ -40,10 +40,10 @@ class CellScene extends Phaser.Scene {
     Player.createAnims(this);
     this.player.create();
 
-    this.map.create();
+    this.map = this.level.createMap();
 
     this.physics.add.existing(this.player.player);
-    this.physics.add.collider(this.player.player, this.level, () => {
+    this.physics.add.collider(this.player.player, this.map, () => {
       console.log("player hit wall");
     });
 
