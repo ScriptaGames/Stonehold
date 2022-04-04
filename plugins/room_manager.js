@@ -1,3 +1,5 @@
+import Phaser from "phaser";
+
 class RoomManager extends Phaser.Plugins.BasePlugin {
   init() {
     this.myName = "nicksmaddog";
