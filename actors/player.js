@@ -538,7 +538,13 @@ export class Player extends Actor {
   }
 
   addUltimateCharge() {
-    this.ultimateCharge += ULTIMATE_CHARGE_PER_ENEMY;
+    if (!this.ultimateActive) {
+      this.ultimateCharge = Phaser.Math.Clamp(
+        this.ultimateCharge + ULTIMATE_CHARGE_PER_ENEMY,
+        0,
+        1
+      );
+    }
   }
 
   /**
