@@ -645,7 +645,8 @@ export class Player extends Actor {
   }
 
   performLunge() {
-    let lungeDirection = this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y)
+    let lungeDirection = this.scene.cameras.main
+      .getWorldPoint(this.mouse.x, this.mouse.y)
       .subtract(this.player)
       .normalize();
     let lunge = new Phaser.Math.Vector2()
