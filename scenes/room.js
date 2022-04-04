@@ -24,7 +24,18 @@ class RoomScene extends Phaser.Scene {
 
   init(data) {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.roomConfig = data;
+    this.roomConfig = data.roomConfig;
+    this.initPlayerState = data.playerState;
+    if (!data.playerState) {
+      this.initPlayerState = {
+        hp: PLAYER_BASE_HP,
+        ultimateCharge: 1.0,
+      };
+    }
+
+    if (data.playerState) {
+      console.log(`player state hp: ${data.playerState.hp}`);
+    }
 
     console.log(this.roomConfig.levelMap);
 
@@ -55,7 +66,11 @@ class RoomScene extends Phaser.Scene {
     console.debug("Creating RoomScene with config:", this.roomConfig);
     console.debug("In my chain:", this.room_manager.myChain);
 
-    this.player = new Player(this);
+    this.player = new Player(
+      this,
+      this.initPlayerState.hp,
+      this.initPlayerState.ultimateCharge
+    );
     this.player.create();
     this.player.player.copyPosition(this.roomConfig.levelMap.playerSpawn);
     this.pinkies = [];
@@ -324,7 +339,13 @@ class RoomScene extends Phaser.Scene {
   exitingRoom() {
     console.log("exiting room");
     let room_config = this.room_manager.nextRoom();
-    this.scene.start(room_config.key, room_config.config);
+    this.scene.start(room_config.key, {
+      roomConfig: room_config.config,
+      playerState: {
+        hp: this.player.hp,
+        ultimateCharge: this.player.ultimateCharge,
+      },
+    });
   }
 }
 

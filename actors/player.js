@@ -23,8 +23,9 @@ import { Captain } from "./captain";
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
-  constructor(scene) {
-    super(scene, { hp: PLAYER_BASE_HP, damage: PLAYER_BASE_DAMAGE });
+  constructor(scene, hp = PLAYER_BASE_HP, ultimateCharge = 1.0) {
+    super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
+    this.ultimateCharge = ultimateCharge;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -153,8 +154,6 @@ export class Player extends Actor {
     this.ultimateExplosionBody.setSize(100, 100);
     this.ultimateExplosionBody.setOffset(25, 25);
     this.ultimateActive = false;
-
-    this.ultimateCharge = 1.0;
 
     this.createKeyboardControls();
     this.createMouse();

@@ -110,7 +110,9 @@ class CellScene extends Phaser.Scene {
         this.sound.stopAll();
         this.room_manager.initChain(data.player);
         let room_config = this.room_manager.nextRoom();
-        this.scene.start(room_config.key, room_config.config);
+        this.scene.start(room_config.key, {
+          roomConfig: room_config.config,
+        });
       }
     );
   }
