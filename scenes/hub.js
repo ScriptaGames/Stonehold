@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import HubDoor from "../actors/hub_door";
 import { Player } from "../actors/player";
 import { GraphQLClient } from "../lib/GraphQLClient.js";
+import { Utils } from "../lib/utils.js";
 
 class HubScene extends Phaser.Scene {
   constructor(config) {
@@ -22,16 +23,11 @@ class HubScene extends Phaser.Scene {
     this.load.image("cell_door", "images/cell_door.png");
     this.load.image("player", "images/player.png");
 
-    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
     Player.preload(this);
   }
 
   async create(data) {
     console.log("name:", data.name);
-
-    this.sound.play("hub-music", {
-      loop: true,
-    });
 
     // Create the main player
     Player.createAnims(this);
@@ -44,12 +40,7 @@ class HubScene extends Phaser.Scene {
     this.doors = this.physics.add.staticGroup();
 
     // Add current player's door first
-    this.localPlayer = {
-      id: localStorage.getItem("player_id"),
-      name: localStorage.getItem("player_name"),
-      seed: localStorage.getItem("player_seed"),
-      rooms_cleared: localStorage.getItem("player_rooms_cleared"),
-    };
+    this.localPlayer = Utils.getLocalStoragePlayer();
     let first_door_x = 0;
     let first_door_y = 300;
     let first_door = new HubDoor({
@@ -59,7 +50,12 @@ class HubScene extends Phaser.Scene {
       info: this.localPlayer,
     });
     this.doors.add(first_door, true);
-    this.add.text(first_door_x - 32, first_door_y - 100, this.localPlayer.name);
+    this.add.text(
+      first_door_x - 32,
+      first_door_y - 100,
+      this.localPlayer.name,
+      { fontFamily: "DungeonFont", fontSize: "24px" }
+    );
 
     let other_player_index = 0;
     for (let other_player of this.players) {
@@ -75,7 +71,10 @@ class HubScene extends Phaser.Scene {
         info: other_player,
       });
       this.doors.add(door, true);
-      this.add.text(x - 32, y - 100, other_player.name);
+      const namePlateText = this.add.text(x - 32, y - 100, other_player.name, {
+        fontFamily: "DungeonFont",
+        fontSize: "24px",
+      });
 
       other_player_index++;
     }

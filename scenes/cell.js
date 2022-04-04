@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import { Player } from "../actors/player";
 import HubDoor from "../actors/hub_door.js";
 import { Level } from "../actors/level";
+import { PIXEL_SCALE } from "../variables.js";
+import { Utils } from "../lib/utils.js";
 
 class CellScene extends Phaser.Scene {
   constructor(config) {
@@ -24,23 +26,38 @@ class CellScene extends Phaser.Scene {
   }
 
   async preload() {
-    this.load.image("cell_background", "images/cell_background.png");
-    this.load.image("cell_door", "images/cell_door.png");
+    this.load.image("cell_walls", "images/player_cell_walls.png");
+    this.load.image("cell_floor", "images/player_cell_floor.png");
     this.load.image("player", "images/player.png");
 
     // cell tile stuff
     this.level.preload();
+    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
 
     Player.preload(this);
   }
 
   async create() {
+    this.sound.play("hub-music", {
+      loop: true,
+    });
+
+    this.localPlayer = Utils.getLocalStoragePlayer();
+
     // Create the main player
     this.player = new Player(this);
     Player.createAnims(this);
     this.player.create();
 
+    const cellFloor = this.add.sprite(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2,
+      "cell_floor"
+    );
+    cellFloor.setScale(PIXEL_SCALE);
+
     this.map = this.level.createMap();
+    this.map.setPosition(cellFloor.getTopLeft().x, cellFloor.getTopLeft().y);
 
     this.physics.add.existing(this.player.player);
     this.physics.add.collider(this.player.player, this.map, () => {
@@ -63,21 +80,34 @@ class CellScene extends Phaser.Scene {
       this.add.text(x - 32, y - 150, other_player.seed);
     }
 
+    // Hub Door
+    let hubDoorBounds = this.add.rectangle(390, 160, 70, 100);
+    this.physics.add.existing(hubDoorBounds);
+
     this.physics.add.overlap(
       this.player.player,
-      this.doors,
-      (player, door, colInfo) => {
-        this.enterDoor(door);
+      hubDoorBounds,
+      (player, rec, colInfo) => {
+        console.log("collided with hub Door");
+        this.scene.start("HubScene");
       }
     );
-  }
 
-  /** @param {HubDoor} door */
-  enterDoor(door) {
-    console.log("overlap: " + door.info.name);
-    this.room_manager.initChain(door.info);
-    let room_config = this.room_manager.nextRoom();
-    this.scene.start(room_config.key, room_config.config);
+    // First room door
+    let roomDoorBounds = this.add.rectangle(705, 160, 70, 100);
+    this.physics.add.existing(roomDoorBounds);
+
+    this.physics.add.overlap(
+      this.player.player,
+      roomDoorBounds,
+      (player, rec, colInfo) => {
+        console.log("collided with room Door");
+        this.sound.stopAll();
+        this.room_manager.initChain(this.localPlayer);
+        let room_config = this.room_manager.nextRoom();
+        this.scene.start(room_config.key, room_config.config);
+      }
+    );
   }
 
   update() {

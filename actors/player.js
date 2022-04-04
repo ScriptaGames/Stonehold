@@ -340,7 +340,7 @@ export class Player extends Actor {
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
     if (
-      (this.kb.SPACE.isDown || this.kb.SHIFT.isDown) &&
+      this.kb.SPACE.isDown &&
       this.dodge.ready &&
       this.dodge.keyReleased &&
       this.attack.gracePeriod
@@ -592,5 +592,12 @@ export class Player extends Actor {
 
   dealDamage() {
     this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
+  }
+
+  hide() {
+    this.player.setVisible(false);
+    this.leftHand.setVisible(false);
+    this.rightHand.setVisible(false);
+    this.axe.setVisible(false);
   }
 }

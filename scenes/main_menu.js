@@ -90,7 +90,7 @@ export default class MainMenuScene extends Phaser.Scene {
         //  Turn off the click events
         this.removeListener("click");
 
-        scene.start("HubScene", { name });
+        scene.start("CellScene", { name });
       }
     });
   }
