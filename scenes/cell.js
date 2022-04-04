@@ -38,6 +38,8 @@ class CellScene extends Phaser.Scene {
     // Create the main player
     Player.createAnims(this);
     this.player.create();
+    this.player.player.x = 400;
+    this.player.player.y = 400;
 
     const cellFloor = this.add.sprite(
       this.cameras.main.width / 2,
