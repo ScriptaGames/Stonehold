@@ -14,6 +14,9 @@ export const PLAYER_SPEED = 400;
 /** How long to freeze the final frame of ultimate attack animation */
 export const PLAYER_AFTER_ULTIMATE_DELAY = 500;
 
+/** How much to move when attacking */
+export const ATTACK_LUNGE_SPEED = 600;
+
 /** How much speed boost dodge should give.  Added to base player speed during a dodge. */
 export const DODGE_SPEED_BONUS = 1500;
 
@@ -30,7 +33,7 @@ export const DODGE_GRACE_PERIOD = 300;
 export const ATTACK_GRACE_PERIOD = 350;
 
 /** From attack combo start, how long until the player can start moving and dodging again. */
-export const ATTACK_COMBO_GRACE_PERIOD = 250;
+export const ATTACK_COMBO_GRACE_PERIOD = 300;
 
 /** From first attack start, how much time to accept input for second part of combo attack. */
 export const COMBO_ATTACK_INPUT_PERIOD = 350;

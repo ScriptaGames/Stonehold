@@ -17,6 +17,7 @@ import {
   ULTIMATE_CHARGE_PER_ENEMY,
   COMBO_ATTACK_INPUT_PERIOD,
   ATTACK_COMBO_GRACE_PERIOD,
+  ATTACK_LUNGE_SPEED,
 } from "../variables";
 import { Captain } from "./captain";
 
@@ -522,9 +523,6 @@ export class Player extends Actor {
   }
 
   playFirstAttack() {
-    console.log("first attack");
-    this.attack.canCombo = true;
-
     // play attack anims
     this.axe.stop();
     this.axe.play({
@@ -546,7 +544,7 @@ export class Player extends Actor {
   }
 
   playSecondAttack() {
-    console.log("second attack");
+    this.attack.performCombo = false;
 
     // play attack anims
     this.axe.play({
@@ -587,16 +585,18 @@ export class Player extends Actor {
         () => (this.attack.gracePeriod = true)
       );
 
-      this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        this.scene.time.delayedCall(PLAYER_AFTER_ULTIMATE_DELAY, () => {
-          this.attack.attacking = false;
-          this.leftHand.setVisible(true);
-          this.rightHand.setVisible(true);
-        });
+      this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (anim) => {
+        if (anim.key == "ultimate-attack") {
+          this.scene.time.delayedCall(PLAYER_AFTER_ULTIMATE_DELAY, () => {
+            this.attack.attacking = false;
+            this.leftHand.setVisible(true);
+            this.rightHand.setVisible(true);
+          });
 
-        this.scene.cameras.main.shake(500);
+          this.scene.cameras.main.shake(500);
 
-        this.spawnUltimateExplosion();
+          this.spawnUltimateExplosion();
+        }
       });
     }
   }
@@ -638,9 +638,22 @@ export class Player extends Actor {
     if (enabled) {
       this.attack.activeFrame = true;
       this.scene.sound.play("swing-small");
+      this.performLunge();
     } else {
       this.attack.activeFrame = false;
     }
+  }
+
+  performLunge() {
+    let lungeDirection = this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y)
+      .subtract(this.player)
+      .normalize();
+    let lunge = new Phaser.Math.Vector2()
+      .copy(lungeDirection)
+      .normalize()
+      .scale(ATTACK_LUNGE_SPEED);
+
+    this.playerBody.velocity.normalize().scale(PLAYER_SPEED).add(lunge);
   }
 
   playDeathAnim() {
