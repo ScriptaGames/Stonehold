@@ -11,6 +11,7 @@ export class PlayUIScene extends Phaser.Scene {
   preload() {
     this.load.image("health_bar_border", "images/healthbar.png");
     this.load.image("health_bar_filling", "images/health-filling.png");
+    this.load.image("return-home", "images/returnHome_button.png");
   }
 
   create() {
@@ -22,10 +23,40 @@ export class PlayUIScene extends Phaser.Scene {
     //  Grab a reference to the Game Scene
     let roomScene = this.scene.get("RoomScene");
 
+    this.makeReturnHomeBtn();
+
     //  Listen for events from it
     roomScene.events.addListener("playerTakeDamage", (percent) => {
       console.debug("GOT EVENT player took took damage:", percent);
       this.setValue(this.healthBar, percent);
+    });
+
+    roomScene.events.addListener("roomLoaded", (inMyChain) => {
+      console.log("room loaded: " + inMyChain);
+      if (inMyChain) {
+        this.returnHomeBtn.setVisible(false);
+        this.returnHomeBtn.disableInteractive();
+      } else {
+        this.returnHomeBtn.setVisible(true);
+        this.returnHomeBtn.setInteractive();
+      }
+    });
+  }
+
+  makeReturnHomeBtn() {
+    const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
+    this.returnHomeBtn = this.add.sprite(screenCenterX, 47, "return-home");
+    this.returnHomeBtn.setVisible(false);
+
+    this.returnHomeBtn.on("pointerup", () => {
+      let roomScene = this.scene.get("RoomScene");
+      this.returnHomeBtn.setVisible(false);
+      this.returnHomeBtn.disableInteractive();
+      roomScene.registry.destroy();
+      roomScene.events.off('actor-death');
+      roomScene.events.off('roomLoaded');
+      roomScene.game.sound.stopAll();
+      roomScene.scene.start("CellScene");
     });
   }
 
