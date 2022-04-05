@@ -299,6 +299,7 @@ class RoomScene extends Phaser.Scene {
     });
 
     this.events.emit("createRoom", this.room_manager.currentChainDepth, this);
+    this.events.emit("roomLoaded", this.room_manager.myChain, this);
   }
 
   update() {
@@ -348,7 +349,8 @@ class RoomScene extends Phaser.Scene {
     console.log("exiting room");
     let room_config = this.room_manager.nextRoom();
     this.registry.destroy(); // destroy registry
-    this.events.off("actor-death"); // disable all active events
+    this.events.off('actor-death');       // disable all active events
+    this.events.off('roomLoaded');
     this.scene.restart({
       roomConfig: room_config.config,
       playerState: {
