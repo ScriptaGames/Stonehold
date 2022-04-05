@@ -65,6 +65,7 @@ export class Pinky extends Actor {
     this.poison.setScale(PIXEL_SCALE);
     this.poison.anims.hideOnComplete = true;
     this.poison.visible = false;
+    this.poison.setDepth(5000);
     this.poison.setDataEnabled();
     this.poison.data.set("actor", this);
     this.scene.physics.add.existing(this.poison);
