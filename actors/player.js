@@ -612,7 +612,7 @@ export class Player extends Actor {
     this.scene.sound.play("ultimate-boom", { volume: 4 });
 
     // ultimate should only deal damage briefly when it lands
-    this.scene.time.delayedCall(5, () => (this.ultimateActive = false));
+    this.scene.time.delayedCall(20, () => (this.ultimateActive = false));
 
     this.ultimateExplosion.on(
       Phaser.Animations.Events.ANIMATION_COMPLETE,
