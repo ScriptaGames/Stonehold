@@ -287,19 +287,25 @@ class RoomScene extends Phaser.Scene {
           .setDepth(1000);
 
         // TODO: fade out player
-        setTimeout(() => {
-          this.player.hide();
-        }, 1000);
+        this.time.delayedCall({
+          delay: 1000,
+          callback: () => {
+            this.player.hide();
+          },
+        });
 
         // TODO: add a fade scene transition here
-        setTimeout(() => {
-          const uiScene = this.scene.get("PlayUIScene");
-          uiScene.scene.restart();
-          this.sound.stopAll();
-          this.scene.start("CellScene", {
-            player: Utils.getLocalStoragePlayer(),
-          });
-        }, 4000);
+        this.time.delayedCall({
+          delay: 4000,
+          callback: () => {
+            const uiScene = this.scene.get("PlayUIScene");
+            uiScene.scene.restart();
+            this.sound.stopAll();
+            this.scene.start("CellScene", {
+              player: Utils.getLocalStoragePlayer(),
+            });
+          },
+        });
       } else {
         console.log("ENEMY DIED OH YEAAAAAH");
         await this.enemyKilled();
