@@ -123,7 +123,7 @@ class HubScene extends Phaser.Scene {
 
     // Entry bounds
     let entryBounds = this.add
-      .rectangle(startX, this.cameras.main.height / 2 - 70, 15, 40)
+      .rectangle(startX, this.cameras.main.height / 2 - 90, 15, 40)
       .setScale(PIXEL_SCALE);
     this.physics.add.existing(entryBounds);
     entryBounds.body.immovable = false;
