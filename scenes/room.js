@@ -347,14 +347,17 @@ class RoomScene extends Phaser.Scene {
 
       // Increment the players rooms cleared count
       const playerId = localStorage.getItem("player_id");
-      let roomsCleared = parseInt(localStorage.getItem("player_rooms_cleared"));
-      roomsCleared++;
-      const updatedPlayer = await this.gqlClient.updatePlayer(
-        playerId,
-        roomsCleared
-      );
-      console.debug("updatedPlayer:", updatedPlayer);
-      localStorage.setItem("player_rooms_cleared", roomsCleared.toString());
+      const remotePlayer = await this.gqlClient.queryPlayerByID(playerId)
+
+      if (this.room_manager.currentChainDepth > remotePlayer.rooms_cleared) {
+        const newRoomsCleared = parseInt(remotePlayer.rooms_cleared) + 1;
+        const updatedPlayer = await this.gqlClient.updatePlayer(
+          playerId,
+          newRoomsCleared
+        );
+        console.debug("updatedPlayer:", updatedPlayer);
+        localStorage.setItem("player_rooms_cleared", newRoomsCleared.toString());
+      }
     }
   }
 
