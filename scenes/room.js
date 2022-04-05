@@ -133,14 +133,22 @@ class RoomScene extends Phaser.Scene {
     let percentCaptains = this.roomConfig.percentCaptains;
     for (let e = 0; e < this.numEnemies; e++) {
       let enemy;
-      if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
+
+      // Always have at least 1 captain after level 3
+      if (e === 0 && this.room_manager.currentChainDepth >= 3) {
         enemy = new Captain(this, this.roomConfig);
         enemy.create();
         this.captains.push(enemy);
       } else {
-        enemy = new Pinky(this, this.roomConfig);
-        enemy.create();
-        this.pinkies.push(enemy);
+        if (this.room_manager.rnd.frac() * 100 <= percentCaptains) {
+          enemy = new Captain(this, this.roomConfig);
+          enemy.create();
+          this.captains.push(enemy);
+        } else {
+          enemy = new Pinky(this, this.roomConfig);
+          enemy.create();
+          this.pinkies.push(enemy);
+        }
       }
 
       // pick one of the enemy placements objects file the tiled map
