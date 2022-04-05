@@ -20,12 +20,14 @@ import {
   ATTACK_LUNGE_SPEED,
 } from "../variables";
 import { Captain } from "./captain";
+import { Utils } from "../lib/utils";
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
   constructor(scene, hp = PLAYER_BASE_HP, ultimateCharge = 0.0) {
     super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
     this.ultimateCharge = ultimateCharge;
+    this.bonusDamage = 0;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -155,6 +157,8 @@ export class Player extends Actor {
     this.ultimateExplosionBody.setOffset(25, 25);
     this.ultimateActive = false;
 
+    this.bonusDamage = parseInt(Utils.getLocalStoragePlayer().bonus_damage);
+
     this.createKeyboardControls();
     this.createMouse();
 
@@ -169,7 +173,7 @@ export class Player extends Actor {
     // link footstep sfx to run animation
     this.player.on(
       Phaser.Animations.Events.ANIMATION_UPDATE,
-      (anim, b, c, frameIndex) => {
+      (anim, _b, _c, frameIndex) => {
         // when dwarf-run hits frame 3, play footstep sfx
         if (anim.key == "dwarf-run" && frameIndex == 3) {
           this.scene.sound.play("footstep");
@@ -703,5 +707,9 @@ export class Player extends Actor {
     this.leftHand.setVisible(false);
     this.rightHand.setVisible(false);
     this.axe.setVisible(false);
+  }
+
+  getTotalDamage() {
+    return this.damage + this.bonusDamage;
   }
 }

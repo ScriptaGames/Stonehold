@@ -97,6 +97,7 @@ export default class MainMenuScene extends Phaser.Scene {
           localStorage.setItem("player_name", name);
           localStorage.setItem("player_seed", seed);
           localStorage.setItem("player_rooms_cleared", 0);
+          localStorage.setItem("bonus_damage", 0);
         }
 
         //  Turn off the click events
