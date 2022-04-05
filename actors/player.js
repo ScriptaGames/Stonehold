@@ -260,16 +260,18 @@ export class Player extends Actor {
     });
 
     this.scene.input.on("pointerdown", (pointer) => {
-      if (pointer.button == 0) {
-        // if trying to attack while already attacking, then try a combo
-        if (this.attack.attacking) {
-          this.attack.performCombo = true;
+      if (this.isAlive) {
+        if (pointer.button == 0) {
+          // if trying to attack while already attacking, then try a combo
+          if (this.attack.attacking) {
+            this.attack.performCombo = true;
+          }
+          this.trySwingAxe();
+        } else if (pointer.button == 2) {
+          this.tryUltimateAbility();
+        } else {
+          console.log(`got pointer ${pointer.button}`);
         }
-        this.trySwingAxe();
-      } else if (pointer.button == 2) {
-        this.tryUltimateAbility();
-      } else {
-        console.log(`got pointer ${pointer.button}`);
       }
     });
   }
@@ -647,16 +649,18 @@ export class Player extends Actor {
   }
 
   performLunge() {
-    let lungeDirection = this.scene.cameras.main
-      .getWorldPoint(this.mouse.x, this.mouse.y)
-      .subtract(this.player)
-      .normalize();
-    let lunge = new Phaser.Math.Vector2()
-      .copy(lungeDirection)
-      .normalize()
-      .scale(ATTACK_LUNGE_SPEED);
+    if (this.isAlive) {
+      let lungeDirection = this.scene.cameras.main
+        .getWorldPoint(this.mouse.x, this.mouse.y)
+        .subtract(this.player)
+        .normalize();
+      let lunge = new Phaser.Math.Vector2()
+        .copy(lungeDirection)
+        .normalize()
+        .scale(ATTACK_LUNGE_SPEED);
 
-    this.playerBody.velocity.normalize().scale(PLAYER_SPEED).add(lunge);
+      this.playerBody.velocity.normalize().scale(PLAYER_SPEED).add(lunge);
+    }
   }
 
   playDeathAnim() {
@@ -695,7 +699,11 @@ export class Player extends Actor {
   }
 
   dealDamage() {
-    this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
+    if (this.isAlive) {
+      this.scene.sound.play(
+        ["axe-hit1", "axe-hit2"][Math.round(Math.random())]
+      );
+    }
   }
 
   hide() {
