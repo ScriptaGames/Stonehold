@@ -11,21 +11,55 @@ export class PlayUIScene extends Phaser.Scene {
   preload() {
     this.load.image("health_bar_border", "images/healthbar.png");
     this.load.image("health_bar_filling", "images/health-filling.png");
+    this.load.spritesheet("RMB", "images/RMB_alert_strip.png", {
+      frameWidth: 27,
+      frameHeight: 27,
+    });
   }
 
   create() {
+    // create animation
+    this.rmbAnim = this.anims.create({
+      key: "blink",
+      frames: this.anims.generateFrameNumbers("RMB"),
+      frameRate: 10,
+      repeat: -1,
+    });
+
     // add player UI bars
     this.healthBar = this.makeBar(43, 47, 0xe74c3c);
     this.setValue(this.healthBar, 1);
     this.add.sprite(100, 50, "health_bar_border").setScale(PIXEL_SCALE);
 
+    // Add Ultimate charge bar
+    this.ultimateBar = this.makeBar(43, 87, 0xfed507);
+    this.setValue(this.ultimateBar, 0);
+    this.add.sprite(100, 90, "health_bar_border").setScale(PIXEL_SCALE);
+
+    // RMB sprite
+    this.rmbSprite = this.add.sprite(100, 90, "RMB");
+    this.rmbSprite.setScale(PIXEL_SCALE);
+    this.rmbSprite.play("blink");
+    this.rmbSprite.visible = false;
+
     //  Grab a reference to the Game Scene
     let roomScene = this.scene.get("RoomScene");
 
-    //  Listen for events from it
+    //  Listen for damage events
     roomScene.events.addListener("playerTakeDamage", (percent) => {
       console.debug("GOT EVENT player took took damage:", percent);
       this.setValue(this.healthBar, percent);
+    });
+
+    //  Listen for charge events
+    roomScene.events.addListener("chargeUltimate", (charge) => {
+      console.debug("GOT EVENT chargeUltimate:", charge);
+      this.setValue(this.ultimateBar, charge);
+      if (charge >= 1) {
+        this.rmbSprite.visible = true;
+      } else {
+        this.rmbSprite.visible = false;
+      }
     });
   }
 

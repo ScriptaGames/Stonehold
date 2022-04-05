@@ -29,7 +29,7 @@ class RoomScene extends Phaser.Scene {
     if (!data.playerState) {
       this.initPlayerState = {
         hp: PLAYER_BASE_HP,
-        ultimateCharge: 1.0,
+        ultimateCharge: 0,
       };
     }
 
@@ -346,7 +346,7 @@ class RoomScene extends Phaser.Scene {
     console.log("exiting room");
     let room_config = this.room_manager.nextRoom();
     this.registry.destroy(); // destroy registry
-    this.events.off('actor-death');       // disable all active events
+    this.events.off("actor-death"); // disable all active events
     this.scene.restart({
       roomConfig: room_config.config,
       playerState: {

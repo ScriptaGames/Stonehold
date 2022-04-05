@@ -23,7 +23,7 @@ import { Captain } from "./captain";
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
-  constructor(scene, hp = PLAYER_BASE_HP, ultimateCharge = 1.0) {
+  constructor(scene, hp = PLAYER_BASE_HP, ultimateCharge = 0.0) {
     super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
     this.ultimateCharge = ultimateCharge;
   }
@@ -578,6 +578,9 @@ export class Player extends Actor {
 
       this.player.play("ultimate-attack");
 
+      // reset progress bar
+      this.scene.events.emit("chargeUltimate", 0, this);
+
       this.scene.time.delayedCall(
         ULTIMATE_ATTACK_GRACE_PERIOD,
         () => (this.attack.gracePeriod = true)
@@ -624,6 +627,7 @@ export class Player extends Actor {
         0,
         1
       );
+      this.scene.events.emit("chargeUltimate", this.ultimateCharge, this);
     }
   }
 
@@ -687,7 +691,6 @@ export class Player extends Actor {
     this.rightHand.setTintFill(0xf1f1f1);
     this.scene.time.delayedCall(128, () => this.rightHand.clearTint());
 
-    console.debug("emitting event playerTakeDamage");
     this.scene.events.emit("playerTakeDamage", this.hp / PLAYER_BASE_HP, this);
   }
 
