@@ -4,8 +4,6 @@ import CellScene from "./cell.js";
 export class PlayUIScene extends Phaser.Scene {
   constructor() {
     super({ key: "PlayUIScene" });
-
-    this.health = 100;
   }
 
   preload() {
@@ -18,6 +16,7 @@ export class PlayUIScene extends Phaser.Scene {
   }
 
   create() {
+
     // create animation
     this.rmbAnim = this.anims.create({
       key: "blink",
@@ -26,18 +25,25 @@ export class PlayUIScene extends Phaser.Scene {
       repeat: -1,
     });
 
+    // Add floor number text
+    this.floorText = this.add.text(43,17, "Floor 0", {
+      fontFamily: "DungeonFont",
+      fontSize: "28px",
+      color: "#ffffff",
+    });
+
     // add player UI bars
-    this.healthBar = this.makeBar(43, 47, 0xe74c3c);
+    this.healthBar = this.makeBar(43, 60, 0xe74c3c);
     this.setValue(this.healthBar, 1);
-    this.add.sprite(100, 50, "health_bar_border").setScale(PIXEL_SCALE);
+    this.add.sprite(100, 63, "health_bar_border").setScale(PIXEL_SCALE);
 
     // Add Ultimate charge bar
-    this.ultimateBar = this.makeBar(43, 87, 0xfed507);
+    this.ultimateBar = this.makeBar(43, 100, 0xfed507);
     this.setValue(this.ultimateBar, 0);
-    this.add.sprite(100, 90, "health_bar_border").setScale(PIXEL_SCALE);
+    this.add.sprite(100, 103, "health_bar_border").setScale(PIXEL_SCALE);
 
     // RMB sprite
-    this.rmbSprite = this.add.sprite(100, 90, "RMB");
+    this.rmbSprite = this.add.sprite(100, 103, "RMB");
     this.rmbSprite.setScale(PIXEL_SCALE);
     this.rmbSprite.play("blink");
     this.rmbSprite.visible = false;
@@ -60,6 +66,10 @@ export class PlayUIScene extends Phaser.Scene {
       } else {
         this.rmbSprite.visible = false;
       }
+    });
+
+    roomScene.events.addListener("createRoom", (depth) => {
+      this.floorText.setText("Floor " + depth);
     });
   }
 

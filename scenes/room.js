@@ -297,6 +297,8 @@ class RoomScene extends Phaser.Scene {
         await this.enemyKilled();
       }
     });
+
+    this.events.emit("createRoom", this.room_manager.currentChainDepth, this);
   }
 
   update() {
