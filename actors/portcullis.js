@@ -16,7 +16,7 @@ export class Portcullis extends Actor {
       frameHeight: 48,
     });
 
-    scene.load.audio("door-open", "audio/portcullis.mp3");
+    scene.load.audio("door-open", "audio/portcullis2.mp3");
     scene.load.audio("door-hit", "audio/axe-hitting-stone.mp3");
   }
 
@@ -24,7 +24,7 @@ export class Portcullis extends Actor {
     this.locked = true;
   }
   unlock() {
-    this.portcullis.play("door-open", { volume: 3 });
+    this.portcullis.play("door-open", { volume: 2 });
     this.locked = false;
     // entry hitbox
     this.portcullisBody.setSize(50, 10);
