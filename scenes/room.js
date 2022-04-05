@@ -341,6 +341,12 @@ class RoomScene extends Phaser.Scene {
 
   /** Set the door to unlocked. */
   async unlockDoor() {
+
+    // automatically open the door after a short delay for those who don't know you need to hit it
+    setTimeout(() => {
+      this.portcullis.unlock();
+    }, 1500)
+
     if (!this.portcullis.vulnerable) {
       // allow player to start hitting the door
       this.portcullis.setVulnerable(true);

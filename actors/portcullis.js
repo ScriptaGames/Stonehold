@@ -24,7 +24,7 @@ export class Portcullis extends Actor {
     this.locked = true;
   }
   unlock() {
-    this.portcullis.play("door-open");
+    this.portcullis.play("door-open", { volume: 3 });
     this.locked = false;
     // entry hitbox
     this.portcullisBody.setSize(50, 10);
