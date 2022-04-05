@@ -68,15 +68,32 @@ class HubScene extends Phaser.Scene {
     this.drawSection(321, this.localPlayer);
 
     let other_player_index = 2;
+    let finalX;
     for (let other_player of this.players) {
       if (other_player.id === this.localPlayer.id) {
         continue; // skip local player
       }
 
-      this.drawSection(321 * other_player_index * 1.49 - 160, other_player);
+      finalX = 321 * other_player_index * 1.49 - 160;
+      this.drawSection(finalX, other_player);
 
       other_player_index++;
     }
+
+    // Right wall
+    finalX = 321 * other_player_index * 1.49 - 350;
+    const rightWallSprite = this.add
+      .sprite(finalX, this.cameras.main.height / 2, "hub_left_wall")
+      .setScale(PIXEL_SCALE);
+    this.physics.add.existing(rightWallSprite);
+    rightWallSprite.body.immovable = true;
+    this.physics.add.collider(
+      this.player.player,
+      rightWallSprite,
+      (player, rec, colInfo) => {
+        console.debug("collided with right wall");
+      }
+    );
 
     this.cameras.main.setDeadzone(400, 2000);
     this.cameras.main.startFollow(this.player.player, true, 0.4, 0.4);
