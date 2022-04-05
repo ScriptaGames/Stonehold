@@ -69,6 +69,8 @@ export class Pinky extends Actor {
     this.poison.setDataEnabled();
     this.poison.data.set("actor", this);
     this.scene.physics.add.existing(this.poison);
+    // this.poison.body.setSize(48, 48);
+    this.poison.body.setCircle(24, 6, 7);
 
     this.attack = {
       attacking: false,
