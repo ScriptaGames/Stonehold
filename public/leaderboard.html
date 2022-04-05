@@ -1,0 +1,54 @@
+<script>
+  async function getLeaders() {
+    console.debug('fetching leaders');
+
+    const response = await fetch('http://66.228.50.201:3000/api/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: `
+        query {
+          players(orderBy: {rooms_cleared: desc}) {
+            name
+            rooms_cleared
+          }
+        }
+      `,
+        variables: {},
+      }),
+    })
+
+    let leaders = await response.json();
+    leaders = leaders.data.players;
+    leaders.length = 10
+
+    return leaders;
+  }
+
+  async function outputLeaderboardMarkdown() {
+    const leaders = await getLeaders();
+
+    let markdown =
+`
+| Name | Floors |
+|---|---|`;
+
+    for (let player of leaders) {
+      markdown += `
+| ${player.name} | ${player.rooms_cleared} |`;
+    }
+
+    const element = document.getElementById('leaderboard');
+
+    element.innerText = markdown;
+
+    console.debug(markdown);
+  }
+
+  outputLeaderboardMarkdown();
+
+</script>
+<div id="leaderboard">
+</div>
