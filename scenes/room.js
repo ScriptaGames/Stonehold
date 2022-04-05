@@ -284,7 +284,7 @@ class RoomScene extends Phaser.Scene {
             fontSize: "70px",
           })
           .setOrigin(0.5)
-          .setDepth(1000);
+          .setDepth(10000);
 
         // TODO: fade out player
         setTimeout(() => {
