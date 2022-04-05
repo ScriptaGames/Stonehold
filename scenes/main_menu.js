@@ -19,6 +19,9 @@ export default class MainMenuScene extends Phaser.Scene {
   }
 
   async create() {
+    // set master volume
+    this.game.sound.setVolume(0.2);
+
     // Add background image
     const titleImage = this.add.image(
       this.cameras.main.width / 2,
