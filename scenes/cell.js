@@ -40,7 +40,7 @@ class CellScene extends Phaser.Scene {
   async create(data) {
     console.debug("Create CellScene with player:", data.player);
 
-    // play room music if it isn't already playing from the previous room
+    this.game.sound.stopAll();
     if (!this.game.sound.get("hub-music")?.isPlaying) {
       this.game.sound.play("hub-music", { loop: true });
     }
