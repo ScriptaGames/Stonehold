@@ -32,6 +32,7 @@ new Phaser.Game({
     default: "arcade",
     arcade: {
       debug: false,
+      tileBias: 32,
     },
   },
   scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
