@@ -95,11 +95,19 @@ export class Pinky extends Actor {
     this.pinky.depth = this.pinky.y + this.pinky.height;
 
     if (this.isAlive) {
+      let playerSprite = this.scene.player.player;
       this.playerDistance = new Phaser.Math.Vector2()
-        .copy(this.scene.player.player)
+        .copy(playerSprite)
         .subtract(this.pinky);
 
-      if (this.playerDistance.length() < PINKY_ATTACK_RANGE) {
+      let pDistance = this.playerDistance.length();
+
+      // HACK: Distance gets greater when player is below pinky, brute force compensate
+      if (playerSprite.y > this.pinky.y) {
+        pDistance -= 18
+      }
+
+      if (pDistance < PINKY_ATTACK_RANGE) {
         this.performAttack();
       }
 
