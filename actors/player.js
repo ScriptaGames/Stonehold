@@ -647,7 +647,7 @@ export class Player extends Actor {
       this.attack.activeFrame = true;
 
       // Fixes bug where ax swing got louder and louder
-      this.scene.sound.removeByKey('swing-small');
+      this.scene.sound.removeByKey("swing-small");
       this.scene.sound.add("swing-small").play();
 
       this.performLunge();

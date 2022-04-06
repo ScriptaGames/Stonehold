@@ -29,10 +29,15 @@ new Phaser.Game({
     createContainer: true,
   },
   physics: {
-    default: "arcade",
-    arcade: {
-      debug: false,
+    default: "matter",
+    matter: {
+      debug: true,
+      gravity: {
+        x: 0,
+        y: 0,
+      },
     },
   },
-  scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
+  // scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
+  scene: [CellScene, HubScene, RoomScene, PlayUIScene],
 });

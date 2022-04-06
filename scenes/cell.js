@@ -12,13 +12,19 @@ class CellScene extends Phaser.Scene {
       key: "CellScene",
     });
 
-    this.level = new Level(this, {
-      mapName: "cell-map",
-      mapImagePath: "images/player_cell_walls.png",
-      jsonName: "cell-map",
-      jsonPath: "maps/cell.json",
-      tilesetNameFromTiled: "player_cell_walls",
-    });
+    this.level = new Level(this,
+      {
+        mapName: "room1-map",
+        mapImagePath: "images/room1_walls.png",
+        objectsImagePath: "images/Objects_atlas.png",
+        jsonName: "room1-map",
+        jsonPath: "maps/room1.json",
+        tilesetNameFromTiled: "room1_walls",
+        objectsTilesetFromTiled: "room1_objects",
+        playerSpawn: { x: 634, y: 1158 },
+        // playerSpawn: { x: 1221, y: 817 + 200 }, // spawn beside door
+        doorPosition: { x: 1224, y: 697 },
+      });
   }
 
   init() {
@@ -34,7 +40,7 @@ class CellScene extends Phaser.Scene {
     this.level.preload();
     this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
 
-    Player.preload(this);
+    // Player.preload(this);
   }
 
   async create(data) {
@@ -48,11 +54,11 @@ class CellScene extends Phaser.Scene {
     this.cameras.main.backgroundColor.setTo(46, 49, 62);
 
     // Create the main player
-    this.player = new Player(this);
-    Player.createAnims(this);
-    this.player.create();
-    this.player.player.x = 400;
-    this.player.player.y = 400;
+    // this.player = new Player(this);
+    // Player.createAnims(this);
+    // this.player.create();
+    // this.player.player.x = 400;
+    // this.player.player.y = 400;
 
     const cellFloor = this.add.sprite(
       this.cameras.main.width / 2,
@@ -67,58 +73,69 @@ class CellScene extends Phaser.Scene {
       cellFloor.getTopLeft().y
     );
 
-    this.physics.add.collider(this.player.player, this.tileMap.map, () => {});
+    this.matter.world.convertTilemapLayer(this.tileMap.map);
 
-    for (let other_player_index in this.players) {
-      let other_player = this.players[other_player_index];
-      console.debug("player:", other_player);
-      let x = other_player_index * 256 + 200;
-      let y = 300;
-      let door = new HubDoor({
-        scene: this,
-        x: x,
-        y: y,
-        info: other_player,
-      });
-      this.doors.add(door, true);
-      this.add.text(x - 32, y - 100, other_player.name);
-      this.add.text(x - 32, y - 150, other_player.seed);
-    }
+    // this.matter.world.convertTilemapLayer(lavaLayer);
+
+    this.player = this.matter.add.image(634, 1158, "player");
+    this.player.setFixedRotation();
+    this.player.setAngle(270);
+    this.player.setMass(30);
+    this.cameras.main.startFollow(this.player, true, 0.4, 0.4);
+
+    // this.physics.add.collider(this.player.player, this.tileMap.map, () => {});
 
     // Hub Door
-    let hubDoorBounds = this.add.rectangle(390, 120, 70, 100);
-    this.physics.add.existing(hubDoorBounds);
+    // let hubDoorBounds = this.add.rectangle(390, 120, 70, 100);
+    // this.physics.add.existing(hubDoorBounds);
+    //
+    // this.physics.add.overlap(
+    //   this.player.player,
+    //   hubDoorBounds,
+    //   (player, rec, colInfo) => {
+    //     console.log("collided with hub Door");
+    //     this.scene.start("HubScene");
+    //   }
+    // );
 
-    this.physics.add.overlap(
-      this.player.player,
-      hubDoorBounds,
-      (player, rec, colInfo) => {
-        console.log("collided with hub Door");
-        this.scene.start("HubScene");
-      }
-    );
+    // // First room door
+    // let roomDoorBounds = this.add.rectangle(687, 120, 70, 100);
+    // this.physics.add.existing(roomDoorBounds);
+    //
+    // this.physics.add.overlap(
+    //   this.player.player,
+    //   roomDoorBounds,
+    //   (player, rec, colInfo) => {
+    //     console.log("collided with room Door");
+    //     this.sound.stopAll();
+    //     this.room_manager.initChain(data.player);
+    //     let room_config = this.room_manager.nextRoom();
+    //     this.scene.start(room_config.key, {
+    //       roomConfig: room_config.config,
+    //     });
+    //   }
+    // );
 
-    // First room door
-    let roomDoorBounds = this.add.rectangle(687, 120, 70, 100);
-    this.physics.add.existing(roomDoorBounds);
-
-    this.physics.add.overlap(
-      this.player.player,
-      roomDoorBounds,
-      (player, rec, colInfo) => {
-        console.log("collided with room Door");
-        this.sound.stopAll();
-        this.room_manager.initChain(data.player);
-        let room_config = this.room_manager.nextRoom();
-        this.scene.start(room_config.key, {
-          roomConfig: room_config.config,
-        });
-      }
-    );
+    this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   update() {
-    this.player.update();
+    // this.player.update();
+    if (this.cursors.left.isDown) {
+      console.debug('left.isDown')
+      this.player.thrustLeft(0.02);
+    } else if (this.cursors.right.isDown) {
+      console.debug('right.isDown')
+      this.player.thrustRight(0.02);
+    }
+
+    if (this.cursors.up.isDown) {
+      console.debug('up.isDown')
+      this.player.thrust(0.02);
+    } else if (this.cursors.down.isDown) {
+      console.debug('down.isDown')
+      this.player.thrustBack(0.02);
+    }
   }
 }
 
