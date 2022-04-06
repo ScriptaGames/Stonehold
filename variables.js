@@ -75,7 +75,7 @@ export const CAPTAIN_BASE_HP = 7;
 export const PINKY_SPEED = 100;
 
 /** Pinky's attack range */
-export const PINKY_ATTACK_RANGE = 100;
+export const PINKY_ATTACK_RANGE = 110;
 
 /** Pinky's idle time after attacking */
 export const PINKY_IDLE_AFTER_ATTACK = 1000;
