@@ -24,7 +24,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     const key = "RoomScene";
     // this.rnd.pick(this.roomChoices);
 
-    const maxMushrooms = 22;
+    const maxMushrooms = 12;
     const numMushrooms = this.rnd.weightedPick(
       new Array(maxMushrooms).fill(1).map((n, i) => i)
     );
