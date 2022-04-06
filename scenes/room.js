@@ -9,6 +9,7 @@ import {
   PIXEL_SCALE,
   ULTIMATE_ATTACK_DAMAGE,
   PLAYER_BASE_HP,
+  BONUS_DAMAGE_INCREASE,
 } from "../variables";
 import { Utils } from "../lib/utils.js";
 
@@ -243,12 +244,12 @@ class RoomScene extends Phaser.Scene {
         if (enemyActor instanceof Portcullis) {
           if (this.numEnemies == 0) {
             this.player.dealDamage();
-            enemyActor.takeDamage(this.player.damage);
+            enemyActor.takeDamage(this.player.getTotalDamage());
           }
         } else {
           // deal damage to enemy
           this.player.dealDamage();
-          enemyActor.takeDamage(this.player.damage);
+          enemyActor.takeDamage(this.player.getTotalDamage());
         }
       },
       // check collision only when the axe is active, and when the enemy is vulnerable
@@ -369,10 +370,23 @@ class RoomScene extends Phaser.Scene {
 
   exitingRoom() {
     console.log("exiting room");
+    if (
+      !this.room_manager.myChain ||
+      this.room_manager.currentChainDepth >= this.room_manager.unlockedDepth
+    ) {
+      this.player.bonusDamage =
+        parseInt(localStorage.getItem("bonus_damage")) + BONUS_DAMAGE_INCREASE;
+      localStorage.setItem("bonus_damage", this.player.bonusDamage);
+      this.events.emit(
+        "playerIncreaseDamage",
+        this.player.getTotalDamage(),
+        this
+      );
+    }
     let room_config = this.room_manager.nextRoom();
     this.registry.destroy(); // destroy registry
-    this.events.off('actor-death');       // disable all active events
-    this.events.off('roomLoaded');
+    this.events.off("actor-death"); // disable all active events
+    this.events.off("roomLoaded");
     this.scene.restart({
       roomConfig: room_config.config,
       playerState: {

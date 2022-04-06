@@ -1,4 +1,5 @@
-import { PIXEL_SCALE } from "../variables.js";
+import { Utils } from "../lib/utils.js";
+import { PIXEL_SCALE, PLAYER_BASE_DAMAGE } from "../variables.js";
 import CellScene from "./cell.js";
 
 export class PlayUIScene extends Phaser.Scene {
@@ -17,6 +18,7 @@ export class PlayUIScene extends Phaser.Scene {
   }
 
   create() {
+    const localPlayer = Utils.getLocalStoragePlayer();
 
     // create animation
     this.rmbAnim = this.anims.create({
@@ -27,7 +29,17 @@ export class PlayUIScene extends Phaser.Scene {
     });
 
     // Add floor number text
-    this.floorText = this.add.text(43,17, "Floor 0", {
+    this.floorText = this.add.text(43, 17, "Floor 0", {
+      fontFamily: "DungeonFont",
+      fontSize: "28px",
+      color: "#ffffff",
+    });
+
+    let damage = PLAYER_BASE_DAMAGE;
+    if (localPlayer.bonus_damage) {
+      damage += parseInt(localPlayer.bonus_damage);
+    }
+    this.damageText = this.add.text(150, 17, "Damage " + damage, {
       fontFamily: "DungeonFont",
       fontSize: "28px",
       color: "#ffffff",
@@ -61,6 +73,11 @@ export class PlayUIScene extends Phaser.Scene {
       this.setValue(this.healthBar, percent);
     });
 
+    roomScene.events.addListener("playerIncreaseDamage", (damage) => {
+      console.debug("GOT EVENT player increase damage:", damage);
+      this.damageText.setText("Damage " + damage);
+    });
+
     //  Listen for charge events
     roomScene.events.addListener("chargeUltimate", (charge) => {
       console.debug("GOT EVENT chargeUltimate:", charge);
@@ -75,7 +92,7 @@ export class PlayUIScene extends Phaser.Scene {
     roomScene.events.addListener("createRoom", (depth) => {
       this.floorText.setText("Floor " + depth);
     });
-    
+
     roomScene.events.addListener("roomLoaded", (inMyChain) => {
       console.log("room loaded: " + inMyChain);
       if (inMyChain) {
@@ -89,7 +106,8 @@ export class PlayUIScene extends Phaser.Scene {
   }
 
   makeReturnHomeBtn() {
-    const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
+    const screenCenterX =
+      this.cameras.main.worldView.x + this.cameras.main.width / 2;
     this.returnHomeBtn = this.add.sprite(screenCenterX, 47, "return-home");
     this.returnHomeBtn.setVisible(false);
 
@@ -98,8 +116,8 @@ export class PlayUIScene extends Phaser.Scene {
       this.returnHomeBtn.setVisible(false);
       this.returnHomeBtn.disableInteractive();
       roomScene.registry.destroy();
-      roomScene.events.off('actor-death');
-      roomScene.events.off('roomLoaded');
+      roomScene.events.off("actor-death");
+      roomScene.events.off("roomLoaded");
       roomScene.game.sound.stopAll();
       roomScene.scene.start("CellScene");
     });
