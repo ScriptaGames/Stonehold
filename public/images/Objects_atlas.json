@@ -1,0 +1,82 @@
+{
+    "frames": [
+        {
+            "filename": "large_red_mushroom",
+            "frame": {
+                "w": 42,
+                "h": 48,
+                "x": 0,
+                "y": 3
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "large_blue_mushroom",
+            "frame": {
+                "w": 42,
+                "h": 48,
+                "x": 44,
+                "y": 3
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "small_red_mushroom",
+            "frame": {
+                "w": 16,
+                "h": 16,
+                "x": 2,
+                "y": 63
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "small_blue_mushroom01",
+            "frame": {
+                "w": 16,
+                "h": 16,
+                "x": 17,
+                "y": 63
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "small_blue_mushroom02",
+            "frame": {
+                "w": 16,
+                "h": 16,
+                "x": 31,
+                "y": 63
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "small_brown_mushroom",
+            "frame": {
+                "w": 16,
+                "h": 16,
+                "x": 50,
+                "y": 63
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ]
+}

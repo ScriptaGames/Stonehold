@@ -5,6 +5,7 @@ import { Captain } from "../actors/captain";
 import { Portcullis } from "../actors/portcullis";
 import { GraphQLClient } from "../lib/GraphQLClient";
 import { Level } from "../actors/level";
+import { Decoration } from "../actors/decoration";
 import {
   PIXEL_SCALE,
   ULTIMATE_ATTACK_DAMAGE,
@@ -46,7 +47,6 @@ class RoomScene extends Phaser.Scene {
   preload() {
     this.load.image("floor", "images/fightRooms_floor.png");
     this.load.image("door", "images/door_rubble.png");
-    this.load.image("mushroom", "images/mushroom.png");
 
     this.load.audio("room-music", "audio/ld50-menumusic.mp3");
 
@@ -56,6 +56,7 @@ class RoomScene extends Phaser.Scene {
     Pinky.preload(this);
     Captain.preload(this);
     Portcullis.preload(this);
+    Decoration.preload(this);
   }
 
   create() {
@@ -76,6 +77,7 @@ class RoomScene extends Phaser.Scene {
     this.player.player.copyPosition(this.roomConfig.levelMap.playerSpawn);
     this.pinkies = [];
     this.captains = [];
+    this.decorations = [];
 
     this.floor = this.add
       .image(0, 0, "floor")
@@ -128,12 +130,18 @@ class RoomScene extends Phaser.Scene {
     // this.doorExit.setSize(70, 100);
 
     console.log("room1 mushrooms: " + this.roomConfig.numMushrooms);
-    // TODO: Replace this with the pixel art mushrooms
-    // for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
-    //   let x = this.room_manager.rnd.between(20, 800);
-    //   let y = this.room_manager.rnd.between(20, 800);
-    //   this.add.sprite(x, y, "mushroom");
-    // }
+    for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
+      let mushroom = new Decoration(this);
+      mushroom.create();
+      this.decorations.push(mushroom);
+      mushroom.mainSprite.copyPosition(
+        this.room_manager.rnd.pick(
+          this.tileMap.tileMap.getObjectLayer("Object Layer 1").objects
+        )
+      );
+      mushroom.mainSprite.x *= PIXEL_SCALE;
+      mushroom.mainSprite.y *= PIXEL_SCALE;
+    }
 
     this.numEnemies = this.roomConfig.numEnemies;
     let percentCaptains = this.roomConfig.percentCaptains;
@@ -323,6 +331,7 @@ class RoomScene extends Phaser.Scene {
 
     this.pinkies.forEach((pinky) => pinky.update());
     this.captains.forEach((captain) => captain.update());
+    this.decorations.forEach((decoration) => decoration.update());
   }
 
   /**

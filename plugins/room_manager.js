@@ -24,7 +24,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     const key = "RoomScene";
     // this.rnd.pick(this.roomChoices);
 
-    const maxMushrooms = 22;
+    const maxMushrooms = 12;
     const numMushrooms = this.rnd.weightedPick(
       new Array(maxMushrooms).fill(1).map((n, i) => i)
     );
@@ -78,9 +78,11 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
       {
         mapName: "room1-map",
         mapImagePath: "images/room1_walls.png",
+        objectsImagePath: "images/Objects_atlas.png",
         jsonName: "room1-map",
         jsonPath: "maps/room1.json",
         tilesetNameFromTiled: "room1_walls",
+        objectsTilesetFromTiled: "room1_objects",
         playerSpawn: { x: 634, y: 1158 },
         // playerSpawn: { x: 1221, y: 817 + 200 }, // spawn beside door
         doorPosition: { x: 1224, y: 697 },
