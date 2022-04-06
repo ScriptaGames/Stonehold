@@ -1,5 +1,5 @@
 {
-  "name": "phaser3-esbuild",
+  "name": "stonehold",
   "version": "0.0.1",
   "scripts": {
     "dev": "node build.js -w",
