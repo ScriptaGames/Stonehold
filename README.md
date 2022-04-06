@@ -1,4 +1,8 @@
-# Phaser 3 (using esbuild)
+# Stonehold
+
+A dungeon game.  Originally our submission to Ludum Dare 50 April 2022.
+
+https://ldjam.com/events/ludum-dare/50/stonehold
 
 ## Initial setup
 
