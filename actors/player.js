@@ -641,7 +641,11 @@ export class Player extends Actor {
   axeLive(enabled) {
     if (enabled) {
       this.attack.activeFrame = true;
-      this.scene.sound.play("swing-small");
+
+      // Fixes bug where ax swing got louder and louder
+      this.scene.sound.removeByKey('swing-small');
+      this.scene.sound.add("swing-small").play();
+
       this.performLunge();
     } else {
       this.attack.activeFrame = false;
