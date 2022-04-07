@@ -1,7 +1,5 @@
 import Phaser from "phaser";
-import {
-  PIXEL_SCALE,
-} from "../variables";
+import { PIXEL_SCALE } from "../variables";
 
 export class Decoration {
   /**  @param {Phaser.Scene} scene */
@@ -18,16 +16,22 @@ export class Decoration {
       "small_brown_mushroom",
       "large_red_mushroom",
       "large_blue_mushroom",
-    ]
+    ];
   }
 
   /**  @param {Phaser.Scene} scene */
   static preload(scene) {
-    scene.load.atlas("objects", "images/Objects_atlas.png", "images/Objects_atlas.json");
+    scene.load.atlas(
+      "objects",
+      "images/Objects_atlas.png",
+      "images/Objects_atlas.json"
+    );
   }
 
   create() {
-    const spriteKey = this.scene.room_manager.rnd.weightedPick(this.weightedMushrooms);
+    const spriteKey = this.scene.room_manager.rnd.weightedPick(
+      this.weightedMushrooms
+    );
     this.mainSprite = this.scene.add.sprite(250, 500, "objects", spriteKey);
     this.mainSprite.setScale(PIXEL_SCALE);
   }

@@ -5,7 +5,15 @@ export class Level {
   /** @param {Phaser.Scene} scene */
   constructor(
     scene,
-    { mapName, mapImagePath, objectsImagePath, jsonName, jsonPath, tilesetNameFromTiled, objectsTilesetFromTiled }
+    {
+      mapName,
+      mapImagePath,
+      objectsImagePath,
+      jsonName,
+      jsonPath,
+      tilesetNameFromTiled,
+      objectsTilesetFromTiled,
+    }
   ) {
     this.scene = scene;
     this.mapName = mapName;
@@ -46,9 +54,9 @@ export class Level {
 
     // add the layer to the scene so it can be referenced as "this.level"
     // within scenes, to set up collision, etc
-
     const floor = tileMap.createLayer(floorLayerNameFromTiled, tileset, 0, 0);
     floor.setScale(PIXEL_SCALE);
+
     const map = tileMap.createLayer(visualLayerNameFromTiled, [tileset, objects], 0, 0);
     map.setScale(PIXEL_SCALE);
     map.setCollisionByProperty({ collide: "true" });
