@@ -1,13 +1,10 @@
 import Phaser from "phaser";
 import { Actor } from "./actor";
 import {
-  PIXEL_SCALE,
   PINKY_ATTACK_DAMAGE,
-  PINKY_SPEED,
-  WEAPON_HOVER_DISTANCE,
   PINKY_ATTACK_RANGE,
-  PINKY_BASE_HP,
-  PINKY_IDLE_AFTER_ATTACK,
+  PIXEL_SCALE,
+  WEAPON_HOVER_DISTANCE,
 } from "../variables";
 
 export class Pinky extends Actor {
@@ -95,18 +92,13 @@ export class Pinky extends Actor {
     this.pinky.depth = this.pinky.y + this.pinky.height;
 
     if (this.isAlive) {
-      let playerSprite = this.scene.player.player;
+      const playerBody = this.scene.player.playerBody;
+
       this.playerDistance = new Phaser.Math.Vector2()
-        .copy(playerSprite)
-        .subtract(this.pinky);
+        .copy({ x: playerBody.center.x, y: playerBody.center.y })
+        .subtract({ x: this.pinkyBody.center.x, y: this.pinkyBody.center.y });
 
-      let pDistance = this.playerDistance.length();
-
-      // HACK: Distance gets greater when player is below pinky, brute force compensate
-      if (playerSprite.y > this.pinky.y) {
-        pDistance -= 18
-      }
-
+      const pDistance = this.playerDistance.length();
       if (pDistance < PINKY_ATTACK_RANGE) {
         this.performAttack();
       }
