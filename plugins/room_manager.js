@@ -93,33 +93,24 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
         tilesetNameFromTiled: "tileset",
         objectsTilesetFromTiled: "Objects_atlas",
       },
-      // {
-      //   mapName: "room2-map",
-      //   mapImagePath: "images/room2_walls.png",
-      //   objectsImagePath: "images/Objects_atlas.png",
-      //   jsonName: "room2-map",
-      //   jsonPath: "maps/room2.json",
-      //   tilesetNameFromTiled: "room2_walls",
-      //   objectsTilesetFromTiled: "room2_objects",
-      //   playerSpawn: { x: 1134, y: 1658 },
-      //   //playerSpawn: { x: 3096, y: 1338 + 200 }, // spawn beside door
-      //   doorPosition: { x: 984, y: 648},
-      // },
-
-      // {
-      //   mapName: "room3-map",
-      //   mapImagePath: "images/room3_walls.png",
-      //   jsonName: "room3-map",
-      //   jsonPath: "maps/room3.json",
-      //   tilesetNameFromTiled: "room3_walls",
-      // },
-      // {
-      //   mapName: "room4-map",
-      //   mapImagePath: "images/room4_walls.png",
-      //   jsonName: "room4-map",
-      //   jsonPath: "maps/room4.json",
-      //   tilesetNameFromTiled: "room4_walls",
-      // },
+      {
+        mapName: "room3-map",
+        mapImagePath: "images/tileset.png",
+        objectsImagePath: "images/Objects_atlas.png",
+        jsonName: "room3-map",
+        jsonPath: "maps/room3.json",
+        tilesetNameFromTiled: "tileset",
+        objectsTilesetFromTiled: "Objects_atlas",
+      },
+      //{
+      //  mapName: "room4-map",
+      //  mapImagePath: "images/tileset.png",
+      //  objectsImagePath: "images/Objects_atlas.png",
+      //  jsonName: "room4-map",
+      //  jsonPath: "maps/room4.json",
+      //  tilesetNameFromTiled: "tileset",
+      //  objectsTilesetFromTiled: "Objects_atlas",
+      //},
     ];
   }
 
