@@ -30,7 +30,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     );
 
     // TODO TWEAK DIFFICULTY SCALING HERE
-    const numEnemies = 30 + depth;
+    const numEnemies = depth;
     const percentCaptains = Math.min(100, depth * 2);
     const pinkyHP = PINKY_BASE_HP + depth;
     const captainHP = CAPTAIN_BASE_HP + Math.ceil(depth + depth / 2);
