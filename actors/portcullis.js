@@ -41,6 +41,7 @@ export class Portcullis extends Actor {
       500,
       "door-open"
     );
+    this.mainSprite.setOrigin(0, 1);
     this.portcullis.setScale(PIXEL_SCALE);
     this.portcullis.copyPosition(position);
     this.scene.physics.add.existing(this.portcullis);

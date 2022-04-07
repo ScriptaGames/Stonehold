@@ -77,28 +77,26 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     return [
       {
         mapName: "room1-map",
-        mapImagePath: "images/room1_walls.png",
+        mapImagePath: "images/tileset.png",
         objectsImagePath: "images/Objects_atlas.png",
         jsonName: "room1-map",
         jsonPath: "maps/room1.json",
-        tilesetNameFromTiled: "room1_walls",
-        objectsTilesetFromTiled: "room1_objects",
-        playerSpawn: { x: 634, y: 1158 },
-        // playerSpawn: { x: 1221, y: 817 + 200 }, // spawn beside door
-        doorPosition: { x: 1224, y: 697 },
+        tilesetNameFromTiled: "tileset",
+        objectsTilesetFromTiled: "Objects_atlas",
       },
-      {
-        mapName: "room2-map",
-        mapImagePath: "images/room2_walls.png",
-        objectsImagePath: "images/Objects_atlas.png",
-        jsonName: "room2-map",
-        jsonPath: "maps/room2.json",
-        tilesetNameFromTiled: "room2_walls",
-        objectsTilesetFromTiled: "room2_objects",
-        playerSpawn: { x: 1134, y: 1658 },
-        //playerSpawn: { x: 3096, y: 1338 + 200 }, // spawn beside door
-        doorPosition: { x: 984, y: 648},
-      },
+     // {
+     //   mapName: "room2-map",
+     //   mapImagePath: "images/room2_walls.png",
+     //   objectsImagePath: "images/Objects_atlas.png",
+     //   jsonName: "room2-map",
+     //   jsonPath: "maps/room2.json",
+     //   tilesetNameFromTiled: "room2_walls",
+     //   objectsTilesetFromTiled: "room2_objects",
+     //   playerSpawn: { x: 1134, y: 1658 },
+     //   //playerSpawn: { x: 3096, y: 1338 + 200 }, // spawn beside door
+     //   doorPosition: { x: 984, y: 648},
+     // },
+
       // {
       //   mapName: "room3-map",
       //   mapImagePath: "images/room3_walls.png",

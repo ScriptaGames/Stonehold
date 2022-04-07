@@ -41,14 +41,18 @@ export class Level {
     );
 
     // this should be the same in all maps made in Tiled
-    const visualLayerNameFromTiled = "Tile Layer 1";
+    const visualLayerNameFromTiled = "Tile Layer Background";
+    const floorLayerNameFromTiled = "Floor";
 
     // add the layer to the scene so it can be referenced as "this.level"
     // within scenes, to set up collision, etc
+
+    const floor = tileMap.createLayer(floorLayerNameFromTiled, tileset, 0, 0);
+    floor.setScale(PIXEL_SCALE);
     const map = tileMap.createLayer(visualLayerNameFromTiled, [tileset, objects], 0, 0);
     map.setScale(PIXEL_SCALE);
     map.setCollisionByProperty({ collide: "true" });
 
-    return { tileMap, map };
+    return { tileMap, map, floor };
   }
 }

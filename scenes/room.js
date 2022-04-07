@@ -45,7 +45,6 @@ class RoomScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("floor", "images/fightRooms_floor.png");
     this.load.image("door", "images/door_rubble.png");
 
     this.load.audio("room-music", "audio/ld50-menumusic.mp3");
@@ -68,38 +67,34 @@ class RoomScene extends Phaser.Scene {
     console.debug("Creating RoomScene with config:", this.roomConfig);
     console.debug("In my chain:", this.room_manager.myChain);
 
+    this.tileMap = this.level.createMap();
+    let playerSpawn =
+        this.tileMap.tileMap.getObjectLayer("Objects").objects.find((obj) => obj.name == "PlayerSpawn");
+    playerSpawn.x *= PIXEL_SCALE;
+    playerSpawn.y *= PIXEL_SCALE;
+
+    let doorPosition =
+        this.tileMap.tileMap.getObjectLayer("Objects").objects.find((obj) => obj.name == "Door");
+    doorPosition.x *= PIXEL_SCALE;
+    doorPosition.y *= PIXEL_SCALE;
+
     this.player = new Player(
       this,
       this.initPlayerState.hp,
       this.initPlayerState.ultimateCharge
     );
     this.player.create();
-    this.player.player.copyPosition(this.roomConfig.levelMap.playerSpawn);
+    this.player.player.copyPosition(playerSpawn);
+
     this.pinkies = [];
     this.captains = [];
     this.decorations = [];
 
-    this.floor = this.add
-      .image(0, 0, "floor")
-      .setScale(PIXEL_SCALE)
-      .setOrigin(0, 0);
-
-    this.tileMap = this.level.createMap();
-    this.tileMap.map.setPosition(this.floor.x, this.floor.y);
-
     this.physics.world.setBounds(
-      this.floor.x,
-      this.floor.y,
-      this.floor.width,
-      this.floor.height
-    );
-    console.log(
-      this.floor.x,
-      this.floor.y,
-      this.floor.width,
-      this.floor.height,
-      this.floor.getTopLeft().x,
-      this.floor.getTopLeft().y
+      this.tileMap.floor.x,
+      this.tileMap.floor.y,
+      this.tileMap.floor.width,
+      this.tileMap.floor.height
     );
 
     // play room music if it isn't already playing from the previous room
@@ -118,7 +113,7 @@ class RoomScene extends Phaser.Scene {
     this.cameras.main.backgroundColor.setTo(46, 49, 62);
 
     this.portcullis = new Portcullis(this);
-    this.portcullis.create(this.roomConfig.levelMap.doorPosition);
+    this.portcullis.create(doorPosition);
 
     if (
       this.room_manager.currentChainDepth <= this.room_manager.unlockedDepth
@@ -136,7 +131,7 @@ class RoomScene extends Phaser.Scene {
       this.decorations.push(mushroom);
       mushroom.mainSprite.copyPosition(
         this.room_manager.rnd.pick(
-          this.tileMap.tileMap.getObjectLayer("Object Layer 1").objects
+          this.tileMap.tileMap.getObjectLayer("Enemy Spawn Points").objects
         )
       );
       mushroom.mainSprite.x *= PIXEL_SCALE;
@@ -168,7 +163,7 @@ class RoomScene extends Phaser.Scene {
       // pick one of the enemy placements objects file the tiled map
       enemy.mainSprite.copyPosition(
         this.room_manager.rnd.pick(
-          this.tileMap.tileMap.getObjectLayer("Object Layer 1").objects
+          this.tileMap.tileMap.getObjectLayer("Enemy Spawn Points").objects
         )
       );
       enemy.mainSprite.x *= PIXEL_SCALE;
