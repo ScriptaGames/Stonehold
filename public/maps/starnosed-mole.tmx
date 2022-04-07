@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="78">
  <editorsettings>
-  <export target="room3.json" format="json"/>
+  <export target="starnosed-mole.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" name="tileset" tilewidth="16" tileheight="16" spacing="16" tilecount="18" columns="9">
   <image source="../images/tileset.png" width="272" height="48"/>
