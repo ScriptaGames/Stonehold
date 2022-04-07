@@ -57,7 +57,12 @@ export class Level {
     const floor = tileMap.createLayer(floorLayerNameFromTiled, tileset, 0, 0);
     floor.setScale(PIXEL_SCALE);
 
-    const map = tileMap.createLayer(visualLayerNameFromTiled, [tileset, objects], 0, 0);
+    const map = tileMap.createLayer(
+      visualLayerNameFromTiled,
+      [tileset, objects],
+      0,
+      0
+    );
     map.setScale(PIXEL_SCALE);
     map.setCollisionByProperty({ collide: "true" });
 

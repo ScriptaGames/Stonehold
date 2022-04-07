@@ -68,13 +68,15 @@ class RoomScene extends Phaser.Scene {
     console.debug("In my chain:", this.room_manager.myChain);
 
     this.tileMap = this.level.createMap();
-    let playerSpawn =
-        this.tileMap.tileMap.getObjectLayer("Objects").objects.find((obj) => obj.name == "PlayerSpawn");
+    let playerSpawn = this.tileMap.tileMap
+      .getObjectLayer("Objects")
+      .objects.find((obj) => obj.name == "PlayerSpawn");
     playerSpawn.x *= PIXEL_SCALE;
     playerSpawn.y *= PIXEL_SCALE;
 
-    let doorPosition =
-        this.tileMap.tileMap.getObjectLayer("Objects").objects.find((obj) => obj.name == "Door");
+    let doorPosition = this.tileMap.tileMap
+      .getObjectLayer("Objects")
+      .objects.find((obj) => obj.name == "Door");
     doorPosition.x *= PIXEL_SCALE;
     doorPosition.y *= PIXEL_SCALE;
 

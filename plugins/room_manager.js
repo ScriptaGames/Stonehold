@@ -93,18 +93,18 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
         tilesetNameFromTiled: "tileset",
         objectsTilesetFromTiled: "Objects_atlas",
       },
-     // {
-     //   mapName: "room2-map",
-     //   mapImagePath: "images/room2_walls.png",
-     //   objectsImagePath: "images/Objects_atlas.png",
-     //   jsonName: "room2-map",
-     //   jsonPath: "maps/room2.json",
-     //   tilesetNameFromTiled: "room2_walls",
-     //   objectsTilesetFromTiled: "room2_objects",
-     //   playerSpawn: { x: 1134, y: 1658 },
-     //   //playerSpawn: { x: 3096, y: 1338 + 200 }, // spawn beside door
-     //   doorPosition: { x: 984, y: 648},
-     // },
+      // {
+      //   mapName: "room2-map",
+      //   mapImagePath: "images/room2_walls.png",
+      //   objectsImagePath: "images/Objects_atlas.png",
+      //   jsonName: "room2-map",
+      //   jsonPath: "maps/room2.json",
+      //   tilesetNameFromTiled: "room2_walls",
+      //   objectsTilesetFromTiled: "room2_objects",
+      //   playerSpawn: { x: 1134, y: 1658 },
+      //   //playerSpawn: { x: 3096, y: 1338 + 200 }, // spawn beside door
+      //   doorPosition: { x: 984, y: 648},
+      // },
 
       // {
       //   mapName: "room3-map",
