@@ -97,7 +97,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
         objectsTilesetFromTiled: "room2_objects",
         playerSpawn: { x: 1134, y: 1658 },
         //playerSpawn: { x: 3096, y: 1338 + 200 }, // spawn beside door
-        doorPosition: { x: 984, y: 648},
+        doorPosition: { x: 984, y: 648 },
       },
       // {
       //   mapName: "room3-map",

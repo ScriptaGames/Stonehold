@@ -351,11 +351,10 @@ class RoomScene extends Phaser.Scene {
 
   /** Set the door to unlocked. */
   async unlockDoor() {
-
     // automatically open the door after a short delay for those who don't know you need to hit it
     setTimeout(() => {
       this.portcullis.unlock();
-    }, 1500)
+    }, 1500);
 
     if (!this.portcullis.vulnerable) {
       // allow player to start hitting the door
@@ -363,7 +362,7 @@ class RoomScene extends Phaser.Scene {
 
       // Increment the players rooms cleared count
       const playerId = localStorage.getItem("player_id");
-      const remotePlayer = await this.gqlClient.queryPlayerByID(playerId)
+      const remotePlayer = await this.gqlClient.queryPlayerByID(playerId);
 
       if (this.room_manager.currentChainDepth > remotePlayer.rooms_cleared) {
         const newRoomsCleared = parseInt(remotePlayer.rooms_cleared) + 1;
@@ -372,7 +371,10 @@ class RoomScene extends Phaser.Scene {
           newRoomsCleared
         );
         console.debug("updatedPlayer:", updatedPlayer);
-        localStorage.setItem("player_rooms_cleared", newRoomsCleared.toString());
+        localStorage.setItem(
+          "player_rooms_cleared",
+          newRoomsCleared.toString()
+        );
       }
     }
   }
