@@ -96,4 +96,7 @@ export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
 export const ACTOR_DAMAGE_INVUL_PERIOD = 100;
 
 /** Amount to increase bonus damage per room */
-export const BONUS_DAMAGE_INCREASE = 1;
+export const BONUS_DAMAGE_BASE = 1;
+
+/** Amount to increase bonus damage per room */
+export const BONUS_DAMAGE_INCREASE = 0.1;

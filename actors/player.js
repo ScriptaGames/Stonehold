@@ -157,7 +157,7 @@ export class Player extends Actor {
     this.ultimateExplosionBody.setOffset(25, 25);
     this.ultimateActive = false;
 
-    this.bonusDamage = parseInt(Utils.getLocalStoragePlayer().bonus_damage);
+    this.bonusDamage = Number(Utils.getLocalStoragePlayer().bonus_damage);
 
     this.createKeyboardControls();
     this.createMouse();
@@ -722,6 +722,6 @@ export class Player extends Actor {
   }
 
   getTotalDamage() {
-    return this.damage + this.bonusDamage;
+    return this.damage * this.bonusDamage;
   }
 }

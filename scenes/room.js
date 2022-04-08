@@ -383,11 +383,11 @@ class RoomScene extends Phaser.Scene {
       this.room_manager.currentChainDepth >= this.room_manager.unlockedDepth
     ) {
       this.player.bonusDamage =
-        parseInt(localStorage.getItem("bonus_damage")) + BONUS_DAMAGE_INCREASE;
+        Number(localStorage.getItem("bonus_damage")) + BONUS_DAMAGE_INCREASE;
       localStorage.setItem("bonus_damage", this.player.bonusDamage);
       this.events.emit(
         "playerIncreaseDamage",
-        this.player.getTotalDamage(),
+        this.player.bonusDamage,
         this
       );
     }

@@ -4,7 +4,7 @@ import shortUUID from "short-uuid";
 import ProfanityFilter from "bad-words-relaxed";
 import xss from "xss";
 import { Utils } from "../lib/utils.js";
-import { PIXEL_SCALE } from "../variables.js";
+import { PIXEL_SCALE, BONUS_DAMAGE_BASE } from "../variables.js";
 
 export default class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -100,7 +100,7 @@ export default class MainMenuScene extends Phaser.Scene {
           localStorage.setItem("player_name", name);
           localStorage.setItem("player_seed", seed);
           localStorage.setItem("player_rooms_cleared", 0);
-          localStorage.setItem("bonus_damage", 0);
+          localStorage.setItem("bonus_damage", BONUS_DAMAGE_BASE);
         }
 
         //  Turn off the click events

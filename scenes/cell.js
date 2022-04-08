@@ -3,7 +3,6 @@ import { Player } from "../actors/player";
 import HubDoor from "../actors/hub_door.js";
 import { Level } from "../actors/level";
 import { PIXEL_SCALE } from "../variables.js";
-import { Utils } from "../lib/utils.js";
 
 class CellScene extends Phaser.Scene {
   constructor(config) {

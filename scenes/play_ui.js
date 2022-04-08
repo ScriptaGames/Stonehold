@@ -1,5 +1,5 @@
 import { Utils } from "../lib/utils.js";
-import { PIXEL_SCALE, PLAYER_BASE_DAMAGE } from "../variables.js";
+import {BONUS_DAMAGE_BASE, PIXEL_SCALE} from "../variables.js";
 import CellScene from "./cell.js";
 
 export class PlayUIScene extends Phaser.Scene {
@@ -35,11 +35,11 @@ export class PlayUIScene extends Phaser.Scene {
       color: "#ffffff",
     });
 
-    let damage = PLAYER_BASE_DAMAGE;
+    let bonusDamageMultiplier = BONUS_DAMAGE_BASE;
     if (localPlayer.bonus_damage) {
-      damage += parseInt(localPlayer.bonus_damage);
+      bonusDamageMultiplier = Number(localPlayer.bonus_damage);
     }
-    this.damageText = this.add.text(150, 17, "Damage " + damage, {
+    this.damageText = this.add.text(150, 17, "Damage x" + bonusDamageMultiplier.toPrecision(2), {
       fontFamily: "DungeonFont",
       fontSize: "28px",
       color: "#ffffff",
@@ -75,18 +75,14 @@ export class PlayUIScene extends Phaser.Scene {
 
     roomScene.events.addListener("playerIncreaseDamage", (damage) => {
       console.debug("GOT EVENT player increase damage:", damage);
-      this.damageText.setText("Damage " + damage);
+      this.damageText.setText("Damage x" + damage.toPrecision(2));
     });
 
     //  Listen for charge events
     roomScene.events.addListener("chargeUltimate", (charge) => {
       console.debug("GOT EVENT chargeUltimate:", charge);
       this.setValue(this.ultimateBar, charge);
-      if (charge >= 1) {
-        this.rmbSprite.visible = true;
-      } else {
-        this.rmbSprite.visible = false;
-      }
+      this.rmbSprite.visible = charge >= 1;
     });
 
     roomScene.events.addListener("createRoom", (depth) => {

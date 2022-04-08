@@ -110,16 +110,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
         jsonPath: "maps/room3.json",
         tilesetNameFromTiled: "tileset",
         objectsTilesetFromTiled: "Objects_atlas",
-      },
-      {
-        mapName: "starnosed-mole-map",
-        mapImagePath: "images/tileset.png",
-        objectsImagePath: "images/Objects_atlas.png",
-        jsonName: "starnosed-mole-map",
-        jsonPath: "maps/starnosed-mole.json",
-        tilesetNameFromTiled: "tileset",
-        objectsTilesetFromTiled: "Objects_atlas",
-      },
+      }
     ];
   }
 
