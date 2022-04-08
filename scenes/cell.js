@@ -31,7 +31,7 @@ class CellScene extends Phaser.Scene {
 
     // cell tile stuff
     this.level.preload();
-    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
+    this.load.audio("hub-music", "audio/ld50-ambient-short_intro.mp3");
 
     Player.preload(this);
   }

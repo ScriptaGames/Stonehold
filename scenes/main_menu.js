@@ -15,7 +15,7 @@ export default class MainMenuScene extends Phaser.Scene {
   preload() {
     this.load.html("nameform", "nameform.html");
     this.load.image("title_background", "images/Stonehold_title_688_x_512.png");
-    this.load.audio("hub-music", "audio/ld50-level_ambient.mp3");
+    this.load.audio("hub-music", "audio/ld50-ambient-short_intro.mp3");
   }
 
   async create() {
