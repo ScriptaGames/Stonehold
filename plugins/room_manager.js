@@ -15,10 +15,7 @@ import {
 import { Utils } from "../lib/utils.js";
 
 class RoomManager extends Phaser.Plugins.BasePlugin {
-  init() {
-    this.localPlayer = Utils.getLocalStoragePlayer();
-    this.myID = this.localPlayer.id;
-  }
+  init() {}
 
   getRoomConfig(depth) {
     const key = "RoomScene";
@@ -110,17 +107,20 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
         jsonPath: "maps/room3.json",
         tilesetNameFromTiled: "tileset",
         objectsTilesetFromTiled: "Objects_atlas",
-      }
+      },
     ];
   }
 
   initChain(player_data) {
+    const localPlayer = Utils.getLocalStoragePlayer();
+    const myID = localPlayer.id;
+
     this.rnd = new Phaser.Math.RandomDataGenerator([player_data.seed]);
     this.rnd.seed = player_data.seed;
 
     this.unlockedDepth = player_data.rooms_cleared;
     this.currentChainDepth = 0;
-    this.myChain = player_data.id === this.myID;
+    this.myChain = player_data.id === myID;
   }
 
   nextRoom() {
