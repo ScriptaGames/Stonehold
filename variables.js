@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////
 
 /** Player base HP. */
-export const PLAYER_BASE_HP = 50;
+export const PLAYER_BASE_HP = 1;
 
 /** Player base damage. */
 export const PLAYER_BASE_DAMAGE = 1;

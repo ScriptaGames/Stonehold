@@ -6,34 +6,35 @@ import RoomScene from "./scenes/room";
 import MovementScene from "./scenes/movement";
 import MainMenuScene from "./scenes/main_menu.js";
 import PlayUIScene from "./scenes/play_ui";
+import "./lib/physics.js";
 
 new Phaser.Game({
-  type: Phaser.AUTO,
-  pixelArt: true,
-  plugins: {
-    global: [
-      {
-        key: "RoomManager",
-        plugin: RoomManager,
-        start: false,
-        mapping: "room_manager",
-      },
-    ],
-  },
-  scale: {
-    parent: "game",
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
-  },
-  dom: {
-    createContainer: true,
-  },
-  physics: {
-    default: "arcade",
-    arcade: {
-      debug: false,
-      tileBias: 32,
+    type: Phaser.AUTO,
+    pixelArt: true,
+    plugins: {
+        global: [
+            {
+                key: "RoomManager",
+                plugin: RoomManager,
+                start: false,
+                mapping: "room_manager",
+            },
+        ],
     },
-  },
-  scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
+    scale: {
+        parent: "game",
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    },
+    dom: {
+        createContainer: true,
+    },
+    physics: {
+        default: "arcade",
+        arcade: {
+            debug: false,
+            tileBias: 32,
+        },
+    },
+    scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
 });
