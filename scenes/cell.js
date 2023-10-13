@@ -13,7 +13,7 @@ class CellScene extends Phaser.Scene {
 
     this.level = new Level(this, {
       mapName: "cell-map",
-      mapImagePath: "images/player_cell_walls.png",
+      mapImagePath: "images/player_cell_walls_hub_blocked.png",
       jsonName: "cell-map",
       jsonPath: "maps/cell.json",
       tilesetNameFromTiled: "player_cell_walls",
@@ -25,7 +25,7 @@ class CellScene extends Phaser.Scene {
   }
 
   async preload() {
-    this.load.image("cell_walls", "images/player_cell_walls.png");
+    this.load.image("cell_walls", "images/player_cell_walls_hub_blocked.png");
     this.load.image("cell_floor", "images/player_cell_floor.png");
     this.load.image("player", "images/player.png");
 
@@ -92,8 +92,9 @@ class CellScene extends Phaser.Scene {
       this.player.player,
       hubDoorBounds,
       (player, rec, colInfo) => {
-        console.log("collided with hub Door");
-        this.scene.start("HubScene");
+        // uncomment this if we enable the hub door ever again
+        // console.log("collided with hub Door");
+        // this.scene.start("HubScene");
       }
     );
 

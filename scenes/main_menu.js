@@ -14,7 +14,10 @@ export default class MainMenuScene extends Phaser.Scene {
 
   preload() {
     this.load.html("nameform", "nameform.html");
-    this.load.image("title_background", "images/Stonehold_title_688_x_512.png");
+    this.load.image(
+      "title_background",
+      "images/2023_Stonehold_title_updateB.png"
+    );
     this.load.audio("hub-music", "audio/ld50-ambient-short_intro.mp3");
   }
 
@@ -42,11 +45,12 @@ export default class MainMenuScene extends Phaser.Scene {
     const filterName = this.filterName;
 
     // Populate previous players name
-    const localPlayerName = localStorage.getItem("player_name");
-    if (localPlayerName) {
-      const nameField = element.getChildByName("nameField");
-      nameField.value = localPlayerName;
-    }
+    // TODO: enable this if we add the name HTML input form field back
+    // const localPlayerName = localStorage.getItem("player_name");
+    // if (localPlayerName) {
+    //   const nameField = element.getChildByName("nameField");
+    //   nameField.value = localPlayerName;
+    // }
 
     // Handle PLAY button click
     element.addListener("click");
@@ -56,11 +60,19 @@ export default class MainMenuScene extends Phaser.Scene {
         const seed = shortUUID.generate();
 
         const inputText = this.getChildByName("nameField");
+
+        //TODO: get SSO username
+        const sso_username = "SSO_username" + rn;
+
         let name;
 
         //
-        if (inputText.value !== "") {
-          name = filterName(inputText.value);
+        if ((inputText && inputText.value !== "") || sso_username) {
+          //TODO: get this name from the SSO integration
+          // Commented out in case we get a name from a the HTML form field
+          // name = filterName(inputText.value);
+
+          name = sso_username;
         } else {
           name = "Prisoner" + rn;
         }
@@ -68,11 +80,12 @@ export default class MainMenuScene extends Phaser.Scene {
         // first see if this player exists already
         let existingPlayer;
         const localPlayerId = localStorage.getItem("player_id");
+
         if (localPlayerId) {
-          existingPlayer = await gqlClient.queryPlayerByIDAndName(
-            localPlayerId,
-            name
-          );
+          // existingPlayer = await gqlClient.queryPlayerByIDAndName(
+          //   localPlayerId,
+          //   name
+          // );
 
           if (existingPlayer) {
             localStorage.setItem("player_name", existingPlayer.name);
@@ -88,11 +101,20 @@ export default class MainMenuScene extends Phaser.Scene {
 
         if (!existingPlayer) {
           // Create the player
-          const createdPlayer = await gqlClient.createPlayer({
+          // const createdPlayer = await gqlClient.createPlayer({
+          //   name,
+          //   seed,
+          //   rooms_cleared: 0,
+          // });
+
+          //TODO: replace this mock player with a player name from the SSO integration
+          const createdPlayer = {
+            id: shortUUID.generate(),
             name,
             seed,
             rooms_cleared: 0,
-          });
+          };
+
           console.debug("Created player:", createdPlayer);
 
           // Save player to local storage
