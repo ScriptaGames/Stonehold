@@ -9,32 +9,32 @@ import PlayUIScene from "./scenes/play_ui";
 import "./lib/physics.js";
 
 new Phaser.Game({
-    type: Phaser.AUTO,
-    pixelArt: true,
-    plugins: {
-        global: [
-            {
-                key: "RoomManager",
-                plugin: RoomManager,
-                start: false,
-                mapping: "room_manager",
-            },
-        ],
+  type: Phaser.AUTO,
+  pixelArt: true,
+  plugins: {
+    global: [
+      {
+        key: "RoomManager",
+        plugin: RoomManager,
+        start: false,
+        mapping: "room_manager",
+      },
+    ],
+  },
+  scale: {
+    parent: "game",
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+  },
+  dom: {
+    createContainer: true,
+  },
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: false,
+      tileBias: 32,
     },
-    scale: {
-        parent: "game",
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
-    },
-    dom: {
-        createContainer: true,
-    },
-    physics: {
-        default: "arcade",
-        arcade: {
-            debug: false,
-            tileBias: 32,
-        },
-    },
-    scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
+  },
+  scene: [MainMenuScene, CellScene, HubScene, RoomScene, PlayUIScene],
 });

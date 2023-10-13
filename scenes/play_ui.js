@@ -1,5 +1,5 @@
 import { Utils } from "../lib/utils.js";
-import {BONUS_DAMAGE_BASE, PIXEL_SCALE} from "../variables.js";
+import { BONUS_DAMAGE_BASE, PIXEL_SCALE } from "../variables.js";
 import CellScene from "./cell.js";
 
 export class PlayUIScene extends Phaser.Scene {
@@ -39,11 +39,16 @@ export class PlayUIScene extends Phaser.Scene {
     if (localPlayer.bonus_damage) {
       bonusDamageMultiplier = Number(localPlayer.bonus_damage);
     }
-    this.damageText = this.add.text(150, 17, "Damage x" + bonusDamageMultiplier.toPrecision(2), {
-      fontFamily: "DungeonFont",
-      fontSize: "28px",
-      color: "#ffffff",
-    });
+    this.damageText = this.add.text(
+      150,
+      17,
+      "Damage x" + bonusDamageMultiplier.toPrecision(2),
+      {
+        fontFamily: "DungeonFont",
+        fontSize: "28px",
+        color: "#ffffff",
+      }
+    );
 
     // add player UI bars
     this.healthBar = this.makeBar(43, 60, 0xe74c3c);
