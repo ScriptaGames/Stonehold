@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { Actor } from "./actor";
 import {
   PIXEL_SCALE,
+  CAPTAIN_DROP_CHANCE,
   CAPTAIN_ATTACK_DAMAGE,
   CAPTAIN_BASE_HP,
   CAPTAIN_SPEED,
@@ -19,6 +20,8 @@ export class Captain extends Actor {
     this.captainIdleAfterAttack = config.captainIdleAfterAttack;
     this.captainProjectileSpeed = config.captainProjectileSpeed;
     this.captainSpeed = config.captainSpeed;
+
+    this.lootTable = ["health", "speed"];
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -55,6 +58,7 @@ export class Captain extends Actor {
     scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");
     scene.load.audio("enemy-hit-aah", "audio/enemy-hit-aah.mp3");
   }
+
   create() {
     super.create();
     this.captain = this.mainSprite = this.scene.add.sprite(250, 500);
@@ -238,5 +242,24 @@ export class Captain extends Actor {
 
   dealDamage() {
     this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
+  }
+
+  die() {
+    super.die();
+
+    // drop any items from the loot table
+    this.dropItems();
+  }
+
+  dropItems() {
+    let dropChance = Phaser.Math.RND.frac() * 100;
+
+    if (dropChance <= CAPTAIN_DROP_CHANCE) {
+      console.log("dropping items");
+      let item_name = Phaser.Math.RND.between(0, this.lootTable.length - 1);
+      console.log("item name:", this.lootTable[item_name]);
+    } else {
+      console.log("dropping nothing");
+    }
   }
 }

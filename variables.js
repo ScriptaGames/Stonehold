@@ -71,6 +71,9 @@ export const CAPTAIN_ATTACK_DAMAGE = 1;
 /** Captain starting HP. */
 export const CAPTAIN_BASE_HP = 7;
 
+/** percent chance that a captain will drop an item */
+export const CAPTAIN_DROP_CHANCE = 25;
+
 /** Pinky's speed */
 export const PINKY_SPEED = 100;
 
@@ -100,3 +103,12 @@ export const BONUS_DAMAGE_BASE = 1;
 
 /** Amount to increase bonus damage per room */
 export const BONUS_DAMAGE_INCREASE = 0.1;
+
+/** buff health amount */
+export const BUFF_HEALTH_AMOUNT = 15;
+
+/** buff speed multiplier */
+export const BUFF_SPEED_MULTIPLIER = 2;
+
+/** buff speed duration */
+export const BUFF_SPEED_DURATION = 15000;

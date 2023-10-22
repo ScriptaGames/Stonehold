@@ -28,6 +28,7 @@ class CellScene extends Phaser.Scene {
     this.load.image("cell_walls", "images/player_cell_walls_hub_blocked.png");
     this.load.image("cell_floor", "images/player_cell_floor.png");
     this.load.image("player", "images/player.png");
+    this.load.image("boot", "images/boot.png");
 
     // cell tile stuff
     this.level.preload();
