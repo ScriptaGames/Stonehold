@@ -256,8 +256,8 @@ export class Captain extends Actor {
 
     if (dropChance <= CAPTAIN_DROP_CHANCE) {
       console.log("dropping items");
-      let item_name = Phaser.Math.RND.between(0, this.lootTable.length - 1);
-      console.log("item name:", this.lootTable[item_name]);
+      let item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
+      console.log("item name:", this.lootTable[item_index]);
     } else {
       console.log("dropping nothing");
     }
