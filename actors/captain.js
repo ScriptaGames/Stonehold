@@ -286,7 +286,7 @@ export class Captain extends Actor {
     const dropChance = Phaser.Math.RND.frac() * 100;
     if (dropChance <= CAPTAIN_DROP_CHANCE) {
       const item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
-      const randomItem = this.lootTable[item_index];
+      let randomItem = this.lootTable[item_index];
 
       // only drop speed buff once per-scene (room)
       if (randomItem == "speed") {
