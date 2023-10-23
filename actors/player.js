@@ -31,6 +31,7 @@ export class Player extends Actor {
     super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
     this.ultimateCharge = ultimateCharge;
     this.bonusDamage = 0;
+    this.buffSpeedMultiplier = 1;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -439,7 +440,7 @@ export class Player extends Actor {
 
     this.playerBody.velocity
       .normalize()
-      .scale(PLAYER_SPEED)
+      .scale(PLAYER_SPEED * this.buffSpeedMultiplier)
       .add(this.speedBoost);
   }
 
@@ -729,17 +730,25 @@ export class Player extends Actor {
   }
 
   addSpeedBuff() {
-    this.scene.events.emit(
-      "playerAddSpeedBuff",
-      this.hp + BUFF_HEALTH_AMOUNT,
-      this
-    );
+    //TODO: listen for this event if we ever want to update the UI
+    //      to indicate that speed buff is active, like putting the boot
+    //      in the top left corner or something
+    this.scene.events.emit("playerAddSpeedBuff", true, this);
+
     // apply speed boost and set timeout
-    this.speedBoost.scale(BUFF_SPEED_MULTIPLIER);
-    this.scene.time.delayedCall(
-      BUFF_SPEED_DURATION,
-      () => (this.speedBoost = 0)
+    console.debug(
+      "applying speed buff, multiplier: ",
+      BUFF_SPEED_MULTIPLIER,
+      " duration: ",
+      BUFF_SPEED_DURATION
     );
+
+    this.buffSpeedMultiplier = BUFF_SPEED_MULTIPLIER;
+
+    this.scene.time.delayedCall(BUFF_SPEED_DURATION, () => {
+      console.debug("removing speed buff");
+      this.buffSpeedMultiplier = 1;
+    });
   }
 
   collectBuff(player, buff) {
@@ -763,5 +772,18 @@ export class Player extends Actor {
 
   getTotalDamage() {
     return this.damage * this.bonusDamage;
+  }
+
+  handleBuff(name) {
+    switch (name) {
+      case "health":
+        this.addHealthPoints();
+        break;
+      case "speed":
+        this.addSpeedBuff();
+        break;
+      default:
+        console.log(`unknown buff: ${name}`);
+    }
   }
 }

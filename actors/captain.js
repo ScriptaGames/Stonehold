@@ -262,9 +262,10 @@ export class Captain extends Actor {
   }
 
   spawnBuffItem(name, xPos, yPos) {
-    let buffItem = this.scene.add.sprite(xPos, yPos);
+    let buffItem = this.scene.add.sprite(xPos, yPos + 40);
 
     buffItem.setScale(PIXEL_SCALE);
+    buffItem.play(name);
     this.scene.physics.add.existing(buffItem);
 
     // Add collision with player
@@ -274,14 +275,8 @@ export class Captain extends Actor {
       (buff, player, colInfo) => {
         console.log("something is happening!!!");
         let playerActor = player.data.get("actor");
-        if (name === "health") {
-          console.log("health buff");
-          playerActor.addHealthPoints();
-          buffItem.destroy();
-        } else if (name === "speed") {
-          console.log("speed buff");
-          // playerActor.handleAddBuff;
-        }
+        playerActor.handleBuff(name);
+        buffItem.destroy();
       },
       () => this.scene.player.isAlive
     );
@@ -289,9 +284,24 @@ export class Captain extends Actor {
 
   dropItems() {
     const dropChance = Phaser.Math.RND.frac() * 100;
-    if (dropChance >= CAPTAIN_DROP_CHANCE) {
+    if (dropChance <= CAPTAIN_DROP_CHANCE) {
       const item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
       const randomItem = this.lootTable[item_index];
+
+      // only drop speed buff once per-scene (room)
+      if (randomItem == "speed") {
+        // check if speed buff has already been dropped
+        if (this.scene.speed_dropped) {
+          console.debug(
+            "speed buff already dropped this level, drop health instead"
+          );
+          randomItem = "health";
+        } else {
+          console.debug("First speed buff dropped this level, setting flag.");
+          this.scene.speed_dropped = true;
+        }
+      }
+
       // how to capture captains last x & y to generate new item here
       this.spawnBuffItem(randomItem, this.captain.x, this.captain.y);
     } else {
