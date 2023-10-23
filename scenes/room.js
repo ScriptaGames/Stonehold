@@ -43,6 +43,9 @@ class RoomScene extends Phaser.Scene {
     console.log(this.roomConfig.levelMap);
 
     this.level = new Level(this, this.roomConfig.levelMap);
+
+    // reset the speed buff dropped flag
+    this.speed_dropped = false;
   }
 
   preload() {

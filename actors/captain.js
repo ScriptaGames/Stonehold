@@ -53,6 +53,14 @@ export class Captain extends Actor {
         frameHeight: 96,
       }
     );
+    scene.load.spritesheet("health", "/images/health_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+    scene.load.spritesheet("speed", "/images/speed_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
     scene.load.audio("captain-dies", "audio/captain-dies.mp3");
     scene.load.audio("captain-roar", "audio/captain-roar.mp3");
     scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");
@@ -106,14 +114,16 @@ export class Captain extends Actor {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["captain-idle", "captain-run", "poison-ball"].forEach((name) => {
-      scene.anims.create({
-        key: name,
-        frames: scene.anims.generateFrameNumbers(name),
-        frameRate: 10,
-        repeat: -1,
-      });
-    });
+    ["health", "speed", "captain-idle", "captain-run", "poison-ball"].forEach(
+      (name) => {
+        scene.anims.create({
+          key: name,
+          frames: scene.anims.generateFrameNumbers(name),
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
+    );
     ["captain-attack", "poison-ball-explosion"].forEach((name) => {
       let res = scene.anims.create({
         key: name,
@@ -251,15 +261,51 @@ export class Captain extends Actor {
     this.dropItems();
   }
 
-  dropItems() {
-    let dropChance = Phaser.Math.RND.frac() * 100;
+  spawnBuffItem(name, xPos, yPos) {
+    let buffItem = this.scene.add.sprite(xPos, yPos + 40);
 
+    buffItem.setScale(PIXEL_SCALE);
+    buffItem.play(name);
+    this.scene.physics.add.existing(buffItem);
+
+    // Add collision with player
+    this.scene.physics.add.overlap(
+      buffItem,
+      this.scene.player.player,
+      (buff, player, colInfo) => {
+        console.debug("player collided with buff item");
+        let playerActor = player.data.get("actor");
+        playerActor.handleBuff(name);
+        buffItem.destroy();
+      },
+      () => this.scene.player.isAlive
+    );
+  }
+
+  dropItems() {
+    const dropChance = Phaser.Math.RND.frac() * 100;
     if (dropChance <= CAPTAIN_DROP_CHANCE) {
-      console.log("dropping items");
-      let item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
-      console.log("item name:", this.lootTable[item_index]);
+      const item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
+      let randomItem = this.lootTable[item_index];
+
+      // only drop speed buff once per-scene (room)
+      if (randomItem == "speed") {
+        // check if speed buff has already been dropped
+        if (this.scene.speed_dropped) {
+          console.debug(
+            "speed buff already dropped this level, drop health instead"
+          );
+          randomItem = "health";
+        } else {
+          console.debug("First speed buff dropped this level, setting flag.");
+          this.scene.speed_dropped = true;
+        }
+      }
+
+      // how to capture captains last x & y to generate new item here
+      this.spawnBuffItem(randomItem, this.captain.x, this.captain.y);
     } else {
-      console.log("dropping nothing");
+      console.log("👨🏻‍🍳 no soup for you!");
     }
   }
 }

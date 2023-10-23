@@ -18,6 +18,9 @@ import {
   COMBO_ATTACK_INPUT_PERIOD,
   ATTACK_COMBO_GRACE_PERIOD,
   ATTACK_LUNGE_SPEED,
+  BUFF_HEALTH_AMOUNT,
+  BUFF_SPEED_MULTIPLIER,
+  BUFF_SPEED_DURATION,
 } from "../variables";
 import { Captain } from "./captain";
 import { Utils } from "../lib/utils";
@@ -28,6 +31,7 @@ export class Player extends Actor {
     super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
     this.ultimateCharge = ultimateCharge;
     this.bonusDamage = 0;
+    this.buffSpeedMultiplier = 1;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -436,7 +440,7 @@ export class Player extends Actor {
 
     this.playerBody.velocity
       .normalize()
-      .scale(PLAYER_SPEED)
+      .scale(PLAYER_SPEED * this.buffSpeedMultiplier)
       .add(this.speedBoost);
   }
 
@@ -706,7 +710,45 @@ export class Player extends Actor {
     this.rightHand.setTintFill(0xf1f1f1);
     this.scene.time.delayedCall(128, () => this.rightHand.clearTint());
 
-    this.scene.events.emit("playerTakeDamage", this.hp / PLAYER_BASE_HP, this);
+    this.emitHealthBarUpdate();
+  }
+
+  emitHealthBarUpdate() {
+    this.scene.events.emit(
+      "playerUpdateHealthBar",
+      this.hp / PLAYER_BASE_HP,
+      this
+    );
+  }
+
+  addHealthPoints() {
+    //add hp based on buff value
+    this.hp += BUFF_HEALTH_AMOUNT;
+    this.hp = Math.min(this.hp, PLAYER_BASE_HP);
+
+    this.emitHealthBarUpdate();
+  }
+
+  addSpeedBuff() {
+    //TODO: listen for this event if we ever want to update the UI
+    //      to indicate that speed buff is active, like putting the boot
+    //      in the top left corner or something
+    this.scene.events.emit("playerAddSpeedBuff", true, this);
+
+    // apply speed boost and set timeout
+    console.debug(
+      "applying speed buff, multiplier: ",
+      BUFF_SPEED_MULTIPLIER,
+      " duration: ",
+      BUFF_SPEED_DURATION
+    );
+
+    this.buffSpeedMultiplier = BUFF_SPEED_MULTIPLIER;
+
+    this.scene.time.delayedCall(BUFF_SPEED_DURATION, () => {
+      console.debug("removing speed buff");
+      this.buffSpeedMultiplier = 1;
+    });
   }
 
   dealDamage() {
@@ -726,5 +768,18 @@ export class Player extends Actor {
 
   getTotalDamage() {
     return this.damage * this.bonusDamage;
+  }
+
+  handleBuff(name) {
+    switch (name) {
+      case "health":
+        this.addHealthPoints();
+        break;
+      case "speed":
+        this.addSpeedBuff();
+        break;
+      default:
+        console.log(`unknown buff: ${name}`);
+    }
   }
 }

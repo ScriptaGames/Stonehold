@@ -72,7 +72,7 @@ export const CAPTAIN_ATTACK_DAMAGE = 1;
 export const CAPTAIN_BASE_HP = 7;
 
 /** percent chance that a captain will drop an item */
-export const CAPTAIN_DROP_CHANCE = 25;
+export const CAPTAIN_DROP_CHANCE = 30;
 
 /** Pinky's speed */
 export const PINKY_SPEED = 100;
@@ -111,4 +111,4 @@ export const BUFF_HEALTH_AMOUNT = 15;
 export const BUFF_SPEED_MULTIPLIER = 2;
 
 /** buff speed duration */
-export const BUFF_SPEED_DURATION = 15000;
+export const BUFF_SPEED_DURATION = 10000;
