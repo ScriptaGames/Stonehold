@@ -273,7 +273,7 @@ export class Captain extends Actor {
       buffItem,
       this.scene.player.player,
       (buff, player, colInfo) => {
-        console.log("something is happening!!!");
+        console.debug("player collided with buff item");
         let playerActor = player.data.get("actor");
         playerActor.handleBuff(name);
         buffItem.destroy();

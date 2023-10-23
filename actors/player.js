@@ -751,10 +751,6 @@ export class Player extends Actor {
     });
   }
 
-  collectBuff(player, buff) {
-    buff.disableBody(true, true);
-  }
-
   dealDamage() {
     if (this.isAlive) {
       this.scene.sound.play(
