@@ -1,13 +1,14 @@
 import Phaser from "phaser";
-import { Actor } from "./actor";
+import { Enemy } from "./enemy";
 import {
   PINKY_ATTACK_DAMAGE,
   PINKY_ATTACK_RANGE,
   PIXEL_SCALE,
   WEAPON_HOVER_DISTANCE,
+  PINKY_DROP_CHANCE,
 } from "../variables";
 
-export class Pinky extends Actor {
+export class Pinky extends Enemy {
   /** @param {Phaser.Scene} scene */
   constructor(scene, config) {
     super(scene, { hp: config.pinkyHP, damage: config.pinkyAttackDamage });
@@ -16,6 +17,8 @@ export class Pinky extends Actor {
 
     this.pinkyIdleAfterAttack = config.pinkyIdleAfterAttack;
     this.pinkySpeed = config.pinkySpeed;
+
+    this.dropChance = PINKY_DROP_CHANCE;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {

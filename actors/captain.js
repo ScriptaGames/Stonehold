@@ -1,17 +1,9 @@
 import Phaser from "phaser";
-import { Actor } from "./actor";
-import {
-  PIXEL_SCALE,
-  CAPTAIN_DROP_CHANCE,
-  CAPTAIN_ATTACK_DAMAGE,
-  CAPTAIN_BASE_HP,
-  CAPTAIN_SPEED,
-  CAPTAIN_ATTACK_RANGE,
-  CAPTAIN_IDLE_AFTER_ATTACK,
-} from "../variables";
+import { Enemy } from "./enemy";
+import { PIXEL_SCALE, CAPTAIN_DROP_CHANCE } from "../variables";
 import { PoisonBall } from "./poison_ball";
 
-export class Captain extends Actor {
+export class Captain extends Enemy {
   /** @param {Phaser.Scene} scene */
   constructor(scene, config) {
     super(scene, { hp: config.captainHP, damage: config.captainAttackDamage });
@@ -21,7 +13,7 @@ export class Captain extends Actor {
     this.captainProjectileSpeed = config.captainProjectileSpeed;
     this.captainSpeed = config.captainSpeed;
 
-    this.lootTable = ["health", "speed"];
+    this.dropChance = CAPTAIN_DROP_CHANCE;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -252,60 +244,5 @@ export class Captain extends Actor {
 
   dealDamage() {
     this.scene.sound.play(["axe-hit1", "axe-hit2"][Math.round(Math.random())]);
-  }
-
-  die() {
-    super.die();
-
-    // drop any items from the loot table
-    this.dropItems();
-  }
-
-  spawnBuffItem(name, xPos, yPos) {
-    let buffItem = this.scene.add.sprite(xPos, yPos + 40);
-
-    buffItem.setScale(PIXEL_SCALE);
-    buffItem.play(name);
-    this.scene.physics.add.existing(buffItem);
-
-    // Add collision with player
-    this.scene.physics.add.overlap(
-      buffItem,
-      this.scene.player.player,
-      (buff, player, colInfo) => {
-        console.debug("player collided with buff item");
-        let playerActor = player.data.get("actor");
-        playerActor.handleBuff(name);
-        buffItem.destroy();
-      },
-      () => this.scene.player.isAlive
-    );
-  }
-
-  dropItems() {
-    const dropChance = Phaser.Math.RND.frac() * 100;
-    if (dropChance <= CAPTAIN_DROP_CHANCE) {
-      const item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
-      let randomItem = this.lootTable[item_index];
-
-      // only drop speed buff once per-scene (room)
-      if (randomItem == "speed") {
-        // check if speed buff has already been dropped
-        if (this.scene.speed_dropped) {
-          console.debug(
-            "speed buff already dropped this level, drop health instead"
-          );
-          randomItem = "health";
-        } else {
-          console.debug("First speed buff dropped this level, setting flag.");
-          this.scene.speed_dropped = true;
-        }
-      }
-
-      // how to capture captains last x & y to generate new item here
-      this.spawnBuffItem(randomItem, this.captain.x, this.captain.y);
-    } else {
-      console.log("👨🏻‍🍳 no soup for you!");
-    }
   }
 }

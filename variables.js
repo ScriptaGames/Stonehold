@@ -83,6 +83,9 @@ export const PINKY_ATTACK_RANGE = 110;
 /** Pinky's idle time after attacking */
 export const PINKY_IDLE_AFTER_ATTACK = 1000;
 
+/** percent chance that a pinky will drop an item */
+export const PINKY_DROP_CHANCE = 15;
+
 /** Captain's speed */
 export const CAPTAIN_SPEED = 100;
 
