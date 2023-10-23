@@ -18,6 +18,9 @@ import {
   COMBO_ATTACK_INPUT_PERIOD,
   ATTACK_COMBO_GRACE_PERIOD,
   ATTACK_LUNGE_SPEED,
+  BUFF_HEALTH_AMOUNT,
+  BUFF_SPEED_MULTIPLIER,
+  BUFF_SPEED_DURATION,
 } from "../variables";
 import { Captain } from "./captain";
 import { Utils } from "../lib/utils";
@@ -707,6 +710,20 @@ export class Player extends Actor {
     this.scene.time.delayedCall(128, () => this.rightHand.clearTint());
 
     this.scene.events.emit("playerTakeDamage", this.hp / PLAYER_BASE_HP, this);
+  }
+
+  addHealthPoints() {
+    this.scene.events.emit("playerAddHealthPoints", this.hp + BUFF_HEALTH_AMOUNT, this);
+  }
+
+  addSpeedBuff() {
+    this.scene.events.emit("playerAddSpeedBuff", this.hp + BUFF_HEALTH_AMOUNT, this);
+    // apply speed boost and set timeout
+    this.speedBoost.scale(BUFF_SPEED_MULTIPLIER);
+    this.scene.time.delayedCall(
+      BUFF_SPEED_DURATION,
+      () => (this.speedBoost = 0)
+    );
   }
 
   dealDamage() {

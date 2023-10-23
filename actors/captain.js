@@ -53,6 +53,14 @@ export class Captain extends Actor {
         frameHeight: 96,
       }
     );
+    scene.load.spritesheet("health", "/images/health_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+    scene.load.spritesheet("speed", "/images/speed_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
     scene.load.audio("captain-dies", "audio/captain-dies.mp3");
     scene.load.audio("captain-roar", "audio/captain-roar.mp3");
     scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");
@@ -106,7 +114,7 @@ export class Captain extends Actor {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["captain-idle", "captain-run", "poison-ball"].forEach((name) => {
+    ["health", "speed", "captain-idle", "captain-run", "poison-ball", ].forEach((name) => {
       scene.anims.create({
         key: name,
         frames: scene.anims.generateFrameNumbers(name),
@@ -131,6 +139,24 @@ export class Captain extends Actor {
       const vel = this.playerDistance.normalize().scale(this.captainSpeed);
       this.captainBody.setVelocity(vel.x, vel.y);
     }
+  }
+
+  handleAddBuff(buffName) {
+    this.scene.physics.add.overlap(
+      this.scene.sprite,
+      this.scene.player.player,
+      (buff, player, colInfo) => {
+        console.log('something is happening!!!')
+        let playerActor = player.data.get("actor");
+        if (buffName == 'health') {
+          playerActor.addHealthPoints();
+        } else if (buffName === 'speed') {
+          playerActor.handleAddBuff
+        }
+      },
+      () => scene.player.isAlive
+    );
+
   }
 
   /** Attack, if we're in a state that allows attacking. */
@@ -251,15 +277,23 @@ export class Captain extends Actor {
     this.dropItems();
   }
 
-  dropItems() {
-    let dropChance = Phaser.Math.RND.frac() * 100;
+  spawnBuffItem(name, xPos, yPos) {
+    let buffItem = this.scene.add.sprite(xPos, yPos);
+    buffItem.setScale(PIXEL_SCALE);
+    // put buffItem on top of everything (probably)
+    buffItem.setDepth(5000);
+    buffItem.play(name);
+  }
 
-    if (dropChance <= CAPTAIN_DROP_CHANCE) {
-      console.log("dropping items");
-      let item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
-      console.log("item name:", this.lootTable[item_index]);
+  dropItems() {
+    const dropChance = Phaser.Math.RND.frac() * 100;
+    if (dropChance >= CAPTAIN_DROP_CHANCE) {
+      const item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
+      const randomItem = this.lootTable[item_index];
+      // how to capture captains last x & y to generate new item here
+      this.spawnBuffItem(randomItem, this.captain.x, this.captain.y)
     } else {
-      console.log("dropping nothing");
+      console.log("👨🏻‍🍳 no soup for you!");
     }
   }
 }
