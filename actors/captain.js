@@ -114,14 +114,16 @@ export class Captain extends Actor {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["health", "speed", "captain-idle", "captain-run", "poison-ball", ].forEach((name) => {
-      scene.anims.create({
-        key: name,
-        frames: scene.anims.generateFrameNumbers(name),
-        frameRate: 10,
-        repeat: -1,
-      });
-    });
+    ["health", "speed", "captain-idle", "captain-run", "poison-ball"].forEach(
+      (name) => {
+        scene.anims.create({
+          key: name,
+          frames: scene.anims.generateFrameNumbers(name),
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
+    );
     ["captain-attack", "poison-ball-explosion"].forEach((name) => {
       let res = scene.anims.create({
         key: name,
@@ -139,24 +141,6 @@ export class Captain extends Actor {
       const vel = this.playerDistance.normalize().scale(this.captainSpeed);
       this.captainBody.setVelocity(vel.x, vel.y);
     }
-  }
-
-  handleAddBuff(buffName) {
-    this.scene.physics.add.overlap(
-      this.scene.sprite,
-      this.scene.player.player,
-      (buff, player, colInfo) => {
-        console.log('something is happening!!!')
-        let playerActor = player.data.get("actor");
-        if (buffName == 'health') {
-          playerActor.addHealthPoints();
-        } else if (buffName === 'speed') {
-          playerActor.handleAddBuff
-        }
-      },
-      () => scene.player.isAlive
-    );
-
   }
 
   /** Attack, if we're in a state that allows attacking. */
@@ -279,10 +263,28 @@ export class Captain extends Actor {
 
   spawnBuffItem(name, xPos, yPos) {
     let buffItem = this.scene.add.sprite(xPos, yPos);
+
     buffItem.setScale(PIXEL_SCALE);
-    // put buffItem on top of everything (probably)
-    buffItem.setDepth(5000);
-    buffItem.play(name);
+    this.scene.physics.add.existing(buffItem);
+
+    // Add collision with player
+    this.scene.physics.add.overlap(
+      buffItem,
+      this.scene.player.player,
+      (buff, player, colInfo) => {
+        console.log("something is happening!!!");
+        let playerActor = player.data.get("actor");
+        if (name === "health") {
+          console.log("health buff");
+          playerActor.addHealthPoints();
+          buffItem.destroy();
+        } else if (name === "speed") {
+          console.log("speed buff");
+          // playerActor.handleAddBuff;
+        }
+      },
+      () => this.scene.player.isAlive
+    );
   }
 
   dropItems() {
@@ -291,7 +293,7 @@ export class Captain extends Actor {
       const item_index = Phaser.Math.RND.between(0, this.lootTable.length - 1);
       const randomItem = this.lootTable[item_index];
       // how to capture captains last x & y to generate new item here
-      this.spawnBuffItem(randomItem, this.captain.x, this.captain.y)
+      this.spawnBuffItem(randomItem, this.captain.x, this.captain.y);
     } else {
       console.log("👨🏻‍🍳 no soup for you!");
     }

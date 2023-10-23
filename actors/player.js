@@ -709,15 +709,31 @@ export class Player extends Actor {
     this.rightHand.setTintFill(0xf1f1f1);
     this.scene.time.delayedCall(128, () => this.rightHand.clearTint());
 
-    this.scene.events.emit("playerTakeDamage", this.hp / PLAYER_BASE_HP, this);
+    this.emitHealthBarUpdate();
+  }
+
+  emitHealthBarUpdate() {
+    this.scene.events.emit(
+      "playerUpdateHealthBar",
+      this.hp / PLAYER_BASE_HP,
+      this
+    );
   }
 
   addHealthPoints() {
-    this.scene.events.emit("playerAddHealthPoints", this.hp + BUFF_HEALTH_AMOUNT, this);
+    //add hp based on buff value
+    this.hp += BUFF_HEALTH_AMOUNT;
+    this.hp = Math.min(this.hp, PLAYER_BASE_HP);
+
+    this.emitHealthBarUpdate();
   }
 
   addSpeedBuff() {
-    this.scene.events.emit("playerAddSpeedBuff", this.hp + BUFF_HEALTH_AMOUNT, this);
+    this.scene.events.emit(
+      "playerAddSpeedBuff",
+      this.hp + BUFF_HEALTH_AMOUNT,
+      this
+    );
     // apply speed boost and set timeout
     this.speedBoost.scale(BUFF_SPEED_MULTIPLIER);
     this.scene.time.delayedCall(

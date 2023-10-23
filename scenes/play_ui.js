@@ -73,8 +73,8 @@ export class PlayUIScene extends Phaser.Scene {
     this.makeReturnHomeBtn();
 
     //  Listen for events from it
-    roomScene.events.addListener("playerTakeDamage", (percent) => {
-      console.debug("GOT EVENT player took took damage:", percent);
+    roomScene.events.addListener("playerUpdateHealthBar", (percent) => {
+      console.debug("GOT EVENT player HP changed:", percent);
       this.setValue(this.healthBar, percent);
     });
 
