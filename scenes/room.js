@@ -145,7 +145,8 @@ class RoomScene extends Phaser.Scene {
     }
 
     this.numEnemies = this.roomConfig.numEnemies;
-    let percentCaptains = this.roomConfig.percentCaptains;
+    // only allow captains on levels 2+
+    let percentCaptains = this.room_manager.currentChainDepth == 1 ? 0 : this.roomConfig.percentCaptains;
     for (let e = 0; e < this.numEnemies; e++) {
       let enemy;
 

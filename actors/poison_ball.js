@@ -32,6 +32,18 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
       () => scene.player.vulnerable
     );
 
+    // collide with wall
+    scene.physics.add.collider(
+      this,
+      scene.tileMap.map,
+      () => {
+        if (this.active) {
+          this.spawnExplosion();
+          this.die();
+        }
+      },
+    );
+
     // adjust hitbox
     this.body.setSize(16, 16);
     this.depth = 10000;

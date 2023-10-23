@@ -11,7 +11,7 @@ export class Captain extends Enemy {
     this.captainAttackRange = config.captainAttackRange;
     this.captainIdleAfterAttack = config.captainIdleAfterAttack;
     this.captainProjectileSpeed = config.captainProjectileSpeed;
-    this.captainSpeed = config.captainSpeed;
+    this.captainSpeed = config.captainSpeed * (Math.random() / 10 + 1);;
 
     this.dropChance = CAPTAIN_DROP_CHANCE;
   }

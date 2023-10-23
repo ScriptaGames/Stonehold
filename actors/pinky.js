@@ -16,7 +16,7 @@ export class Pinky extends Enemy {
     console.log("spawning pinky with hp", config.pinkyHP);
 
     this.pinkyIdleAfterAttack = config.pinkyIdleAfterAttack;
-    this.pinkySpeed = config.pinkySpeed;
+    this.pinkySpeed = config.pinkySpeed * (Math.random() / 10 + 1);
 
     this.dropChance = PINKY_DROP_CHANCE;
   }
