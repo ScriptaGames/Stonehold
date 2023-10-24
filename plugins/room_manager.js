@@ -31,12 +31,8 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     // TODO TWEAK DIFFICULTY SCALING HERE
     const numEnemies = depth;
     const percentCaptains = Math.min(100, depth * 2);
-    const pinkyHP =
-      PINKY_BASE_HP +
-      this.incrementEvery(depth, ENEMY_HP_INCREMENT_DEPTH_MULTIPLE);
-    const captainHP =
-      CAPTAIN_BASE_HP +
-      this.incrementEvery(depth, ENEMY_HP_INCREMENT_DEPTH_MULTIPLE);
+    const pinkyHP = PINKY_BASE_HP;
+    const captainHP = CAPTAIN_BASE_HP;
     const captainAttackDamage =
       CAPTAIN_ATTACK_DAMAGE + (depth - 2) * ENEMY_DAMAGE_SCALER;
     const captainAttackRange = CAPTAIN_ATTACK_RANGE + depth * 5;

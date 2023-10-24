@@ -101,9 +101,6 @@ export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
 /** enemy damage scaler multiplier */
 export const ENEMY_DAMAGE_SCALER = 0.1;
 
-/** depth multiple at which to increment the enemy HP */
-export const ENEMY_HP_INCREMENT_DEPTH_MULTIPLE = 5;
-
 /** After taking damage, actors go invulnerable for this long. */
 export const ACTOR_DAMAGE_INVUL_PERIOD = 100;
 
@@ -111,7 +108,7 @@ export const ACTOR_DAMAGE_INVUL_PERIOD = 100;
 export const BONUS_DAMAGE_BASE = 1;
 
 /** Amount to increase bonus damage per room */
-export const BONUS_DAMAGE_INCREASE = 0.1;
+export const BONUS_DAMAGE_INCREASE = 0.0;
 
 /** buff health amount */
 export const BUFF_HEALTH_AMOUNT = 10;
