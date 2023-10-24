@@ -388,8 +388,8 @@ export class Player extends Actor {
     if (
       this.kb.SPACE.isDown &&
       this.dodge.ready &&
-      this.dodge.keyReleased &&
-      this.attack.gracePeriod
+      this.dodge.keyReleased //&&
+      // this.attack.gracePeriod
     ) {
       // start dodging
       this.dodge.dodging = true;
@@ -454,7 +454,7 @@ export class Player extends Actor {
     this.rightHand.setFlipX(this.player.flipX);
 
     // also update the weapon hitbox position
-    if (!this.attack.attacking) {
+    if (!this.attack.attacking || this.dodge.dodging) {
       this.axe.copyPosition(this.player);
     }
   }
