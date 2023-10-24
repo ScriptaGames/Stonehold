@@ -1,6 +1,6 @@
 {
   "name": "stonehold",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "dev": "node build.js -w",
     "build": "node build.js",
