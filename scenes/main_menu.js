@@ -16,7 +16,7 @@ export default class MainMenuScene extends Phaser.Scene {
     this.load.html("nameform", "nameform.html");
     this.load.image(
       "title_background",
-      "images/2023_Stonehold_title_updateB.png"
+      "images/WARHW_2023_bg.png"
     );
     this.load.audio("hub-music", "audio/ld50-ambient-short_intro.mp3");
   }
