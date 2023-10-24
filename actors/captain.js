@@ -11,7 +11,7 @@ export class Captain extends Enemy {
     this.captainAttackRange = config.captainAttackRange;
     this.captainIdleAfterAttack = config.captainIdleAfterAttack;
     this.captainProjectileSpeed = config.captainProjectileSpeed;
-    this.captainSpeed = config.captainSpeed * (Math.random() / 10 + 1);;
+    this.captainSpeed = config.captainSpeed * (Math.random() / 10 + 1);
 
     this.dropChance = CAPTAIN_DROP_CHANCE;
   }
@@ -45,14 +45,7 @@ export class Captain extends Enemy {
         frameHeight: 96,
       }
     );
-    scene.load.spritesheet("health", "/images/health_buff.png", {
-      frameWidth: 24,
-      frameHeight: 24,
-    });
-    scene.load.spritesheet("speed", "/images/speed_buff.png", {
-      frameWidth: 24,
-      frameHeight: 24,
-    });
+
     scene.load.audio("captain-dies", "audio/captain-dies.mp3");
     scene.load.audio("captain-roar", "audio/captain-roar.mp3");
     scene.load.audio("enemy-damaged", "audio/enemy-damaged.mp3");

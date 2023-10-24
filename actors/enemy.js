@@ -8,6 +8,17 @@ export class Enemy extends Actor {
     this.lootTable = ["health", "speed"];
   }
 
+  static preload(scene) {
+    scene.load.spritesheet("health", "images/health_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+    scene.load.spritesheet("speed", "images/speed_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+  }
+
   spawnBuffItem(name) {
     let buffItem = this.scene.add.sprite(
       this.mainSprite.x,

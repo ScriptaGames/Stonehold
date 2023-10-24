@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { Player } from "../actors/player";
+import { Enemy } from "../actors/enemy";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
 import { Portcullis } from "../actors/portcullis";
@@ -54,6 +55,7 @@ class RoomScene extends Phaser.Scene {
     this.level.preload();
 
     Player.preload(this);
+    Enemy.preload(this);
     Pinky.preload(this);
     Captain.preload(this);
     Portcullis.preload(this);
