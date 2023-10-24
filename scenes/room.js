@@ -3,7 +3,6 @@ import { Player } from "../actors/player";
 import { Pinky } from "../actors/pinky";
 import { Captain } from "../actors/captain";
 import { Portcullis } from "../actors/portcullis";
-import { GraphQLClient } from "../lib/GraphQLClient";
 import { Level } from "../actors/level";
 import { Decoration } from "../actors/decoration";
 import {
@@ -22,8 +21,6 @@ class RoomScene extends Phaser.Scene {
       ...config,
       key: "RoomScene",
     });
-
-    this.gqlClient = new GraphQLClient();
   }
 
   init(data) {
@@ -382,23 +379,6 @@ you made it to level ${finalDepth}`,
     if (!this.portcullis.vulnerable) {
       // allow player to start hitting the door
       this.portcullis.setVulnerable(true);
-
-      // Increment the players rooms cleared count
-      const playerId = localStorage.getItem("player_id");
-      const remotePlayer = await this.gqlClient.queryPlayerByID(playerId);
-
-      if (this.room_manager.currentChainDepth > remotePlayer.rooms_cleared) {
-        const newRoomsCleared = parseInt(remotePlayer.rooms_cleared) + 1;
-        const updatedPlayer = await this.gqlClient.updatePlayer(
-          playerId,
-          newRoomsCleared
-        );
-        console.debug("updatedPlayer:", updatedPlayer);
-        localStorage.setItem(
-          "player_rooms_cleared",
-          newRoomsCleared.toString()
-        );
-      }
     }
   }
 

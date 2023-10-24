@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { GraphQLClient } from "../lib/GraphQLClient.js";
 import shortUUID from "short-uuid";
 import ProfanityFilter from "bad-words-relaxed";
 import xss from "xss";
@@ -9,15 +8,11 @@ import { PIXEL_SCALE, BONUS_DAMAGE_BASE } from "../variables.js";
 export default class MainMenuScene extends Phaser.Scene {
   constructor() {
     super({ key: "MainMenuScene" });
-    this.gqlClient = new GraphQLClient();
   }
 
   preload() {
     this.load.html("nameform", "nameform.html");
-    this.load.image(
-      "title_background",
-      "images/WARHW_2023_bg.png"
-    );
+    this.load.image("title_background", "images/WARHW_2023_bg.png");
     this.load.audio("hub-music", "audio/ld50-ambient-short_intro.mp3");
   }
 
@@ -41,7 +36,6 @@ export default class MainMenuScene extends Phaser.Scene {
       .dom(screenCenterX, screenCenterY + 150)
       .createFromCache("nameform");
     const scene = this.scene;
-    const gqlClient = this.gqlClient;
     const filterName = this.filterName;
 
     // Populate previous players name
