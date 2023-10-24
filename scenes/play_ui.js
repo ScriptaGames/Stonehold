@@ -49,6 +49,7 @@ export class PlayUIScene extends Phaser.Scene {
         color: "#ffffff",
       }
     );
+    this.damageText.setVisible(false); // hiding this until we add a damage buff
 
     // add player UI bars
     this.healthBar = this.makeBar(43, 60, 0xe74c3c);
