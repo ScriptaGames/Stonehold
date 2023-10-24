@@ -355,41 +355,28 @@ export class Player extends Actor {
       // apply left/right motion
       if (this.kb.A.isDown) {
         this.playerBody.setVelocityX(-1);
-        this.dodge.x = -1;
         this.player.setFlipX(true);
       } else if (this.kb.D.isDown) {
         this.playerBody.setVelocityX(1);
-        this.dodge.x = 1;
         this.player.setFlipX(false);
       }
 
       // apply up/down motion
       if (this.kb.W.isDown) {
         this.playerBody.setVelocityY(-1);
-        this.dodge.y = -1;
       } else if (this.kb.S.isDown) {
         this.playerBody.setVelocityY(1);
-        this.dodge.y = 1;
-      }
-
-      // ensure the next dodge is pointing in the right direction
-      const goingHoriz = this.kb.A.isDown || this.kb.D.isDown;
-      const goingVert = this.kb.W.isDown || this.kb.S.isDown;
-      if (goingHoriz && !goingVert) {
-        this.dodge.y = 0;
-      }
-      if (goingVert && !goingHoriz) {
-        this.dodge.x = 0;
       }
     }
+
+    this.setDodgeDirection();
 
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
     if (
       this.kb.SPACE.isDown &&
       this.dodge.ready &&
-      this.dodge.keyReleased //&&
-      // this.attack.gracePeriod
+      this.dodge.keyReleased
     ) {
       // start dodging
       this.dodge.dodging = true;
@@ -787,6 +774,33 @@ export class Player extends Actor {
         break;
       default:
         console.debug(`unknown buff: ${name}`);
+    }
+  }
+
+  setDodgeDirection() {
+    // ensure dodge is pointing in the right direction
+    // apply left/right motion
+    if (this.kb.A.isDown) {
+      this.dodge.x = -1;
+    } else if (this.kb.D.isDown) {
+      this.dodge.x = 1;
+    }
+
+    // apply up/down motion
+    if (this.kb.W.isDown) {
+      this.dodge.y = -1;
+    } else if (this.kb.S.isDown) {
+      this.dodge.y = 1;
+    }
+
+    // ensure the next dodge is pointing in the right direction
+    const goingHoriz = this.kb.A.isDown || this.kb.D.isDown;
+    const goingVert = this.kb.W.isDown || this.kb.S.isDown;
+    if (goingHoriz && !goingVert) {
+      this.dodge.y = 0;
+    }
+    if (goingVert && !goingHoriz) {
+      this.dodge.x = 0;
     }
   }
 }
