@@ -583,15 +583,11 @@ export class Player extends Actor {
     ) {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
-      this.ultimateCharge = 0.0;
 
       this.leftHand.setVisible(false);
       this.rightHand.setVisible(false);
 
       this.player.play("ultimate-attack");
-
-      // reset progress bar
-      this.scene.events.emit("chargeUltimate", 0, this);
 
       this.scene.time.delayedCall(
         ULTIMATE_ATTACK_GRACE_PERIOD,
@@ -620,6 +616,10 @@ export class Player extends Actor {
     this.ultimateExplosion.setPosition(this.player.x, this.player.y);
     this.ultimateExplosion.play("ultimate-explosion");
     this.scene.sound.play("ultimate-boom", { volume: 4 });
+
+    // reset progress bar
+    this.ultimateCharge = 0.0;
+    this.scene.events.emit("chargeUltimate", 0, this);
 
     // ultimate should only deal damage briefly when it lands
     this.scene.time.delayedCall(20, () => (this.ultimateActive = false));
