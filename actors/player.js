@@ -113,6 +113,8 @@ export class Player extends Actor {
     scene.load.audio("axe-hit2", "audio/weapon-hit2.mp3");
     scene.load.audio("ultimate-boom", "audio/ultimate-boom.mp3");
     scene.load.audio("dwarf-dies", "audio/player-dies.mp3");
+    scene.load.audio("health-buff", "audio/health_buff.mp3");
+    scene.load.audio("speed-buff", "audio/speed_buff.mp3");
   }
   create() {
     super.create();
@@ -726,6 +728,8 @@ export class Player extends Actor {
     this.hp += BUFF_HEALTH_AMOUNT;
     this.hp = Math.min(this.hp, PLAYER_BASE_HP);
 
+    this.scene.sound.play("health-buff", { volume: 3.5 });
+
     this.emitHealthBarUpdate();
   }
 
@@ -744,6 +748,9 @@ export class Player extends Actor {
     );
 
     this.buffSpeedMultiplier = BUFF_SPEED_MULTIPLIER;
+
+    // play sound effect
+    this.scene.sound.play("speed-buff", { volume: 1.5 });
 
     this.scene.time.delayedCall(BUFF_SPEED_DURATION, () => {
       console.debug("removing speed buff");
