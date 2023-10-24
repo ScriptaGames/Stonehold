@@ -41,6 +41,8 @@ export class Enemy extends Actor {
       },
       () => this.scene.player.isAlive
     );
+
+    buffItem.setDepth(4000);
   }
 
   dropItems() {
