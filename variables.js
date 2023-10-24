@@ -99,7 +99,7 @@ export const CAPTAIN_PROJECTILE_SPEED = 400;
 export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
 
 /** enemy damage scaler multiplier */
-export const ENEMY_DAMAGE_SCALER = 0.1;
+export const ENEMY_DAMAGE_SCALER = 0.2;
 
 /** After taking damage, actors go invulnerable for this long. */
 export const ACTOR_DAMAGE_INVUL_PERIOD = 100;

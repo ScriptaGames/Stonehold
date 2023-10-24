@@ -12,7 +12,6 @@ import {
   PINKY_IDLE_AFTER_ATTACK,
   PINKY_SPEED,
   ENEMY_DAMAGE_SCALER,
-  ENEMY_HP_INCREMENT_DEPTH_MULTIPLE,
 } from "../variables";
 import { Utils } from "../lib/utils.js";
 
