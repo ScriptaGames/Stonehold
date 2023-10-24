@@ -11,6 +11,8 @@ import {
   PINKY_BASE_HP,
   PINKY_IDLE_AFTER_ATTACK,
   PINKY_SPEED,
+  ENEMY_DAMAGE_SCALER,
+  ENEMY_HP_INCREMENT_DEPTH_MULTIPLE,
 } from "../variables";
 import { Utils } from "../lib/utils.js";
 
@@ -29,14 +31,20 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     // TODO TWEAK DIFFICULTY SCALING HERE
     const numEnemies = depth;
     const percentCaptains = Math.min(100, depth * 2);
-    const pinkyHP = PINKY_BASE_HP + depth;
-    const captainHP = CAPTAIN_BASE_HP + Math.ceil(depth + depth / 2);
-    const captainAttackDamage = CAPTAIN_ATTACK_DAMAGE + depth;
+    const pinkyHP =
+      PINKY_BASE_HP +
+      this.incrementEvery(depth, ENEMY_HP_INCREMENT_DEPTH_MULTIPLE);
+    const captainHP =
+      CAPTAIN_BASE_HP +
+      this.incrementEvery(depth, ENEMY_HP_INCREMENT_DEPTH_MULTIPLE);
+    const captainAttackDamage =
+      CAPTAIN_ATTACK_DAMAGE + (depth - 2) * ENEMY_DAMAGE_SCALER;
     const captainAttackRange = CAPTAIN_ATTACK_RANGE + depth * 5;
     const captainIdleAfterAttack = CAPTAIN_IDLE_AFTER_ATTACK;
     const captainProjectileSpeed = CAPTAIN_PROJECTILE_SPEED + depth;
     const captainSpeed = CAPTAIN_SPEED + depth;
-    const pinkyAttackDamage = PINKY_ATTACK_DAMAGE + depth;
+    const pinkyAttackDamage =
+      PINKY_ATTACK_DAMAGE + (depth - 1) * ENEMY_DAMAGE_SCALER;
     const pinkyIdleAfterAttack = PINKY_IDLE_AFTER_ATTACK;
     const pinkySpeed = PINKY_SPEED + depth;
 
@@ -67,6 +75,10 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     console.debug(config);
 
     return config;
+  }
+
+  incrementEvery(current, every) {
+    return Math.floor(current / every);
   }
 
   /** Configs for all the levels for each room type.  To be used with level.js */

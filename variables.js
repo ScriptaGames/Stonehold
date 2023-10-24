@@ -60,19 +60,10 @@ export const API_URL = "http://66.228.50.201:3000/api/graphql";
 export const PIXEL_SCALE = 3;
 
 /** Damage from a pinky's attack. */
-export const PINKY_ATTACK_DAMAGE = 2;
+export const PINKY_ATTACK_DAMAGE = 1;
 
 /** Pinky starting HP. */
 export const PINKY_BASE_HP = 5;
-
-/** Damage from a captain's attack. */
-export const CAPTAIN_ATTACK_DAMAGE = 1;
-
-/** Captain starting HP. */
-export const CAPTAIN_BASE_HP = 7;
-
-/** percent chance that a captain will drop an item */
-export const CAPTAIN_DROP_CHANCE = 30;
 
 /** Pinky's speed */
 export const PINKY_SPEED = 100;
@@ -84,7 +75,16 @@ export const PINKY_ATTACK_RANGE = 110;
 export const PINKY_IDLE_AFTER_ATTACK = 1000;
 
 /** percent chance that a pinky will drop an item */
-export const PINKY_DROP_CHANCE = 15;
+export const PINKY_DROP_CHANCE = 20;
+
+/** Damage from a captain's attack. */
+export const CAPTAIN_ATTACK_DAMAGE = 1;
+
+/** Captain starting HP. */
+export const CAPTAIN_BASE_HP = 7;
+
+/** percent chance that a captain will drop an item */
+export const CAPTAIN_DROP_CHANCE = 35;
 
 /** Captain's speed */
 export const CAPTAIN_SPEED = 100;
@@ -98,6 +98,12 @@ export const CAPTAIN_PROJECTILE_SPEED = 400;
 /** Captain's idle time after attacking */
 export const CAPTAIN_IDLE_AFTER_ATTACK = 1600;
 
+/** enemy damage scaler multiplier */
+export const ENEMY_DAMAGE_SCALER = 0.1;
+
+/** depth multiple at which to increment the enemy HP */
+export const ENEMY_HP_INCREMENT_DEPTH_MULTIPLE = 5;
+
 /** After taking damage, actors go invulnerable for this long. */
 export const ACTOR_DAMAGE_INVUL_PERIOD = 100;
 
@@ -108,7 +114,7 @@ export const BONUS_DAMAGE_BASE = 1;
 export const BONUS_DAMAGE_INCREASE = 0.1;
 
 /** buff health amount */
-export const BUFF_HEALTH_AMOUNT = 15;
+export const BUFF_HEALTH_AMOUNT = 10;
 
 /** buff speed multiplier */
 export const BUFF_SPEED_MULTIPLIER = 2;

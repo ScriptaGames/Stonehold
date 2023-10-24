@@ -7,8 +7,10 @@ import {
 
 export class PoisonBall extends Phaser.GameObjects.Sprite {
   /** @param {Phaser.Scene} scene */
-  constructor(scene) {
+  constructor(scene, roomConfig) {
     super(scene, 0, 0, "poison-ball");
+
+    this.damage = scene.roomConfig.captainAttackDamage;
 
     scene.physics.add.existing(this);
     this.setScale(PIXEL_SCALE);
@@ -33,22 +35,16 @@ export class PoisonBall extends Phaser.GameObjects.Sprite {
     );
 
     // collide with wall
-    scene.physics.add.collider(
-      this,
-      scene.tileMap.map,
-      () => {
-        if (this.active) {
-          this.spawnExplosion();
-          this.die();
-        }
-      },
-    );
+    scene.physics.add.collider(this, scene.tileMap.map, () => {
+      if (this.active) {
+        this.spawnExplosion();
+        this.die();
+      }
+    });
 
     // adjust hitbox
     this.body.setSize(16, 16);
     this.depth = 10000;
-
-    this.damage = CAPTAIN_ATTACK_DAMAGE;
   }
 
   fire(x, y, direction) {

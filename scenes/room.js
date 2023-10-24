@@ -11,6 +11,7 @@ import {
   ULTIMATE_ATTACK_DAMAGE,
   PLAYER_BASE_HP,
   BONUS_DAMAGE_INCREASE,
+  BONUS_DAMAGE_BASE,
 } from "../variables";
 import { Utils } from "../lib/utils.js";
 import { reportScore } from "../lib/physics.js";
@@ -37,10 +38,10 @@ class RoomScene extends Phaser.Scene {
     }
 
     if (data.playerState) {
-      console.log(`player state hp: ${data.playerState.hp}`);
+      console.debug(`player state hp: ${data.playerState.hp}`);
     }
 
-    console.log(this.roomConfig.levelMap);
+    console.debug(this.roomConfig.levelMap);
 
     this.level = new Level(this, this.roomConfig.levelMap);
 
@@ -146,7 +147,10 @@ class RoomScene extends Phaser.Scene {
 
     this.numEnemies = this.roomConfig.numEnemies;
     // only allow captains on levels 2+
-    let percentCaptains = this.room_manager.currentChainDepth == 1 ? 0 : this.roomConfig.percentCaptains;
+    let percentCaptains =
+      this.room_manager.currentChainDepth == 1
+        ? 0
+        : this.roomConfig.percentCaptains;
     for (let e = 0; e < this.numEnemies; e++) {
       let enemy;
 
@@ -325,6 +329,10 @@ you made it to level ${finalDepth}`,
           const uiScene = this.scene.get("PlayUIScene");
           uiScene.scene.restart();
           this.sound.stopAll();
+
+          // reset bonus damage
+          localStorage.setItem("bonus_damage", BONUS_DAMAGE_BASE);
+
           this.scene.start("CellScene", {
             player: Utils.getLocalStoragePlayer(),
           });

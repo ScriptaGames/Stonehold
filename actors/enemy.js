@@ -53,7 +53,7 @@ export class Enemy extends Actor {
       }
 
       // Spawn the buff item after a delay
-      this.scene.time.delayedCall(1500, () => {
+      this.scene.time.delayedCall(1300, () => {
         // spawn the buff item into the scene
         this.spawnBuffItem(randomItem);
       });

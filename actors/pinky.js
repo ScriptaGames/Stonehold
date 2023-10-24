@@ -43,6 +43,7 @@ export class Pinky extends Enemy {
     scene.load.audio("enemy-hit-aah", "audio/enemy-hit-aah.mp3");
     scene.load.audio("grunt-dies", "audio/grunt-dies.mp3");
   }
+
   create() {
     super.create();
     this.pinky = this.mainSprite = this.scene.add.sprite(250, 500);
@@ -83,7 +84,7 @@ export class Pinky extends Enemy {
       (pinky, player, colInfo) => {
         let playerActor = player.data.get("actor");
         let pinkyActor = pinky.data.get("actor");
-        playerActor.takeDamage(PINKY_ATTACK_DAMAGE);
+        playerActor.takeDamage(this.damage);
         pinkyActor.dealDamage();
       },
       () => this.attack.activeFrame

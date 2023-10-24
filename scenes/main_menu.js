@@ -56,74 +56,24 @@ export default class MainMenuScene extends Phaser.Scene {
     element.addListener("click");
     element.on("click", async function (event) {
       if (event.target.name === "playButton") {
-        const rn = Phaser.Math.Between(100, 90000);
         const seed = shortUUID.generate();
+        const name = localStorage.getItem("arcade-username") || "Unknown Dwarf";
 
-        const inputText = this.getChildByName("nameField");
+        const createdPlayer = {
+          id: shortUUID.generate(),
+          name,
+          seed,
+          rooms_cleared: 0,
+        };
 
-        //TODO: get SSO username
-        const sso_username = "SSO_username" + rn;
+        console.debug("Created player:", createdPlayer);
 
-        let name;
-
-        //
-        if ((inputText && inputText.value !== "") || sso_username) {
-          //TODO: get this name from the SSO integration
-          // Commented out in case we get a name from a the HTML form field
-          // name = filterName(inputText.value);
-
-          name = sso_username;
-        } else {
-          name = "Prisoner" + rn;
-        }
-
-        // first see if this player exists already
-        let existingPlayer;
-        const localPlayerId = localStorage.getItem("player_id");
-
-        if (localPlayerId) {
-          // existingPlayer = await gqlClient.queryPlayerByIDAndName(
-          //   localPlayerId,
-          //   name
-          // );
-
-          if (existingPlayer) {
-            localStorage.setItem("player_name", existingPlayer.name);
-            localStorage.setItem("player_seed", existingPlayer.seed);
-            localStorage.setItem(
-              "player_rooms_cleared",
-              existingPlayer.rooms_cleared
-            );
-          }
-
-          console.debug("existingPlayer:", existingPlayer);
-        }
-
-        if (!existingPlayer) {
-          // Create the player
-          // const createdPlayer = await gqlClient.createPlayer({
-          //   name,
-          //   seed,
-          //   rooms_cleared: 0,
-          // });
-
-          //TODO: replace this mock player with a player name from the SSO integration
-          const createdPlayer = {
-            id: shortUUID.generate(),
-            name,
-            seed,
-            rooms_cleared: 0,
-          };
-
-          console.debug("Created player:", createdPlayer);
-
-          // Save player to local storage
-          localStorage.setItem("player_id", createdPlayer.id);
-          localStorage.setItem("player_name", name);
-          localStorage.setItem("player_seed", seed);
-          localStorage.setItem("player_rooms_cleared", 0);
-          localStorage.setItem("bonus_damage", BONUS_DAMAGE_BASE);
-        }
+        // Save player to local storage
+        localStorage.setItem("player_id", createdPlayer.id);
+        localStorage.setItem("player_name", name);
+        localStorage.setItem("player_seed", seed);
+        localStorage.setItem("player_rooms_cleared", 0);
+        localStorage.setItem("bonus_damage", BONUS_DAMAGE_BASE);
 
         //  Turn off the click events
         this.removeListener("click");
