@@ -272,10 +272,10 @@ export class Player extends Actor {
     this.scene.input.on("pointerdown", (pointer) => {
       if (this.isAlive) {
         // ctrl & click is pressed or right click, try to use ultimate ability
-        if (pointer.rightButtonDown() && new KeyboardEvent(17) || pointer.button == 2) {
+        if (pointer.rightButtonDown()) {
           this.tryUltimateAbility();
           // regular attack
-        } else if (pointer.button == 0) {
+        } else if (pointer.leftButtonDown()) {
           // if trying to attack while already attacking, then try a combo
           if (this.attack.attacking) {
             this.attack.performCombo = true;
