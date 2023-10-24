@@ -93,7 +93,7 @@ class CellScene extends Phaser.Scene {
       hubDoorBounds,
       (player, rec, colInfo) => {
         // uncomment this if we enable the hub door ever again
-        // console.log("collided with hub Door");
+        // console.debug("collided with hub Door");
         // this.scene.start("HubScene");
       }
     );
@@ -106,7 +106,7 @@ class CellScene extends Phaser.Scene {
       this.player.player,
       roomDoorBounds,
       (player, rec, colInfo) => {
-        console.log("collided with room Door");
+        console.debug("collided with room Door");
         this.sound.stopAll();
         this.room_manager.initChain(data.player);
         let room_config = this.room_manager.nextRoom();

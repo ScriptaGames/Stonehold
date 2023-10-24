@@ -58,7 +58,7 @@ export class Enemy extends Actor {
         this.spawnBuffItem(randomItem);
       });
     } else {
-      console.log("👨🏻‍🍳 no soup for you!");
+      console.debug("👨🏻‍🍳 no soup for you!");
     }
   }
 

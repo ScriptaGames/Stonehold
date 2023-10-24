@@ -280,7 +280,7 @@ export class Player extends Actor {
         } else if (pointer.button == 2) {
           this.tryUltimateAbility();
         } else {
-          console.log(`got pointer ${pointer.button}`);
+          console.debug(`got pointer ${pointer.button}`);
         }
       }
     });
@@ -575,7 +575,7 @@ export class Player extends Actor {
   }
 
   tryUltimateAbility() {
-    console.log(`ultimate charge: ${this.ultimateCharge}`);
+    console.debug(`ultimate charge: ${this.ultimateCharge}`);
     if (
       this.dodge.gracePeriod &&
       this.attack.gracePeriod &&
@@ -786,7 +786,7 @@ export class Player extends Actor {
         this.addSpeedBuff();
         break;
       default:
-        console.log(`unknown buff: ${name}`);
+        console.debug(`unknown buff: ${name}`);
     }
   }
 }

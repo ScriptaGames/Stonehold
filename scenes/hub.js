@@ -36,7 +36,7 @@ class HubScene extends Phaser.Scene {
       this.game.sound.play("hub-music", { loop: true });
     }
 
-    console.log("name:", data.name);
+    console.debug("name:", data.name);
 
     // Create the main player
     Player.createAnims(this);

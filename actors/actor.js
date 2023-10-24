@@ -55,12 +55,12 @@ export class Actor {
       // after taking damage, become invul for a moment
       this.setVulnerable(false);
 
-      console.log(
+      console.debug(
         `ACTOR took ${inflictedDamage} damage and is now at ${this.hp} hp`
       );
 
       if (this.hp <= 0) {
-        console.log("ACTOR took fatal damage");
+        console.debug("ACTOR took fatal damage");
         this.die();
       } else {
         // make actor vulnerable again after a delay

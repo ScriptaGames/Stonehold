@@ -128,7 +128,7 @@ class RoomScene extends Phaser.Scene {
 
     // this.doorExit.setSize(70, 100);
 
-    console.log("room1 mushrooms: " + this.roomConfig.numMushrooms);
+    console.debug("room1 mushrooms: " + this.roomConfig.numMushrooms);
     for (let m = 0; m < this.roomConfig.numMushrooms; m++) {
       let mushroom = new Decoration(this);
       mushroom.create();
@@ -232,7 +232,7 @@ class RoomScene extends Phaser.Scene {
     //   // keep randomly repositioning each enemy until they don't overlap the walls
     //   while (this.physics.overlap(enemy, this.map)) {
     //     enemy.setRandomPosition();
-    //     console.log(`repositioning enemy to ${enemy.x},${enemy.y}`);
+    //     console.debug(`repositioning enemy to ${enemy.x},${enemy.y}`);
     //   }
     // });
 
@@ -291,7 +291,7 @@ class RoomScene extends Phaser.Scene {
         let username =
           localStorage.getItem("arcade-username") || "Unknown Dwarf";
 
-        console.log(`PLAYER DIED OH NOOOOOOOO (on level ${finalDepth})`);
+        console.debug(`PLAYER DIED OH NOOOOOOOO (on level ${finalDepth})`);
 
         reportScore(username, finalDepth);
 
@@ -335,7 +335,7 @@ you made it to level ${finalDepth}`,
           });
         }, 5000);
       } else {
-        console.log("ENEMY DIED OH YEAAAAAH");
+        console.debug("ENEMY DIED OH YEAAAAAH");
         await this.enemyKilled();
       }
     });
@@ -363,7 +363,7 @@ you made it to level ${finalDepth}`,
     if (this.numEnemies < 0) {
       this.numEnemies = 0;
     }
-    console.log(`enemy killed! ${this.numEnemies} remain`);
+    console.debug(`enemy killed! ${this.numEnemies} remain`);
     if (this.numEnemies === 0) {
       await this.unlockDoor();
     }
@@ -383,7 +383,7 @@ you made it to level ${finalDepth}`,
   }
 
   exitingRoom() {
-    console.log("exiting room");
+    console.debug("exiting room");
     if (
       !this.room_manager.myChain ||
       this.room_manager.currentChainDepth >= this.room_manager.unlockedDepth

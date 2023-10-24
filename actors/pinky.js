@@ -13,7 +13,7 @@ export class Pinky extends Enemy {
   constructor(scene, config) {
     super(scene, { hp: config.pinkyHP, damage: config.pinkyAttackDamage });
 
-    console.log("spawning pinky with hp", config.pinkyHP);
+    console.debug("spawning pinky with hp", config.pinkyHP);
 
     this.pinkyIdleAfterAttack = config.pinkyIdleAfterAttack;
     this.pinkySpeed = config.pinkySpeed * (Math.random() / 10 + 1);

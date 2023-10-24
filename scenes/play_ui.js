@@ -95,7 +95,7 @@ export class PlayUIScene extends Phaser.Scene {
     });
 
     roomScene.events.addListener("roomLoaded", (inMyChain) => {
-      console.log("room loaded: " + inMyChain);
+      console.debug("room loaded: " + inMyChain);
       if (inMyChain) {
         this.returnHomeBtn.setVisible(false);
         this.returnHomeBtn.disableInteractive();

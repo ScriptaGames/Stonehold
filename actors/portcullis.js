@@ -58,7 +58,7 @@ export class Portcullis extends Actor {
       this.scene.sound.play("door-open");
     });
     this.portcullis.on(Phaser.Animations.Events.ANIMATION_COMPLETE, (anim) => {
-      console.log("door finished opening");
+      console.debug("door finished opening");
     });
   }
 

@@ -27,7 +27,7 @@ class ExampleScene extends Phaser.Scene {
 
     // example handlers for user input.  prefer using "gameobjectdown" (ie, mousedown) because it feels like more instant feedback than waiting for mouseup.
     this.input.on("gameobjectdown", (pointer, gameObject) => {
-      console.log(`mouse down on ${gameObject.name}`, gameObject);
+      console.debug(`mouse down on ${gameObject.name}`, gameObject);
       this.paeMusic.play();
     });
 
