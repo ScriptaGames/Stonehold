@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { Enemy } from "./enemy";
-import { PIXEL_SCALE, CAPTAIN_DROP_CHANCE } from "../variables";
+import { PIXEL_SCALE, CAPTAIN_DROP_CHANCE, CAPTAIN_AGGRO_RANGE, CAPTAIN_AGGRO_FRIEND_RANGE } from "../variables";
 import { PoisonBall } from "./poison_ball";
 
 export class Captain extends Enemy {
@@ -77,6 +77,18 @@ export class Captain extends Enemy {
     this.captainBody.setOffset(17, 28);
 
     this.isAttacking = false;
+
+    this.scene.events.addListener("enemyAggro",
+      /**
+       * @param {Phaser.Math.Vector2} pos
+       */
+      (pos) => {
+        let friend_distance = this.captainBody.position.distance(pos);
+        if (friend_distance <= CAPTAIN_AGGRO_FRIEND_RANGE) {
+          this.isAggro = true;
+          console.debug("AGGRO captain tags along");
+        }
+    });
   }
 
   update() {
@@ -88,6 +100,13 @@ export class Captain extends Enemy {
 
     if (this.playerDistance.length() < this.captainAttackRange) {
       this.attack();
+    }
+
+    if (!this.isAggro && this.playerDistance.length() <= CAPTAIN_AGGRO_RANGE) {
+      console.debug("AGGRO player entered captain aggro range");
+      // let nearby enemies know about the aggro
+      this.scene.events.emit("enemyAggro", this.captainBody.position, this);
+      this.isAggro = true;
     }
 
     this.handleMovement();

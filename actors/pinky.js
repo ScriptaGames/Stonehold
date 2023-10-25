@@ -2,10 +2,12 @@ import Phaser from "phaser";
 import { Enemy } from "./enemy";
 import {
   PINKY_ATTACK_DAMAGE,
+  PINKY_AGGRO_RANGE,
   PINKY_ATTACK_RANGE,
   PIXEL_SCALE,
   WEAPON_HOVER_DISTANCE,
   PINKY_DROP_CHANCE,
+  PINKY_AGGRO_FRIEND_RANGE,
 } from "../variables";
 
 export class Pinky extends Enemy {
@@ -89,6 +91,18 @@ export class Pinky extends Enemy {
       },
       () => this.attack.activeFrame
     );
+
+    this.scene.events.addListener("enemyAggro",
+      /**
+       * @param {Phaser.Math.Vector2} pos
+       */
+      (pos) => {
+        let friend_distance = this.pinkyBody.position.distance(pos);
+        if (friend_distance <= PINKY_AGGRO_FRIEND_RANGE) {
+          this.isAggro = true;
+          console.debug("AGGRO pinky tags along");
+        }
+    });
   }
 
   update() {
@@ -105,6 +119,13 @@ export class Pinky extends Enemy {
       const pDistance = this.playerDistance.length();
       if (pDistance < PINKY_ATTACK_RANGE) {
         this.performAttack();
+      }
+
+      if (!this.isAggro && pDistance <= PINKY_AGGRO_RANGE) {
+        console.debug("AGGRO player entered pinky aggro range");
+        // let nearby enemies know about the aggro
+        this.scene.events.emit("enemyAggro", this.pinkyBody.position, this);
+        this.isAggro = true;
       }
 
       this.handleMovement();
@@ -136,7 +157,7 @@ export class Pinky extends Enemy {
   }
 
   handleMovement() {
-    if (!this.attack.attacking) {
+    if (this.isAggro && !this.attack.attacking) {
       const targetX = this.scene.player.player.x;
       this.pinky.setFlipX(targetX > this.pinky.x);
       const vel = this.playerDistance.normalize().scale(this.pinkySpeed);

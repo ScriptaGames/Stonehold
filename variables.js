@@ -71,6 +71,12 @@ export const PINKY_SPEED = 100;
 /** Pinky's attack range */
 export const PINKY_ATTACK_RANGE = 110;
 
+/** Pinky's aggro range */
+export const PINKY_AGGRO_RANGE = 375;
+
+/** When an enemy is aggro'd, pinkies within this range of the aggro'd enemy will also aggro. */
+export const PINKY_AGGRO_FRIEND_RANGE = 400;
+
 /** Pinky's idle time after attacking */
 export const PINKY_IDLE_AFTER_ATTACK = 1000;
 
@@ -88,6 +94,12 @@ export const CAPTAIN_DROP_CHANCE = 35;
 
 /** Captain's speed */
 export const CAPTAIN_SPEED = 100;
+
+/** Captain's aggro range */
+export const CAPTAIN_AGGRO_RANGE = 375;
+
+/** When an enemy is aggro'd, captains within this range of the aggro'd enemy will also aggro. */
+export const CAPTAIN_AGGRO_FRIEND_RANGE = 400;
 
 /** Captain's attack range */
 export const CAPTAIN_ATTACK_RANGE = 350;

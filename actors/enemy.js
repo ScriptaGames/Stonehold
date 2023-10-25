@@ -6,6 +6,7 @@ export class Enemy extends Actor {
     super(scene, config);
 
     this.lootTable = ["health", "speed"];
+    this.isAggro = false;
   }
 
   static preload(scene) {
