@@ -8,6 +8,7 @@ import {
   CAPTAIN_SPEED,
   PINKY_ATTACK_DAMAGE,
   PINKY_ATTACK_RANGE,
+  STARTING_ROOM_DEPTH,
   PINKY_BASE_HP,
   PINKY_IDLE_AFTER_ATTACK,
   PINKY_SPEED,
@@ -26,6 +27,8 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     const numMushrooms = this.rnd.weightedPick(
       new Array(maxMushrooms).fill(1).map((n, i) => i)
     );
+
+    depth = Math.max(STARTING_ROOM_DEPTH, depth);
 
     // TODO TWEAK DIFFICULTY SCALING HERE
     const numEnemies = depth;

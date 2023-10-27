@@ -13,7 +13,7 @@ import {
   PLAYER_BASE_DAMAGE,
   PLAYER_AFTER_ULTIMATE_DELAY,
   ULTIMATE_ATTACK_GRACE_PERIOD,
-  ULTIMATE_ATTACK_RADIUS,
+  ULTIMATE_ATTACK_EXTENDED_RADIUS,
   ULTIMATE_CHARGE_PER_ENEMY,
   COMBO_ATTACK_INPUT_PERIOD,
   ATTACK_COMBO_GRACE_PERIOD,
@@ -26,6 +26,8 @@ import {
 } from "../variables";
 import { Captain } from "./captain";
 import { Utils } from "../lib/utils";
+
+const ULTIMATE_FRAME_SIZE = 36;
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
@@ -91,8 +93,8 @@ export class Player extends Actor {
       "ultimate-attack",
       "images/dwarfFull_ultimate_strip.png",
       {
-        frameWidth: 36,
-        frameHeight: 36,
+        frameWidth: ULTIMATE_FRAME_SIZE,
+        frameHeight: ULTIMATE_FRAME_SIZE,
       }
     );
 
@@ -156,13 +158,20 @@ export class Player extends Actor {
     this.scene.physics.add.existing(this.axe);
 
     // configure ultimate explosion effect
-    this.ultimateExplosion = this.scene.add.sprite(100, 100);
+    this.ultimateExplosion = this.scene.add.sprite();
     this.ultimateExplosion.setScale(PIXEL_SCALE);
     this.ultimateExplosion.setVisible(false);
     this.scene.physics.add.existing(this.ultimateExplosion);
     this.ultimateExplosionBody = this.ultimateExplosion.body;
-    this.ultimateExplosionBody.setSize(100, 100);
-    this.ultimateExplosionBody.setOffset(25, 25);
+    const extraSize = ULTIMATE_ATTACK_EXTENDED_RADIUS;
+    const ultBodySize = ULTIMATE_FRAME_SIZE * PIXEL_SCALE + extraSize;
+    this.ultimateExplosionBody.setSize(ultBodySize, ultBodySize);
+    const ultDefaultOffset = this.ultimateExplosionBody.offset;
+    console.debug("ultDefaultOffset: ", ultDefaultOffset);
+    const ultBodyOffest = ultBodySize / 2 + ultDefaultOffset.x - extraSize / 2;
+    console.debug("ultBodyOffest: ", ultBodyOffest);
+    this.ultimateExplosionBody.setOffset(ultBodyOffest, ultBodyOffest);
+
     this.ultimateActive = false;
 
     this.bonusDamage = Number(Utils.getLocalStoragePlayer().bonus_damage);

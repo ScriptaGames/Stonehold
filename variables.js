@@ -2,6 +2,9 @@
 //  Gameplay constants, tweak these for maximum fun  //
 ///////////////////////////////////////////////////////
 
+/** Depth of the first room, increase this to debug higher levels */
+export const STARTING_ROOM_DEPTH = 1;
+
 /** Player base HP. */
 export const PLAYER_BASE_HP = 50;
 
@@ -42,7 +45,7 @@ export const COMBO_ATTACK_INPUT_PERIOD = 350;
 export const ULTIMATE_ATTACK_GRACE_PERIOD = 1000;
 
 /** Radius the ultimate attack will damage */
-export const ULTIMATE_ATTACK_RADIUS = 100;
+export const ULTIMATE_ATTACK_EXTENDED_RADIUS = 5;
 
 /** Percent of ultimate charge refilled per enemey kill */
 export const ULTIMATE_CHARGE_PER_ENEMY = 0.25;
