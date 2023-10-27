@@ -5,7 +5,7 @@ export class Enemy extends Actor {
   constructor(scene, config) {
     super(scene, config);
 
-    this.lootTable = ["health", "speed"];
+    this.lootTable = ["health", "speed", "attack"];
   }
 
   static preload(scene) {
@@ -16,6 +16,22 @@ export class Enemy extends Actor {
     scene.load.spritesheet("speed", "images/speed_buff.png", {
       frameWidth: 24,
       frameHeight: 24,
+    });
+    scene.load.spritesheet("attack", "images/axe_buff.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+  }
+
+  static createAnims(scene) {
+    // loop through each spritesheet and create an animation
+    ["health", "speed", "attack"].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 10,
+        repeat: -1,
+      });
     });
   }
 

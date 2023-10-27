@@ -63,6 +63,7 @@ class RoomScene extends Phaser.Scene {
   }
 
   create() {
+    Enemy.createAnims(this);
     Pinky.createAnims(this);
     Player.createAnims(this);
     Captain.createAnims(this);

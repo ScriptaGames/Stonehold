@@ -21,6 +21,8 @@ import {
   BUFF_HEALTH_AMOUNT,
   BUFF_SPEED_MULTIPLIER,
   BUFF_SPEED_DURATION,
+  BUFF_ATTACK_SWINGS,
+  BUFF_ATTACK_MULTIPLIER,
 } from "../variables";
 import { Captain } from "./captain";
 import { Utils } from "../lib/utils";
@@ -375,11 +377,7 @@ export class Player extends Actor {
 
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
-    if (
-      this.kb.SPACE.isDown &&
-      this.dodge.ready &&
-      this.dodge.keyReleased
-    ) {
+    if (this.kb.SPACE.isDown && this.dodge.ready && this.dodge.keyReleased) {
       // start dodging
       this.dodge.dodging = true;
       this.dodge.ready = false;
@@ -456,6 +454,20 @@ export class Player extends Actor {
     if (this.dodge.gracePeriod && this.attack.gracePeriod) {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
+
+      // decrement the swing counter for the attack buff if it's active
+      if (this.buffAttackSwings > 0) {
+        this.buffAttackSwings--;
+
+        console.debug("buffAttackSwings remaining: ", this.buffAttackSwings);
+
+        if (this.buffAttackSwings == 0) {
+          this.removeAttackBuff();
+        }
+      } else if (this.buffAttackSwings < 0) {
+        // just in case for some reason it goes negative
+        this.removeAttackBuff();
+      }
 
       this.player.setFlipX(
         this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y).x -
@@ -747,6 +759,46 @@ export class Player extends Actor {
     });
   }
 
+  addAttackBuff() {
+    this.scene.events.emit("startPlayerAddAttackBuff", true, this);
+
+    // apply attack buff and reset number of swings it can last
+    this.bonusDamage = BUFF_ATTACK_MULTIPLIER;
+
+    // add to localStorage
+    localStorage.setItem("bonus_damage", BUFF_ATTACK_MULTIPLIER);
+
+    // this will get decremented each time the player does an attack
+    this.buffAttackSwings = BUFF_ATTACK_SWINGS;
+
+    // increase size of axe
+    this.axe.setScale(PIXEL_SCALE * 2);
+
+    console.debug(
+      "starting attack buff bonusDamage: ",
+      this.bonusDamage,
+      " buffAttackSwings: ",
+      this.buffAttackSwings
+    );
+  }
+
+  removeAttackBuff() {
+    // reset bonus damage
+    this.bonusDamage = 1;
+    this.buffAttackSwings = 0;
+
+    // reset localStorage
+    localStorage.setItem("bonus_damage", 0);
+
+    // set axe back to normal size
+    this.axe.setScale(PIXEL_SCALE);
+
+    // emit message to update UI
+    this.scene.events.emit("endPlayerAddAttackBuff", true, this);
+
+    console.debug("resetting bonusDamage: ", this.bonusDamage);
+  }
+
   dealDamage() {
     if (this.isAlive) {
       this.scene.sound.play(
@@ -774,6 +826,8 @@ export class Player extends Actor {
       case "speed":
         this.addSpeedBuff();
         break;
+      case "attack":
+        this.addAttackBuff();
       default:
         console.debug(`unknown buff: ${name}`);
     }

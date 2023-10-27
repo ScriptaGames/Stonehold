@@ -1,5 +1,5 @@
 import { Utils } from "../lib/utils.js";
-import { BONUS_DAMAGE_BASE, PIXEL_SCALE } from "../variables.js";
+import { PIXEL_SCALE, BUFF_ATTACK_MULTIPLIER } from "../variables.js";
 import CellScene from "./cell.js";
 
 export class PlayUIScene extends Phaser.Scene {
@@ -18,8 +18,6 @@ export class PlayUIScene extends Phaser.Scene {
   }
 
   create() {
-    const localPlayer = Utils.getLocalStoragePlayer();
-
     // create animation
     this.rmbAnim = this.anims.create({
       key: "blink",
@@ -35,14 +33,10 @@ export class PlayUIScene extends Phaser.Scene {
       color: "#ffffff",
     });
 
-    let bonusDamageMultiplier = BONUS_DAMAGE_BASE;
-    if (localPlayer.bonus_damage) {
-      bonusDamageMultiplier = Number(localPlayer.bonus_damage);
-    }
     this.damageText = this.add.text(
       150,
       17,
-      "Damage x" + bonusDamageMultiplier.toPrecision(2),
+      "Damage x" + BUFF_ATTACK_MULTIPLIER,
       {
         fontFamily: "DungeonFont",
         fontSize: "28px",
@@ -89,6 +83,16 @@ export class PlayUIScene extends Phaser.Scene {
       console.debug("GOT EVENT chargeUltimate:", charge);
       this.setValue(this.ultimateBar, charge);
       this.rmbSprite.visible = charge >= 1;
+    });
+
+    // Listen for start attack buff events
+    roomScene.events.addListener("startPlayerAddAttackBuff", (buff) => {
+      this.damageText.setVisible(true);
+    });
+
+    // Listen for end attack buff events
+    roomScene.events.addListener("endPlayerAddAttackBuff", (buff) => {
+      this.damageText.setVisible(false);
     });
 
     roomScene.events.addListener("createRoom", (depth) => {

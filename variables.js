@@ -118,3 +118,7 @@ export const BUFF_SPEED_MULTIPLIER = 2;
 
 /** buff speed duration */
 export const BUFF_SPEED_DURATION = 10000;
+
+export const BUFF_ATTACK_SWINGS = 10;
+
+export const BUFF_ATTACK_MULTIPLIER = 2;
