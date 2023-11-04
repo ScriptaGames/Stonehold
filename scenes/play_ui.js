@@ -73,11 +73,6 @@ export class PlayUIScene extends Phaser.Scene {
       this.setValue(this.healthBar, percent);
     });
 
-    roomScene.events.addListener("playerIncreaseDamage", (damage) => {
-      console.debug("GOT EVENT player increase damage:", damage);
-      this.damageText.setText("Damage x" + damage.toPrecision(2));
-    });
-
     //  Listen for charge events
     roomScene.events.addListener("chargeUltimate", (charge) => {
       console.debug("GOT EVENT chargeUltimate:", charge);

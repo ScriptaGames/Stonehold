@@ -31,11 +31,17 @@ const ULTIMATE_FRAME_SIZE = 36;
 
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
-  constructor(scene, hp = PLAYER_BASE_HP, ultimateCharge = 0.0) {
+  constructor(
+    scene,
+    hp = PLAYER_BASE_HP,
+    ultimateCharge = 0.0,
+    buffAttackSwings = 0
+  ) {
     super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
     this.ultimateCharge = ultimateCharge;
-    this.bonusDamage = 0;
     this.buffSpeedMultiplier = 1;
+    this.bonusDamage = 1;
+    this.buffAttackSwings = buffAttackSwings;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -174,8 +180,6 @@ export class Player extends Actor {
 
     this.ultimateActive = false;
 
-    this.bonusDamage = Number(Utils.getLocalStoragePlayer().bonus_damage);
-
     this.createKeyboardControls();
     this.createMouse();
 
@@ -186,6 +190,11 @@ export class Player extends Actor {
     // adjust axe hitbox to fit the sprite better
     this.axeBody.setSize(27, 27);
     this.axeLive(false);
+
+    // carry over any buffs from the previous room
+    if (this.buffAttackSwings > 0) {
+      this.addAttackBuff(this.buffAttackSwings);
+    }
 
     // link footstep sfx to run animation
     this.player.on(
@@ -768,17 +777,14 @@ export class Player extends Actor {
     });
   }
 
-  addAttackBuff() {
+  addAttackBuff(buffAttackSwings = BUFF_ATTACK_SWINGS) {
     this.scene.events.emit("startPlayerAddAttackBuff", true, this);
 
     // apply attack buff and reset number of swings it can last
     this.bonusDamage = BUFF_ATTACK_MULTIPLIER;
 
-    // add to localStorage
-    localStorage.setItem("bonus_damage", BUFF_ATTACK_MULTIPLIER);
-
     // this will get decremented each time the player does an attack
-    this.buffAttackSwings = BUFF_ATTACK_SWINGS;
+    this.buffAttackSwings = buffAttackSwings;
 
     // increase size of axe
     this.axe.setScale(PIXEL_SCALE * 2);
@@ -795,9 +801,6 @@ export class Player extends Actor {
     // reset bonus damage
     this.bonusDamage = 1;
     this.buffAttackSwings = 0;
-
-    // reset localStorage
-    localStorage.setItem("bonus_damage", 0);
 
     // set axe back to normal size
     this.axe.setScale(PIXEL_SCALE);
