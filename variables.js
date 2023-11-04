@@ -124,4 +124,4 @@ export const BUFF_SPEED_DURATION = 10000;
 
 export const BUFF_ATTACK_SWINGS = 5;
 
-export const BUFF_ATTACK_MULTIPLIER = 2;
+export const BUFF_ATTACK_MULTIPLIER = 3;
