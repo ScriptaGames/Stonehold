@@ -13,7 +13,7 @@ import {
   PLAYER_BASE_DAMAGE,
   PLAYER_AFTER_ULTIMATE_DELAY,
   ULTIMATE_ATTACK_GRACE_PERIOD,
-  ULTIMATE_ATTACK_RADIUS,
+  ULTIMATE_ATTACK_EXTENDED_RADIUS,
   ULTIMATE_CHARGE_PER_ENEMY,
   COMBO_ATTACK_INPUT_PERIOD,
   ATTACK_COMBO_GRACE_PERIOD,
@@ -21,17 +21,27 @@ import {
   BUFF_HEALTH_AMOUNT,
   BUFF_SPEED_MULTIPLIER,
   BUFF_SPEED_DURATION,
+  BUFF_ATTACK_SWINGS,
+  BUFF_ATTACK_MULTIPLIER,
 } from "../variables";
 import { Captain } from "./captain";
 import { Utils } from "../lib/utils";
 
+const ULTIMATE_FRAME_SIZE = 36;
+
 export class Player extends Actor {
   /** @param {Phaser.Scene} scene */
-  constructor(scene, hp = PLAYER_BASE_HP, ultimateCharge = 0.0) {
+  constructor(
+    scene,
+    hp = PLAYER_BASE_HP,
+    ultimateCharge = 0.0,
+    buffAttackSwings = 0
+  ) {
     super(scene, { hp: hp, damage: PLAYER_BASE_DAMAGE });
     this.ultimateCharge = ultimateCharge;
-    this.bonusDamage = 0;
     this.buffSpeedMultiplier = 1;
+    this.bonusDamage = 1;
+    this.buffAttackSwings = buffAttackSwings;
   }
   /** @param {Phaser.Scene} scene */
   static preload(scene) {
@@ -89,8 +99,8 @@ export class Player extends Actor {
       "ultimate-attack",
       "images/dwarfFull_ultimate_strip.png",
       {
-        frameWidth: 36,
-        frameHeight: 36,
+        frameWidth: ULTIMATE_FRAME_SIZE,
+        frameHeight: ULTIMATE_FRAME_SIZE,
       }
     );
 
@@ -154,16 +164,21 @@ export class Player extends Actor {
     this.scene.physics.add.existing(this.axe);
 
     // configure ultimate explosion effect
-    this.ultimateExplosion = this.scene.add.sprite(100, 100);
+    this.ultimateExplosion = this.scene.add.sprite();
     this.ultimateExplosion.setScale(PIXEL_SCALE);
     this.ultimateExplosion.setVisible(false);
     this.scene.physics.add.existing(this.ultimateExplosion);
     this.ultimateExplosionBody = this.ultimateExplosion.body;
-    this.ultimateExplosionBody.setSize(100, 100);
-    this.ultimateExplosionBody.setOffset(25, 25);
-    this.ultimateActive = false;
+    const extraSize = ULTIMATE_ATTACK_EXTENDED_RADIUS;
+    const ultBodySize = ULTIMATE_FRAME_SIZE * PIXEL_SCALE + extraSize;
+    this.ultimateExplosionBody.setSize(ultBodySize, ultBodySize);
+    const ultDefaultOffset = this.ultimateExplosionBody.offset;
+    console.debug("ultDefaultOffset: ", ultDefaultOffset);
+    const ultBodyOffest = ultBodySize / 2 + ultDefaultOffset.x - extraSize / 2;
+    console.debug("ultBodyOffest: ", ultBodyOffest);
+    this.ultimateExplosionBody.setOffset(ultBodyOffest, ultBodyOffest);
 
-    this.bonusDamage = Number(Utils.getLocalStoragePlayer().bonus_damage);
+    this.ultimateActive = false;
 
     this.createKeyboardControls();
     this.createMouse();
@@ -175,6 +190,11 @@ export class Player extends Actor {
     // adjust axe hitbox to fit the sprite better
     this.axeBody.setSize(27, 27);
     this.axeLive(false);
+
+    // carry over any buffs from the previous room
+    if (this.buffAttackSwings > 0) {
+      this.addAttackBuff(this.buffAttackSwings);
+    }
 
     // link footstep sfx to run animation
     this.player.on(
@@ -375,11 +395,7 @@ export class Player extends Actor {
 
     // if space is pressed, and dodge is off cooldown, and the key has been
     // released since the last dodge, then dodge!
-    if (
-      this.kb.SPACE.isDown &&
-      this.dodge.ready &&
-      this.dodge.keyReleased
-    ) {
+    if (this.kb.SPACE.isDown && this.dodge.ready && this.dodge.keyReleased) {
       // start dodging
       this.dodge.dodging = true;
       this.dodge.ready = false;
@@ -456,6 +472,20 @@ export class Player extends Actor {
     if (this.dodge.gracePeriod && this.attack.gracePeriod) {
       this.attack.attacking = true;
       this.attack.gracePeriod = false;
+
+      // decrement the swing counter for the attack buff if it's active
+      if (this.buffAttackSwings > 0) {
+        this.buffAttackSwings--;
+
+        console.debug("buffAttackSwings remaining: ", this.buffAttackSwings);
+
+        if (this.buffAttackSwings == 0) {
+          this.removeAttackBuff();
+        }
+      } else if (this.buffAttackSwings < 0) {
+        // just in case for some reason it goes negative
+        this.removeAttackBuff();
+      }
 
       this.player.setFlipX(
         this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y).x -
@@ -747,6 +777,40 @@ export class Player extends Actor {
     });
   }
 
+  addAttackBuff(buffAttackSwings = BUFF_ATTACK_SWINGS) {
+    this.scene.events.emit("startPlayerAddAttackBuff", true, this);
+
+    // apply attack buff and reset number of swings it can last
+    this.bonusDamage = BUFF_ATTACK_MULTIPLIER;
+
+    // this will get decremented each time the player does an attack
+    this.buffAttackSwings = buffAttackSwings;
+
+    // increase size of axe
+    this.axe.setScale(PIXEL_SCALE * 2);
+
+    console.debug(
+      "starting attack buff bonusDamage: ",
+      this.bonusDamage,
+      " buffAttackSwings: ",
+      this.buffAttackSwings
+    );
+  }
+
+  removeAttackBuff() {
+    // reset bonus damage
+    this.bonusDamage = 1;
+    this.buffAttackSwings = 0;
+
+    // set axe back to normal size
+    this.axe.setScale(PIXEL_SCALE);
+
+    // emit message to update UI
+    this.scene.events.emit("endPlayerAddAttackBuff", true, this);
+
+    console.debug("resetting bonusDamage: ", this.bonusDamage);
+  }
+
   dealDamage() {
     if (this.isAlive) {
       this.scene.sound.play(
@@ -774,6 +838,8 @@ export class Player extends Actor {
       case "speed":
         this.addSpeedBuff();
         break;
+      case "attack":
+        this.addAttackBuff();
       default:
         console.debug(`unknown buff: ${name}`);
     }

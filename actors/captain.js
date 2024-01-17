@@ -118,16 +118,15 @@ export class Captain extends Enemy {
    */
   static createAnims(scene) {
     // loop through each spritesheet and create an animation
-    ["health", "speed", "captain-idle", "captain-run", "poison-ball"].forEach(
-      (name) => {
-        scene.anims.create({
-          key: name,
-          frames: scene.anims.generateFrameNumbers(name),
-          frameRate: 10,
-          repeat: -1,
-        });
-      }
-    );
+    ["captain-idle", "captain-run", "poison-ball"].forEach((name) => {
+      scene.anims.create({
+        key: name,
+        frames: scene.anims.generateFrameNumbers(name),
+        frameRate: 10,
+        repeat: -1,
+      });
+    });
+
     ["captain-attack", "poison-ball-explosion"].forEach((name) => {
       let res = scene.anims.create({
         key: name,

@@ -63,6 +63,7 @@ class RoomScene extends Phaser.Scene {
   }
 
   create() {
+    Enemy.createAnims(this);
     Pinky.createAnims(this);
     Player.createAnims(this);
     Captain.createAnims(this);
@@ -87,7 +88,8 @@ class RoomScene extends Phaser.Scene {
     this.player = new Player(
       this,
       this.initPlayerState.hp,
-      this.initPlayerState.ultimateCharge
+      this.initPlayerState.ultimateCharge,
+      this.initPlayerState.buffAttackSwings
     );
     this.player.create();
     this.player.player.copyPosition(playerSpawn);
@@ -386,15 +388,7 @@ you made it to level ${finalDepth}`,
 
   exitingRoom() {
     console.debug("exiting room");
-    if (
-      !this.room_manager.myChain ||
-      this.room_manager.currentChainDepth >= this.room_manager.unlockedDepth
-    ) {
-      this.player.bonusDamage =
-        Number(localStorage.getItem("bonus_damage")) + BONUS_DAMAGE_INCREASE;
-      localStorage.setItem("bonus_damage", this.player.bonusDamage);
-      this.events.emit("playerIncreaseDamage", this.player.bonusDamage, this);
-    }
+
     let room_config = this.room_manager.nextRoom();
     this.registry.destroy(); // destroy registry
     this.events.off("actor-death"); // disable all active events
@@ -404,6 +398,7 @@ you made it to level ${finalDepth}`,
       playerState: {
         hp: this.player.hp,
         ultimateCharge: this.player.ultimateCharge,
+        buffAttackSwings: this.player.buffAttackSwings,
       },
     });
   }

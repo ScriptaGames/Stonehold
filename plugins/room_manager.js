@@ -1,17 +1,18 @@
 import Phaser from "phaser";
 import {
-    CAPTAIN_ATTACK_DAMAGE,
-    CAPTAIN_ATTACK_RANGE,
-    CAPTAIN_BASE_HP,
-    CAPTAIN_IDLE_AFTER_ATTACK,
-    CAPTAIN_PROJECTILE_SPEED,
-    CAPTAIN_SPEED,
-    PINKY_ATTACK_DAMAGE,
-    PINKY_ATTACK_RANGE,
-    PINKY_BASE_HP,
-    PINKY_IDLE_AFTER_ATTACK,
-    PINKY_SPEED,
-    ENEMY_DAMAGE_SCALER,
+  CAPTAIN_ATTACK_DAMAGE,
+  CAPTAIN_ATTACK_RANGE,
+  CAPTAIN_BASE_HP,
+  CAPTAIN_IDLE_AFTER_ATTACK,
+  CAPTAIN_PROJECTILE_SPEED,
+  CAPTAIN_SPEED,
+  PINKY_ATTACK_DAMAGE,
+  PINKY_ATTACK_RANGE,
+  STARTING_ROOM_DEPTH,
+  PINKY_BASE_HP,
+  PINKY_IDLE_AFTER_ATTACK,
+  PINKY_SPEED,
+  ENEMY_DAMAGE_SCALER,
 } from "../variables";
 import { Utils } from "../lib/utils.js";
 
@@ -28,21 +29,23 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
             new Array(maxMushrooms).fill(1).map((_n, i) => i)
         );
 
-        // TODO TWEAK DIFFICULTY SCALING HERE
-        const numEnemies = depth;
-        const percentCaptains = Math.min(100, depth * 2);
-        const pinkyHP = PINKY_BASE_HP;
-        const captainHP = CAPTAIN_BASE_HP;
-        const captainAttackDamage =
-            CAPTAIN_ATTACK_DAMAGE + (depth - 2) * ENEMY_DAMAGE_SCALER;
-        const captainAttackRange = CAPTAIN_ATTACK_RANGE + depth * 5;
-        const captainIdleAfterAttack = CAPTAIN_IDLE_AFTER_ATTACK;
-        const captainProjectileSpeed = CAPTAIN_PROJECTILE_SPEED + depth;
-        const captainSpeed = CAPTAIN_SPEED + depth;
-        const pinkyAttackDamage =
-            PINKY_ATTACK_DAMAGE + (depth - 1) * ENEMY_DAMAGE_SCALER;
-        const pinkyIdleAfterAttack = PINKY_IDLE_AFTER_ATTACK;
-        const pinkySpeed = PINKY_SPEED + depth;
+    depth = Math.max(STARTING_ROOM_DEPTH, depth);
+
+    // TODO TWEAK DIFFICULTY SCALING HERE
+    const numEnemies = depth;
+    const percentCaptains = Math.min(100, depth * 2);
+    const pinkyHP = PINKY_BASE_HP;
+    const captainHP = CAPTAIN_BASE_HP;
+    const captainAttackDamage =
+      CAPTAIN_ATTACK_DAMAGE + (depth - 2) * ENEMY_DAMAGE_SCALER;
+    const captainAttackRange = CAPTAIN_ATTACK_RANGE + depth * 5;
+    const captainIdleAfterAttack = CAPTAIN_IDLE_AFTER_ATTACK;
+    const captainProjectileSpeed = CAPTAIN_PROJECTILE_SPEED + depth;
+    const captainSpeed = CAPTAIN_SPEED + depth;
+    const pinkyAttackDamage =
+      PINKY_ATTACK_DAMAGE + (depth - 1) * ENEMY_DAMAGE_SCALER;
+    const pinkyIdleAfterAttack = PINKY_IDLE_AFTER_ATTACK;
+    const pinkySpeed = PINKY_SPEED + depth;
 
         const levelMap = this.rnd.pick(this.getLevels());
 
