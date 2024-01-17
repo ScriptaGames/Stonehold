@@ -19,7 +19,7 @@ class RoomManager extends Phaser.Plugins.BasePlugin {
     init() { }
 
     getRoomConfig(depth) {
-        depth = depth + 20;
+        // depth = depth + 20;
         const key = "RoomScene";
         // this.rnd.pick(this.roomChoices);
 
