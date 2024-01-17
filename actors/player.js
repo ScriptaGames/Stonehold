@@ -125,6 +125,7 @@ export class Player extends Actor {
     scene.load.audio("dwarf-dies", "audio/player-dies.mp3");
     scene.load.audio("health-buff", "audio/health_buff.mp3");
     scene.load.audio("speed-buff", "audio/speed_buff.mp3");
+    scene.load.audio("attack-buff", "audio/attack-buff.mp3");
   }
   create() {
     super.create();
@@ -193,7 +194,7 @@ export class Player extends Actor {
 
     // carry over any buffs from the previous room
     if (this.buffAttackSwings > 0) {
-      this.addAttackBuff(this.buffAttackSwings);
+      this.addAttackBuff(this.buffAttackSwings, false);
     }
 
     // link footstep sfx to run animation
@@ -489,8 +490,8 @@ export class Player extends Actor {
 
       this.player.setFlipX(
         this.scene.cameras.main.getWorldPoint(this.mouse.x, this.mouse.y).x -
-          this.player.x <
-          0
+        this.player.x <
+        0
       );
 
       // also set the horizontal dodge direction to match the direction the player is facing
@@ -754,8 +755,8 @@ export class Player extends Actor {
 
   addSpeedBuff() {
     //TODO: listen for this event if we ever want to update the UI
-    //      to indicate that speed buff is active, like putting the boot
-    //      in the top left corner or something
+    //    to indicate that speed buff is active, like putting the boot
+    //    in the top left corner or something
     this.scene.events.emit("playerAddSpeedBuff", true, this);
 
     // apply speed boost and set timeout
@@ -777,11 +778,15 @@ export class Player extends Actor {
     });
   }
 
-  addAttackBuff(buffAttackSwings = BUFF_ATTACK_SWINGS) {
+  addAttackBuff(buffAttackSwings = BUFF_ATTACK_SWINGS, fromPowerup = true) {
     this.scene.events.emit("startPlayerAddAttackBuff", true, this);
 
     // apply attack buff and reset number of swings it can last
     this.bonusDamage = BUFF_ATTACK_MULTIPLIER;
+
+    if (fromPowerup) {
+      this.scene.sound.play("attack-buff", { volume: 2 });
+    }
 
     // this will get decremented each time the player does an attack
     this.buffAttackSwings = buffAttackSwings;
